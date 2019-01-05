@@ -1,0 +1,486 @@
+#!/bin/sh
+#
+# buildcross - a tool for building GNU/Linux cross toolchains
+# Copyright (C) 2019  Mikael Pettersson
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Usage: buildcross [-jN] <TARGET> [<CROSS_DIR>]
+#
+# Supported targets and resulting toolchains:
+#
+# aarch64	aarch64-unknown-linux-gnu
+# alpha		alpha-unknown-linux-gnu
+# armv7l	armv7l-unknown-linux-gnueabi
+# hppa		hppa-unknown-linux-gnu (no -m64 support)
+# ia64		ia64-unknown-linux-gnu
+# m68k		m68k-unknown-linux-gnu
+# microblaze	microblaze-unknown-linux-gnu
+# mips64	mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support
+# nios2		nios2-unknown-linux-gnu
+# ppc64		ppc64-unknown-linux-gnu with -m64 and -m32 support
+# riscv64	riscv64-unknown-linux-gnu
+# s390x		s390x-unknown-linux-gnu with -m64 and -m31 support
+# sh4		sh4-unknown-linux-gnu
+# sparc64	sparc64-unknown-linux-gnu with -m64 and -m32 support
+# x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
+#
+# Pending:
+#
+# aarch64	-mabi=ilp32 support
+# nds32		awaiting upstream glibc support
+# riscv64	-mabi=ilp32d support
+#
+# Unsupported:
+#
+# - targets not supported by upstream toolchain components
+# - targets requiring add-on patches
+#   (for now, may change time permitting)
+# - targets using another libc than glibc (e.g. musl or uclibc)
+#   (for now, may change time permitting)
+# - non-Linux targets, including mingw-w64, BSD, and plain ELF ones
+
+set -e
+
+VERSION="1.0"
+
+case "$1" in
+    -j*)
+	DASHJ="$1"
+	shift
+	;;
+    *)
+	DASHJ=
+esac
+
+TARGET_ARCH="$1"
+if [ -z "${TARGET_ARCH}" ]; then
+    echo no target arch provided
+    exit 1
+fi
+
+TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnu"
+if [ "${TARGET_ARCH}" = "armv7l" ]; then
+    TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnueabi"
+fi
+
+SOURCE_DIR=`realpath .`
+BUILD_DIR=`realpath .`
+
+CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
+
+# default component versions
+BINUTILS_VSN=2.31.1
+GCC_VSN=8.2.0
+GLIBC_VSN=2.28
+GMP_VSN=6.1.2
+LINUX_VSN=4.20
+MPC_VSN=1.1.0
+MPFR_VSN=4.0.1
+
+# GLIBC BZ 24022: GLIBC-2.28 doesn't build with LINUX-4.20 headers for riscv.
+if [ "${TARGET_ARCH}" = "riscv64" ]; then
+    LINUX_VSN=4.19
+fi
+
+log() {
+    echo
+    echo "@ $1"
+    echo
+}
+
+DISTFILES="http://mirrors.kernel.org/gentoo/distfiles/"
+
+get_tarball() {
+    local EXT=${2:-"xz"}
+    if [ ! -f "$1.tar.${EXT}" ]; then
+	wget "${DISTFILES}/$1.tar.${EXT}"
+    fi
+}
+
+get_sources() {
+    log "getting sources"
+    cd ${SOURCE_DIR}
+    get_tarball "binutils-${BINUTILS_VSN}"
+    get_tarball "gcc-${GCC_VSN}"
+    get_tarball "glibc-${GLIBC_VSN}"
+    get_tarball "gmp-${GMP_VSN}"
+    get_tarball "linux-${LINUX_VSN}"
+    get_tarball "mpfr-${MPFR_VSN}"
+    get_tarball "mpc-${MPC_VSN}" "gz"
+    cd -
+}
+
+unpack_tarball() {
+    local EXT=${2:-"xz"}
+    if [ ! -d "$1" ]; then
+	tar xf "${SOURCE_DIR}/$1.tar.${EXT}"
+    fi
+}
+
+build_host_gmp() {
+    local SUFFIX="$1"
+    if [ -d "${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" -o -d "${BUILD_ROOT}/host-gcc-${GCC_VSN}" ]; then
+	return
+    fi
+    log "building host-gmp-${GMP_VSN}${SUFFIX}"
+    unpack_tarball "gmp-${GMP_VSN}"
+    rm -rf objdir-gmp
+    mkdir objdir-gmp
+    cd objdir-gmp
+    unset ABI
+    ${BUILD_DIR}/gmp-${GMP_VSN}/configure \
+		--prefix="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
+		--disable-shared \
+		--enable-alloca=alloca \
+		ABI=64
+    make ${DASHJ}
+    make install
+    cd ..
+    rm -rf objdir-gmp
+}
+
+build_host_mpfr() {
+    local SUFFIX="$1"
+    if [ -d "${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" -o -d "${BUILD_ROOT}/host-gcc-${GCC_VSN}" ]; then
+	return
+    fi
+    log "building host-mpfr-${MPFR_VSN}${SUFFIX}"
+    unpack_tarball "mpfr-${MPFR_VSN}"
+    rm -rf objdir-mpfr
+    mkdir objdir-mpfr
+    cd objdir-mpfr
+    ${BUILD_DIR}/mpfr-${MPFR_VSN}/configure \
+		--prefix="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
+		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
+		--disable-shared
+    make ${DASHJ}
+    make install
+    cd ..
+    rm -rf objdir-mpfr
+}
+
+build_host_mpc() {
+    local SUFFIX="$1"
+    if [ -d "${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" -o -d "${BUILD_ROOT}/host-gcc-${GCC_VSN}" ]; then
+	return
+    fi
+    log "building host-mpc-${MPC_VSN}${SUFFIX}"
+    unpack_tarball "mpc-${MPC_VSN}" "gz"
+    rm -rf objdir-mpc
+    mkdir objdir-mpc
+    cd objdir-mpc
+    ${BUILD_DIR}/mpc-${MPC_VSN}/configure \
+		--prefix="${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" \
+		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
+		--with-mpfr="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
+		--disable-shared
+    make ${DASHJ}
+    make install
+    cd ..
+    rm -rf objdir-mpc
+}
+
+build_host_gcc() {
+    local SUFFIX="$1"
+    local MAKE_TARGET
+    local DISABLE_BOOTSTRAP
+    if [ -d "${BUILD_DIR}/host-gcc-${GCC_VSN}${SUFFIX}" -o -d "${BUILD_DIR}/host-gcc-${GCC_VSN}" ]; then
+	return
+    fi
+    log "building host-gcc-${GCC_VSN}${SUFFIX}"
+    if [ -z "${SUFFIX}" ]; then
+	DISABLE_BOOTSTRAP=;
+	MAKE_TARGET=bootstrap-lean
+    else
+	DISABLE_BOOTSTRAP="--disable-bootstrap"
+	MAKE_TARGET=
+    fi
+    unpack_tarball "gcc-${GCC_VSN}"
+    rm -rf objdir-gcc
+    mkdir objdir-gcc
+    cd objdir-gcc
+    ${BUILD_DIR}/gcc-${GCC_VSN}/configure \
+		--prefix="${BUILD_DIR}/host-gcc-${GCC_VSN}${SUFFIX}" \
+		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
+		--with-mpfr="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
+		--with-mpc="${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" \
+		--without-cloog \
+		--without-isl \
+		--disable-libgomp \
+		--disable-libmpx \
+		--disable-libmudflap \
+		--disable-libquadmath \
+		--disable-libsanitizer \
+		--disable-lto \
+		--disable-multilib \
+		--disable-nls \
+		--disable-plugin \
+		--disable-shared \
+		--enable-threads=posix \
+		--enable-checking=release \
+		--enable-languages=c,c++ \
+		${DISABLE_BOOTSTRAP}
+    make ${DASHJ} ${MAKE_TARGET}
+    make install
+    cd ..
+    rm -rf objdir-gcc
+}
+
+build_cross_gcc() {
+    local STAGE="$1"
+    local LIBC_CONFIGS
+    local LIBSSP_CONFIG
+    local MULTILIB_CONFIG
+    if [ -f "${CROSS_DIR}/.stage-gcc-${STAGE}" ]; then
+	return
+    fi
+    log "building cross-gcc-${GCC_VSN}-${STAGE}"
+    LIBSSP_CONFIG="--enable-libssp"
+    MULTILIB_CONFIG="--enable-multilib"
+    case "${TARGET_ARCH}" in
+	"aarch64")
+	    LIBSSP_CONFIG="--disable-libssp"
+	    MULTILIB_CONFIG="--disable-multilib"
+	    ;;
+	"armv7l")
+	    MULTILIB_CONFIG="--disable-multilib --with-arch=armv7-a --with-tune=cortex-a9 --with-float=hard --with-fpu=vfpv3-d16"
+	    ;;
+	"ia64")
+	    MULTILIB_CONFIG="--disable-multilib --with-system-libunwind=yes"
+	    ;;
+	"riscv64")
+	    MULTILIB_CONFIG="--disable-multilib"
+	    ;;
+	"x86_64")
+	    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=m64,m32,mx32"
+	    ;;
+    esac
+    case "${STAGE}" in
+	"newlib")
+	    LIBC_CONFIGS="--with-newlib --disable-threads --disable-libssp"
+	    ;;
+	"glibc")
+	    LIBC_CONFIGS="--enable-threads=posix ${LIBSSP_CONFIG}"
+    esac
+    unpack_tarball "gcc-${GCC_VSN}"
+    rm -rf objdir-gcc
+    mkdir objdir-gcc
+    cd objdir-gcc
+    ${BUILD_DIR}/gcc-${GCC_VSN}/configure \
+		--target="${TARGET_TRIPLE}" \
+		--build="${BUILD_TRIPLE}" \
+		--prefix="${CROSS_DIR}" \
+		--with-sysroot="${CROSS_DIR}" \
+		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
+		--with-mpfr="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
+		--with-mpc="${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" \
+		--without-cloog \
+		--without-isl \
+		--disable-libatomic \
+		--disable-libgomp \
+		--disable-libitm \
+		--disable-libmpx \
+		--disable-libmudflap \
+		--disable-libquadmath \
+		--disable-libsanitizer \
+		--disable-lto \
+		--disable-nls \
+		--disable-plugin \
+		--disable-shared \
+		--enable-checking=release \
+		--enable-languages=c \
+		${MULTILIB_CONFIG} \
+		${LIBC_CONFIGS}
+    make ${DASHJ}
+    make install
+    touch "${CROSS_DIR}/.stage-gcc-${STAGE}"
+    cd ..
+    rm -rf objdir-gcc
+}
+
+build_cross_binutils() {
+    if [ -x "${CROSS_DIR}/bin/${TARGET_TRIPLE}-as" ]; then
+	return
+    fi
+    log "building cross-binutils-${BINUTILS_VSN}"
+    unpack_tarball "binutils-${BINUTILS_VSN}"
+    rm -rf objdir-binutils
+    mkdir objdir-binutils
+    cd objdir-binutils
+    ${BUILD_DIR}/binutils-${BINUTILS_VSN}/configure \
+		--target="${TARGET_TRIPLE}" \
+		--build="${BUILD_TRIPLE}" \
+		--prefix="${CROSS_DIR}" \
+		--with-sysroot="${CROSS_DIR}" \
+		--disable-gold \
+		--disable-nls \
+		--disable-plugins
+    make ${DASHJ}
+    make install
+    cd ..
+    rm -rf objdir-binutils
+}
+
+build_target_headers() {
+    local KERNEL_ARCH
+    if [ -f "${CROSS_DIR}/usr/include/linux/version.h" ]; then
+	return
+    fi
+    log "building linux-headers-${LINUX_VSN}"
+    case "${TARGET_ARCH}" in
+	"aarch64") KERNEL_ARCH="arm64";;
+	"armv7l") KERNEL_ARCH="arm";;
+	"hppa") KERNEL_ARCH="parisc";;
+	"mips64") KERNEL_ARCH="mips";;
+	"ppc64") KERNEL_ARCH="powerpc";;
+	"riscv64") KERNEL_ARCH="riscv";;
+	"s390x") KERNEL_ARCH="s390";;
+	"sh4") KERNEL_ARCH="sh";;
+	"sparc64") KERNEL_ARCH="sparc";;
+	"x86_64") KERNEL_ARCH="x86";;
+	*) KERNEL_ARCH="${TARGET_ARCH}"
+    esac
+    unpack_tarball "linux-${LINUX_VSN}"
+    cd linux-${LINUX_VSN}
+    make ARCH="${KERNEL_ARCH}" INSTALL_HDR_PATH="${CROSS_DIR}/usr" headers_install
+    make mrproper
+    cd ..
+}
+
+build_glibc() {
+    local TARGET_TRIPLE="$1"
+    local TARGET_CC="$2"
+    log "building glibc-${GLIBC_VSN} for ${TARGET_TRIPLE} ${TARGET_CC}"
+    rm -rf "${TARGET_TRIPLE}"
+    mkdir "${TARGET_TRIPLE}"
+    cd "${TARGET_TRIPLE}"
+    ${BUILD_DIR}/glibc-${GLIBC_VSN}/configure "${TARGET_CC}" \
+		--host="${TARGET_TRIPLE}" \
+		--build="${BUILD_TRIPLE}" \
+		--prefix=/usr \
+		--without-cvs \
+		--disable-profile
+    make ${DASHJ}
+    make DESTDIR="${CROSS_DIR}" install
+    cd ..
+    rm -rf "${TARGET_TRIPLE}"
+}
+
+build_target_glibc() {
+    local TARGET_CC
+    unpack_tarball "glibc-${GLIBC_VSN}"
+    rm -rf objdir-glibc
+    mkdir objdir-glibc
+    cd objdir-glibc
+    # build extra glibcs for alternative ABIs like -m32
+    case "${TARGET_ARCH}" in
+	"mips64")
+	    build_glibc "mips-unknown-linux-gnu" "CC=mips64-unknown-linux-gnu-gcc -mabi=32"
+	    build_glibc "mips-unknown-linux-gnu" "CC=mips64-unknown-linux-gnu-gcc -mabi=n32"
+	    TARGET_CC="CC=mips64-unknown-linux-gnu-gcc -mabi=64"
+	    ;;
+	"ppc64")
+	    build_glibc "ppc-unknown-linux-gnu" "CC=ppc64-unknown-linux-gnu-gcc -m32"
+	    ;;
+	"s390x")
+	    build_glibc "s390-unknown-linux-gnu" "CC=s390x-unknown-linux-gnu-gcc -m31"
+	    ;;
+	"sparc64")
+	    build_glibc "sparcv9-unknown-linux-gnu" "CC=sparc64-unknown-linux-gnu-gcc -m32 -mcpu=ultrasparc"
+	    ;;
+	"x86_64")
+	    build_glibc "i686-unknown-linux-gnu" "CC=x86_64-unknown-linux-gnu-gcc -m32"
+	    build_glibc "x86_64-unknown-linux-gnu" "CC=x86_64-unknown-linux-gnu-gcc -mx32"
+	    ;;
+    esac
+    # build main glibc
+    build_glibc "${TARGET_TRIPLE}" "${TARGET_CC}"
+    cd ..
+    rm -rf objdir-glibc
+}
+
+log "buildcross ${VERSION} building toolchain for ${TARGET_ARCH} in ${CROSS_DIR}"
+
+#
+# Get Sources
+#
+
+get_sources
+
+#
+# Build Host GCC
+#
+
+cd ${BUILD_DIR}
+
+# build preliminary host libraries and gcc using system cc
+build_host_gmp "-cc"
+build_host_mpfr "-cc"
+build_host_mpc "-cc"
+build_host_gcc "-cc"
+
+# update PATH to pick up our preliminary host gcc
+ORIG_PATH="${PATH}"
+export PATH="${BUILD_DIR}/host-gcc-${GCC_VSN}-cc/bin:${ORIG_PATH}"
+
+# build final host libraries and gcc using preliminary host gcc
+build_host_gmp
+build_host_mpfr
+build_host_mpc
+build_host_gcc
+
+# remove preliminary host libraries and gcc
+rm -rf ${BUILD_DIR}/host-gmp-${GMP_VSN}-cc
+rm -rf ${BUILD_DIR}/host-mpfr-${MPFR_VSN}-cc
+rm -rf ${BUILD_DIR}/host-mpc-${MPC_VSN}-cc
+rm -rf ${BUILD_DIR}/host-gcc-${GCC_VSN}-cc
+
+# update PATH to pick up our final host gcc
+export PATH="${BUILD_DIR}/host-gcc-${GCC_VSN}/bin:${ORIG_PATH}"
+
+# determine BUILD_TRIPLE, ensure it differs from TARGET_TRIPLE
+BUILD_TRIPLE=`gcc -v 2>&1 | grep '^Target:' | awk '{print $2}'`
+if [ -z "${BUILD_TRIPLE}" ]; then
+    echo unable to determine build triple
+    exit 1
+fi
+if [ "${BUILD_TRIPLE}" = "${TARGET_TRIPLE}" ]; then
+    echo build triple "${BUILD_TRIPLE}" equals target triple
+    exit 1
+fi
+
+#
+# Build Cross Tools and Libc
+#
+
+# build cross binutils
+build_cross_binutils
+
+# update PATH to pick up our cross tools
+export PATH="${CROSS_DIR}/bin:${BUILD_DIR}/host-gcc-${GCC_VSN}/bin:${ORIG_PATH}"
+
+# build preliminary cross gcc without glibc
+build_cross_gcc "newlib"
+
+# build target kernel headers
+build_target_headers
+
+# build target glibc
+build_target_glibc
+
+# build final cross gcc with target glibc
+build_cross_gcc "glibc"
+
+log "done"
