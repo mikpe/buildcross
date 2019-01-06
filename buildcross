@@ -131,7 +131,7 @@ unpack_tarball() {
 
 build_host_gmp() {
     local SUFFIX="$1"
-    if [ -d "${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" -o -d "${BUILD_ROOT}/host-gcc-${GCC_VSN}" ]; then
+    if [ -d "${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" -o -d "${BUILD_DIR}/host-gcc-${GCC_VSN}" ]; then
 	return
     fi
     log "building host-gmp-${GMP_VSN}${SUFFIX}"
@@ -153,7 +153,7 @@ build_host_gmp() {
 
 build_host_mpfr() {
     local SUFFIX="$1"
-    if [ -d "${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" -o -d "${BUILD_ROOT}/host-gcc-${GCC_VSN}" ]; then
+    if [ -d "${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" -o -d "${BUILD_DIR}/host-gcc-${GCC_VSN}" ]; then
 	return
     fi
     log "building host-mpfr-${MPFR_VSN}${SUFFIX}"
@@ -173,7 +173,7 @@ build_host_mpfr() {
 
 build_host_mpc() {
     local SUFFIX="$1"
-    if [ -d "${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" -o -d "${BUILD_ROOT}/host-gcc-${GCC_VSN}" ]; then
+    if [ -d "${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" -o -d "${BUILD_DIR}/host-gcc-${GCC_VSN}" ]; then
 	return
     fi
     log "building host-mpc-${MPC_VSN}${SUFFIX}"
