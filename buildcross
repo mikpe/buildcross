@@ -35,6 +35,7 @@
 # sh4		sh4-unknown-linux-gnu
 # sparc64	sparc64-unknown-linux-gnu with -m64 and -m32 support
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
+# xtensa	xtensa-unknown-linux-uclibc
 #
 # Pending:
 #
@@ -47,13 +48,13 @@
 # - targets not supported by upstream toolchain components
 # - targets requiring add-on patches
 #   (for now, may change time permitting)
-# - targets using another libc than glibc (e.g. musl or uclibc)
+# - targets using another libc than glibc or uclibc-ng (e.g. musl)
 #   (for now, may change time permitting)
 # - non-Linux targets, including mingw-w64, BSD, and plain ELF ones
 
 set -e
 
-VERSION="1.0"
+VERSION="1.1"
 
 case "$1" in
     -j*)
@@ -70,11 +71,6 @@ if [ -z "${TARGET_ARCH}" ]; then
     exit 1
 fi
 
-TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnu"
-if [ "${TARGET_ARCH}" = "armv7l" ]; then
-    TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnueabi"
-fi
-
 SOURCE_DIR=`realpath .`
 BUILD_DIR=`realpath .`
 
@@ -84,15 +80,46 @@ CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
 BINUTILS_VSN=2.31.1
 GCC_VSN=8.2.0
 GLIBC_VSN=2.28
+UCLIBC_VSN=1.0.31
 GMP_VSN=6.1.2
 LINUX_VSN=4.20
 MPC_VSN=1.1.0
 MPFR_VSN=4.0.1
 
-# GLIBC BZ 24022: GLIBC-2.28 doesn't build with LINUX-4.20 headers for riscv.
-if [ "${TARGET_ARCH}" = "riscv64" ]; then
-    LINUX_VSN=4.19
+# uClibc-ng configuration options
+UCLIBC_WANT_LINUXTHREADS=
+UCLIBC_WANT_NPTL=
+UCLIBC_WANT_SSP=
+
+# target-specfic overrides
+case "${TARGET_ARCH}" in
+    "armv7l")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnueabi"
+	;;
+    "riscv64")
+	# GLIBC BZ 24022: GLIBC-2.28 doesn't build with LINUX-4.20 headers for riscv.
+	LINUX_VSN=4.19
+	;;
+    "xtensa")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
+	UCLIBC_WANT_NPTL=y
+	UCLIBC_WANT_SSP=y
+	;;
+esac
+
+if [ -z "${TARGET_TRIPLE}" ]; then
+    TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnu"
 fi
+
+# disable the libc we don't want
+case "${TARGET_TRIPLE}" in
+    *linux-gnu*)
+	UCLIBC_VSN=
+	;;
+    *linux-uclibc* | *uclinux*)
+	GLIBC_VSN=
+	;;
+esac
 
 log() {
     echo
@@ -114,7 +141,8 @@ get_sources() {
     cd ${SOURCE_DIR}
     get_tarball "binutils-${BINUTILS_VSN}"
     get_tarball "gcc-${GCC_VSN}"
-    get_tarball "glibc-${GLIBC_VSN}"
+    [ -n "${GLIBC_VSN}" ] && get_tarball "glibc-${GLIBC_VSN}"
+    [ -n "${UCLIBC_VSN}" ] && get_tarball "uClibc-ng-${UCLIBC_VSN}" "bz2"
     get_tarball "gmp-${GMP_VSN}"
     get_tarball "linux-${LINUX_VSN}"
     get_tarball "mpfr-${MPFR_VSN}"
@@ -247,6 +275,7 @@ build_cross_gcc() {
 	return
     fi
     log "building cross-gcc-${GCC_VSN}-${STAGE}"
+    LIBC_CONFIGS="--enable-threads=posix"
     LIBSSP_CONFIG="--enable-libssp"
     MULTILIB_CONFIG="--enable-multilib"
     case "${TARGET_ARCH}" in
@@ -269,10 +298,17 @@ build_cross_gcc() {
     esac
     case "${STAGE}" in
 	"newlib")
-	    LIBC_CONFIGS="--with-newlib --disable-threads --disable-libssp"
+	    LIBC_CONFIGS="--with-newlib --disable-threads"
+	    LIBSSP_CONFIG="--disable-libssp"
 	    ;;
-	"glibc")
-	    LIBC_CONFIGS="--enable-threads=posix ${LIBSSP_CONFIG}"
+	"uclibc")
+	    if [ -z "${UCLIBC_WANT_NPTL}" -a -z "${UCLIBC_WANT_LINUXTHREADS}" ]; then
+		LIBC_CONFIGS="--disable-threads"
+	    fi
+	    if [ -z "${UCLIBC_WANT_SSP}" ]; then
+		LIBSSP_CONFIG="--disable-libssp"
+	    fi
+	    ;;
     esac
     unpack_tarball "gcc-${GCC_VSN}"
     rm -rf objdir-gcc
@@ -302,7 +338,7 @@ build_cross_gcc() {
 		--enable-checking=release \
 		--enable-languages=c \
 		${MULTILIB_CONFIG} \
-		${LIBC_CONFIGS}
+		${LIBC_CONFIGS} ${LIBSSP_CONFIG}
     make ${DASHJ}
     make install
     touch "${CROSS_DIR}/.stage-gcc-${STAGE}"
@@ -411,6 +447,36 @@ build_target_glibc() {
     rm -rf objdir-glibc
 }
 
+build_target_uclibc() {
+    local CROSS_COMPILE="${TARGET_TRIPLE}-"
+    unpack_tarball "uClibc-ng-${UCLIBC_VSN}" "bz2"
+    cd "uClibc-ng-${UCLIBC_VSN}"
+    make clean
+    if [ ! -f "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig" ]; then
+	mkdir -p "extra/Configs/defconfigs/${TARGET_ARCH}"
+	echo "TARGET_${TARGET_ARCH}=y" > "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig"
+    fi
+    make TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" defconfig
+    sed -i -e s,\^KERNEL_HEADERS=.\*\$,KERNEL_HEADERS=\"${CROSS_DIR}/usr/include\",g .config
+    sed -i -e s,\^RUNTIME_PREFIX=.\*\$,RUNTIME_PREFIX=\"/\",g .config
+    sed -i -e s,\^DEVEL_PREFIX=.\*\$,DEVEL_PREFIX=\"/usr\",g .config
+    sed -i -e s,\^CROSS_COMPILER_PREFIX=.\*\$,CROSS_COMPILER_PREFIX=\"${CROSS_COMPILE}\",g .config
+    if [ -n "${UCLIBC_WANT_NPTL}" ]; then
+	echo 'UCLIBC_HAS_THREADS_NATIVE=y' >> .config
+    elif [ -n "${UCLIBC_WANT_LINUXTHREADS}" ]; then
+	echo 'UCLIBC_HAS_LINUXTHREADS=y' >> .config
+    fi
+    if [ -n "${UCLIBC_WANT_SSP}" ]; then
+	echo 'UCLIBC_HAS_SSP=y' >> .config
+    fi
+    make TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" olddefconfig
+    make ${DASHJ}
+    make PREFIX="${CROSS_DIR}" install
+    cp .config "${CROSS_DIR}"
+    make clean
+    cd -
+}
+
 log "buildcross ${VERSION} building toolchain for ${TARGET_ARCH} in ${CROSS_DIR}"
 
 #
@@ -477,10 +543,12 @@ build_cross_gcc "newlib"
 # build target kernel headers
 build_target_headers
 
-# build target glibc
-build_target_glibc
+# build target libc
+[ -n "${GLIBC_VSN}" ] && build_target_glibc
+[ -n "${UCLIBC_VSN}" ] && build_target_uclibc
 
-# build final cross gcc with target glibc
-build_cross_gcc "glibc"
+# build final cross gcc with target libc
+[ -n "${GLIBC_VSN}" ] && build_cross_gcc "glibc"
+[ -n "${UCLIBC_VSN}" ] && build_cross_gcc "uclibc"
 
 log "done"
