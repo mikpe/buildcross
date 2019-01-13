@@ -22,7 +22,10 @@
 #
 # aarch64	aarch64-unknown-linux-gnu
 # alpha		alpha-unknown-linux-gnu
+# arc		arc-unknown-linux-uclibc
 # armv7l	armv7l-unknown-linux-gnueabi
+# c6x		c6x-unknown-uclinux
+# h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
 # ia64		ia64-unknown-linux-gnu
 # m68k		m68k-unknown-linux-gnu
@@ -40,7 +43,6 @@
 # Pending:
 #
 # aarch64	-mabi=ilp32 support
-# nds32		awaiting upstream glibc support
 # riscv64	-mabi=ilp32d support
 #
 # Unsupported:
@@ -54,7 +56,7 @@
 
 set -e
 
-VERSION="1.1"
+VERSION="1.2"
 
 case "$1" in
     -j*)
@@ -90,11 +92,28 @@ MPFR_VSN=4.0.1
 UCLIBC_WANT_LINUXTHREADS=
 UCLIBC_WANT_NPTL=
 UCLIBC_WANT_SSP=
+UCLIBC_WANT_LITTLE_ENDIAN=
+UCLIBC_WANT_BIG_ENDIAN=
 
 # target-specfic overrides
 case "${TARGET_ARCH}" in
+    "arc")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
+	UCLIBC_WANT_NPTL=y
+	UCLIBC_WANT_SSP=y
+	UCLIBC_WANT_LITTLE_ENDIAN=y
+	;;
     "armv7l")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnueabi"
+	;;
+    "c6x")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-uclinux"
+	UCLIBC_WANT_LINUXTHREADS=y
+	UCLIBC_WANT_SSP=y
+	UCLIBC_WANT_BIG_ENDIAN=y
+	;;
+    "h8300")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	;;
     "riscv64")
 	# GLIBC BZ 24022: GLIBC-2.28 doesn't build with LINUX-4.20 headers for riscv.
@@ -468,6 +487,13 @@ build_target_uclibc() {
     fi
     if [ -n "${UCLIBC_WANT_SSP}" ]; then
 	echo 'UCLIBC_HAS_SSP=y' >> .config
+    fi
+    if [ -n "${UCLIBC_WANT_LITTLE_ENDIAN}" ]; then
+	echo 'ARCH_WANTS_BIG_ENDIAN=n' >> .config
+	echo 'ARCH_WANTS_LITTLE_ENDIAN=y' >> .config
+    elif [ -n "${UCLIBC_WANT_BIG_ENDIAN}" ]; then
+	echo 'ARCH_WANTS_LITTLE_ENDIAN=n' >> .config
+	echo 'ARCH_WANTS_BIG_ENDIAN=y' >> .config
     fi
     make TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" olddefconfig
     make ${DASHJ}
