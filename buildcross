@@ -25,6 +25,7 @@
 # arc		arc-unknown-linux-uclibc
 # armv7l	armv7l-unknown-linux-gnueabi
 # c6x		c6x-unknown-uclinux
+# csky		csky-unknown-linux-gnu (only little-endian)
 # h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
 # ia64		ia64-unknown-linux-gnu
@@ -43,7 +44,6 @@
 # Pending:
 #
 # aarch64	-mabi=ilp32 support
-# csky		needs gcc-9.0, binutils-2.32, glibc-2.29, linux-4.20
 # riscv64	-mabi=ilp32d support
 #
 # Unsupported:
@@ -57,7 +57,7 @@
 
 set -e
 
-VERSION="1.3.3"
+VERSION="1.4.0"
 
 case "$1" in
     -j*)
@@ -81,7 +81,7 @@ CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
 
 # default component versions
 BINUTILS_VSN=2.32
-GCC_VSN=8.3.0
+GCC_VSN=9.1.0
 GLIBC_VSN=2.29
 UCLIBC_VSN=1.0.31
 GMP_VSN=6.1.2
@@ -306,6 +306,9 @@ build_cross_gcc() {
 	    ;;
 	"armv7l")
 	    MULTILIB_CONFIG="--disable-multilib --with-arch=armv7-a --with-tune=cortex-a9 --with-float=hard --with-fpu=vfpv3-d16"
+	    ;;
+	"csky")
+	    MULTILIB_CONFIG="--disable-multilib --with-endian=little"
 	    ;;
 	"ia64")
 	    MULTILIB_CONFIG="--disable-multilib --with-system-libunwind=yes"
