@@ -57,7 +57,7 @@
 
 set -e
 
-VERSION="1.4.0"
+VERSION="1.4.1"
 
 case "$1" in
     -j*)
@@ -85,7 +85,7 @@ GCC_VSN=9.1.0
 GLIBC_VSN=2.29
 UCLIBC_VSN=1.0.31
 GMP_VSN=6.1.2
-LINUX_VSN=5.0
+LINUX_VSN=5.1
 MPC_VSN=1.1.0
 MPFR_VSN=4.0.2
 
@@ -314,7 +314,8 @@ build_cross_gcc() {
 	    MULTILIB_CONFIG="--disable-multilib --with-system-libunwind=yes"
 	    ;;
 	"riscv64")
-	    MULTILIB_CONFIG="--disable-multilib"
+	    # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90419#c1
+	    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=lp64d"
 	    ;;
 	"x86_64")
 	    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=m64,m32,mx32"
