@@ -1,2 +1,2 @@
 # buildcross
-buildcross - a tool for building GNU/Linux cross toolchains
+buildcross - a tool for building GCC cross toolchains
