@@ -397,14 +397,21 @@ build_cross_gcc() {
 }
 
 build_cross_gcc_without_libc() {
-    [ -z "${MINGW64_VSN}" ] && build_cross_gcc "newlib"
-    [ -n "${MINGW64_VSN}" ] && build_cross_gcc "mingw64-minimal"
+    if [ -z "${MINGW64_VSN}" ]; then
+	build_cross_gcc "newlib"
+    else
+	build_cross_gcc "mingw64-minimal"
+    fi
 }
 
 build_cross_gcc_with_libc() {
-    [ -n "${GLIBC_VSN}" ] && build_cross_gcc "glibc"
-    [ -n "${UCLIBC_VSN}" ] && build_cross_gcc "uclibc"
-    [ -n "${MINGW64_VSN}" ] && build_cross_gcc "mingw64-full"
+    if [ -n "${GLIBC_VSN}" ]; then
+	build_cross_gcc "glibc"
+    elif [ -n "${UCLIBC_VSN}" ]; then
+	build_cross_gcc "uclibc"
+    elif [ -n "${MINGW64_VSN}" ]; then
+	 build_cross_gcc "mingw64-full"
+    fi
 }
 
 build_cross_binutils() {
@@ -589,9 +596,13 @@ build_target_mingw64crt() {
 }
 
 build_target_libc() {
-    [ -n "${GLIBC_VSN}" ] && build_target_glibc
-    [ -n "${UCLIBC_VSN}" ] && build_target_uclibc
-    [ -n "${MINGW64_VSN}" ] && build_target_mingw64crt
+    if [ -n "${GLIBC_VSN}" ]; then
+	build_target_glibc
+    elif [ -n "${UCLIBC_VSN}" ]; then
+	 build_target_uclibc
+    elif [ -n "${MINGW64_VSN}" ]; then
+	build_target_mingw64crt
+    fi
 }
 
 log "buildcross ${VERSION} building toolchain for ${TARGET_ARCH} in ${CROSS_DIR}"
