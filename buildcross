@@ -34,6 +34,7 @@
 # mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
 # mips64	mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support
 # nios2		nios2-unknown-linux-gnu
+# or1k		or1k-unknown-linux-uclibc
 # ppc64		ppc64-unknown-linux-gnu with -m64 and -m32 support
 # riscv64	riscv64-unknown-linux-gnu
 # s390x		s390x-unknown-linux-gnu with -m64 and -m31 support
@@ -120,6 +121,14 @@ case "${TARGET_ARCH}" in
 	;;
     "mingw64")
 	TARGET_TRIPLE="x86_64-w64-mingw32"
+	;;
+    "or1k")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
+	# UCLIBC_WANT_NPTL=y
+	UCLIBC_WANT_SSP=y
+	# or1k shared libc broke in 1.0.25 and is still broken in 1.0.31
+	UCLIBC_VSN=1.0.24
+	UCLIBC_WANT_LINUXTHREADS=y
 	;;
     "s390x")
 	# binutils-2.32 broke -m31
@@ -455,6 +464,7 @@ build_linux_headers() {
 	"armv7l") KERNEL_ARCH="arm";;
 	"hppa") KERNEL_ARCH="parisc";;
 	"mips64") KERNEL_ARCH="mips";;
+	"or1k") KERNEL_ARCH="openrisc";;
 	"ppc64") KERNEL_ARCH="powerpc";;
 	"riscv64") KERNEL_ARCH="riscv";;
 	"s390x") KERNEL_ARCH="s390";;
