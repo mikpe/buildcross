@@ -553,6 +553,7 @@ build_target_glibc() {
 
 build_target_uclibc() {
     local CROSS_COMPILE="${TARGET_TRIPLE}-"
+    log "building uClibc-ng-${UCLIBC_VSN} for ${TARGET_TRIPLE}"
     unpack_tarball "uClibc-ng-${UCLIBC_VSN}" "bz2"
     cd "uClibc-ng-${UCLIBC_VSN}"
     make clean
