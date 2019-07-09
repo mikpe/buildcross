@@ -59,7 +59,7 @@
 
 set -e
 
-VERSION="3.0.0"
+VERSION="3.1.0"
 
 case "$1" in
     -j*)
