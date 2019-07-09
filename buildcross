@@ -338,6 +338,9 @@ build_cross_gcc() {
 	    LIBSSP_CONFIG="--disable-libssp"
 	    MULTILIB_CONFIG="--disable-multilib"
 	    ;;
+        "arc")
+	    LIBSSP_CONFIG="--disable-libssp"
+	    ;;
 	"armv7l")
 	    MULTILIB_CONFIG="--disable-multilib --with-arch=armv7-a --with-tune=cortex-a9 --with-float=hard --with-fpu=vfpv3-d16"
 	    ;;
