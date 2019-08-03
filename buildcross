@@ -45,8 +45,9 @@
 #
 # Pending:
 #
-# aarch64	-mabi=ilp32 support
-# riscv64	-mabi=ilp32d support
+# aarch64	waiting for glibc -mabi=ilp32 support
+# nds32		waiting for glibc support
+# riscv64	waiting for glibc -mabi=ilp32d support
 #
 # Unsupported:
 #
