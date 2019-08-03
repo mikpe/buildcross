@@ -102,10 +102,6 @@ UCLIBC_WANT_BIG_ENDIAN=
 
 # target-specfic overrides
 case "${TARGET_ARCH}" in
-    "alpha")
-	# glibc doesn't build against alpha's post-5.0 linux headers
-	LINUX_VSN=5.0
-	;;
     "arc")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	UCLIBC_WANT_NPTL=y
