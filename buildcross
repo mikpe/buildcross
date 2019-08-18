@@ -60,7 +60,7 @@
 
 set -e
 
-VERSION="3.2.0"
+VERSION="3.2.1"
 
 case "$1" in
     -j*)
@@ -84,10 +84,10 @@ CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
 
 # default component versions
 BINUTILS_VSN=2.32
-GCC_VSN=9.1.0
+GCC_VSN=9.2.0
 GLIBC_VSN=2.30
 UCLIBC_VSN=1.0.31
-MUSL_VSN=1.1.22
+MUSL_VSN=1.1.23
 MINGW64_VSN=6.0.0
 GMP_VSN=6.1.2
 LINUX_VSN=5.2
@@ -614,7 +614,6 @@ build_target_musl() {
     make ${DASHJ}
     make DESTDIR="${CROSS_DIR}" install
     # fix lib/ld-musl-*.so.1 -> /usr/lib/libc.so symlink
-    ls -l ${CROSS_DIR}/lib*
     ln -sf ../usr/lib/libc.so ${CROSS_DIR}/lib/ld-musl-*.so.*
     cd ..
     rm -rf objdir-musl
