@@ -127,11 +127,6 @@ case "${TARGET_ARCH}" in
     "or1k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-musl"
 	;;
-    "s390x")
-	# binutils-2.32 broke -m31
-	# see https://sourceware.org/ml/binutils/2019-03/msg00004.html
-	BINUTILS_VSN=2.31.1
-	;;
     "xtensa")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	UCLIBC_WANT_NPTL=y
