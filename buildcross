@@ -175,7 +175,7 @@ log() {
     echo
 }
 
-DISTFILES="http://mirrors.kernel.org/gentoo/distfiles/"
+DISTFILES="https://mirrors.kernel.org/gentoo/distfiles/"
 
 get_tarball() {
     local EXT=${2:-"xz"}
