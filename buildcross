@@ -170,12 +170,13 @@ log() {
     echo
 }
 
-DISTFILES="https://mirrors.kernel.org/gentoo/distfiles/"
+DISTFILES="https://mirrors.kernel.org/gentoo/distfiles"
 
 get_tarball() {
     local EXT=${2:-"xz"}
+    local URL=${3:-"${DISTFILES}"}
     if [ ! -f "$1.tar.${EXT}" ]; then
-	wget "${DISTFILES}/$1.tar.${EXT}"
+	wget "${URL}/$1.tar.${EXT}"
     fi
 }
 
@@ -185,7 +186,7 @@ get_sources() {
     get_tarball "binutils-${BINUTILS_VSN}"
     get_tarball "gcc-${GCC_VSN}"
     [ -n "${GLIBC_VSN}" ] && get_tarball "glibc-${GLIBC_VSN}"
-    [ -n "${UCLIBC_VSN}" ] && get_tarball "uClibc-ng-${UCLIBC_VSN}" "bz2"
+    [ -n "${UCLIBC_VSN}" ] && get_tarball "uClibc-ng-${UCLIBC_VSN}" "bz2" "https://downloads.uclibc-ng.org/releases/${UCLIBC_VSN}"
     [ -n "${MUSL_VSN}" ] && get_tarball "musl-${MUSL_VSN}" "gz"
     [ -n "${MINGW64_VSN}" ] && get_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
     get_tarball "gmp-${GMP_VSN}"
