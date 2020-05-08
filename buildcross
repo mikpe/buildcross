@@ -290,7 +290,6 @@ build_host_gcc() {
 		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
 		--with-mpfr="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
 		--with-mpc="${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" \
-		--without-cloog \
 		--without-isl \
 		--disable-libgomp \
 		--disable-libmpx \
@@ -387,7 +386,6 @@ build_cross_gcc() {
 		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
 		--with-mpfr="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
 		--with-mpc="${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" \
-		--without-cloog \
 		--without-isl \
 		--disable-libatomic \
 		--disable-libgomp \
