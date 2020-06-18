@@ -60,7 +60,7 @@
 
 set -e
 
-VERSION="3.7.0"
+VERSION="3.8.0"
 
 case "$1" in
     -j*)
