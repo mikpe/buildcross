@@ -514,6 +514,7 @@ build_glibc() {
     mkdir "${TARGET_TRIPLE}"
     cd "${TARGET_TRIPLE}"
     ${BUILD_DIR}/glibc-${GLIBC_VSN}/configure "${TARGET_CC}" \
+		CXX=/bin/false \
 		--host="${TARGET_TRIPLE}" \
 		--build="${BUILD_TRIPLE}" \
 		--prefix=/usr \
