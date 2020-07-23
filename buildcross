@@ -60,7 +60,7 @@
 
 set -e
 
-VERSION="3.8.1"
+VERSION="3.8.2"
 
 case "$1" in
     -j*)
@@ -84,7 +84,7 @@ CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
 
 # default component versions
 BINUTILS_VSN=2.33.1 # binutils-2.34 requires makeinfo (PR 25491)
-GCC_VSN=10.1.0
+GCC_VSN=10.2.0
 GLIBC_VSN=2.31
 UCLIBC_VSN=1.0.34
 MUSL_VSN=1.2.0
