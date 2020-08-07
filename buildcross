@@ -36,6 +36,7 @@
 # nios2		nios2-unknown-linux-gnu
 # or1k		or1k-unknown-linux-musl
 # ppc64		ppc64-unknown-linux-gnu with -m64 and -m32 support
+# ppc64le	ppc64le-unknown-linux-gnu (no -m32 support)
 # riscv64	riscv64-unknown-linux-gnu
 # s390x		s390x-unknown-linux-gnu with -m64 and -m31 support
 # sh4		sh4-unknown-linux-gnu
@@ -348,6 +349,9 @@ build_cross_gcc() {
 	    MULTILIB_CONFIG="--enable-multilib --enable-64bit --with-dwarf"
 	    LIBC_CONFIGS=
 	    ;;
+	"ppc64le")
+	    LIBSSP_CONFIG="--disable-libssp"
+	    ;;
 	"riscv64")
 	    # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90419#c1
 	    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=lp64d"
@@ -472,7 +476,7 @@ build_linux_headers() {
 	"armv7l") KERNEL_ARCH="arm";;
 	"hppa") KERNEL_ARCH="parisc";;
 	"mips64") KERNEL_ARCH="mips";;
-	"ppc64") KERNEL_ARCH="powerpc";;
+	ppc64*) KERNEL_ARCH="powerpc";;
 	"riscv64") KERNEL_ARCH="riscv";;
 	"s390x") KERNEL_ARCH="s390";;
 	"sh4") KERNEL_ARCH="sh";;
