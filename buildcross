@@ -61,7 +61,7 @@
 
 set -e
 
-VERSION="3.9.1"
+VERSION="3.9.2"
 
 case "$1" in
     -j*)
@@ -290,7 +290,6 @@ build_host_gcc() {
 		--without-isl \
 		--disable-libgomp \
 		--disable-libmpx \
-		--disable-libmudflap \
 		--disable-libquadmath \
 		--disable-libsanitizer \
 		--disable-lto \
@@ -391,7 +390,6 @@ build_cross_gcc() {
 		--disable-libgomp \
 		--disable-libitm \
 		--disable-libmpx \
-		--disable-libmudflap \
 		--disable-libquadmath \
 		--disable-libsanitizer \
 		--disable-lto \
