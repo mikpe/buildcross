@@ -272,7 +272,7 @@ build_host_gcc() {
     fi
     log "building host-gcc-${GCC_VSN}${SUFFIX}"
     if [ -z "${SUFFIX}" ]; then
-	DISABLE_BOOTSTRAP=;
+	DISABLE_BOOTSTRAP=
 	MAKE_TARGET=bootstrap-lean
     else
 	DISABLE_BOOTSTRAP="--disable-bootstrap"
@@ -297,9 +297,9 @@ build_host_gcc() {
 		--disable-nls \
 		--disable-plugin \
 		--disable-shared \
-		--enable-threads=posix \
 		--enable-checking=release \
 		--enable-languages=c,c++ \
+		--enable-threads=posix \
 		${DISABLE_BOOTSTRAP}
     make ${DASHJ} ${MAKE_TARGET}
     make install
@@ -408,10 +408,10 @@ build_cross_gcc() {
 }
 
 build_cross_gcc_without_libc() {
-    if [ -z "${MINGW64_VSN}" ]; then
-	build_cross_gcc "newlib"
-    else
+    if [ -n "${MINGW64_VSN}" ]; then
 	build_cross_gcc "mingw64-minimal"
+    else
+	build_cross_gcc "newlib"
     fi
 }
 
