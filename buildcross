@@ -26,6 +26,7 @@
 # armv7l	armv7l-unknown-linux-gnueabi
 # bfin		bfin-unknown-linux-uclibc
 # c6x		c6x-unknown-uclinux
+# cris		crisv32-unknown-linux-uclibc
 # csky		csky-unknown-linux-gnu (only little-endian)
 # frv		frv-unknown-linux-uclibc
 # h8300		h8300-unknown-linux-uclibc
@@ -121,6 +122,13 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANT_LINUXTHREADS=y
 	UCLIBC_WANT_SSP=y
 	UCLIBC_WANT_BIG_ENDIAN=y
+	;;
+    "cris")
+	TARGET_TRIPLE="crisv32-unknown-linux-uclibc"
+	UCLIBC_WANT_LINUXTHREADS=y
+	UCLIBC_WANT_SSP=y
+	LINUX_VSN=4.16 # cris was removed in linux-4.17
+	GCC_VSN=9.3.0 # gcc-10 marks cris as obsolete
 	;;
     "frv")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
@@ -609,6 +617,11 @@ build_target_uclibc() {
     sed -i -e s,\^RUNTIME_PREFIX=.\*\$,RUNTIME_PREFIX=\"/\",g .config
     sed -i -e s,\^DEVEL_PREFIX=.\*\$,DEVEL_PREFIX=\"/usr\",g .config
     sed -i -e s,\^CROSS_COMPILER_PREFIX=.\*\$,CROSS_COMPILER_PREFIX=\"${CROSS_COMPILE}\",g .config
+    case "${TARGET_ARCH}" in
+	"cris")
+	    echo 'CONFIG_CRISV32=y' >> .config
+	    ;;
+    esac
     if [ -n "${UCLIBC_WANT_NPTL}" ]; then
 	echo 'UCLIBC_HAS_THREADS_NATIVE=y' >> .config
     elif [ -n "${UCLIBC_WANT_LINUXTHREADS}" ]; then
