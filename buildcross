@@ -170,10 +170,8 @@ DISTFILES="https://mirrors.kernel.org/gentoo/distfiles"
 get_tarball() {
     local EXT=${2:-"xz"}
     local URL=${3:-"${DISTFILES}"}
-    # mirrors.kernel.org has an expired certificate
-    local NCC=${3:-"--no-check-certificate"}
     if [ ! -f "$1.tar.${EXT}" ]; then
-	wget ${NCC} "${URL}/$1.tar.${EXT}"
+	wget "${URL}/$1.tar.${EXT}"
     fi
 }
 
