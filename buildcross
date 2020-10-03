@@ -170,8 +170,15 @@ DISTFILES="https://mirrors.kernel.org/gentoo/distfiles"
 get_tarball() {
     local EXT=${2:-"xz"}
     local URL=${3:-"${DISTFILES}"}
+    local ALT_URL="$4"
     if [ ! -f "$1.tar.${EXT}" ]; then
-	wget "${URL}/$1.tar.${EXT}"
+	if ! wget "${URL}/$1.tar.${EXT}" ; then
+	    if [ -n "${ALT_URL}" ]; then
+		wget "${ALT_URL}/$1.tar.${EXT}"
+	    fi
+	else
+	    exit 1
+	fi
     fi
 }
 
