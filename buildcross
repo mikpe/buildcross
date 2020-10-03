@@ -27,6 +27,7 @@
 # bfin		bfin-unknown-linux-uclibc
 # c6x		c6x-unknown-uclinux
 # csky		csky-unknown-linux-gnu (only little-endian)
+# frv		frv-unknown-linux-uclibc
 # h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
 # ia64		ia64-unknown-linux-gnu
@@ -120,6 +121,11 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANT_LINUXTHREADS=y
 	UCLIBC_WANT_SSP=y
 	UCLIBC_WANT_BIG_ENDIAN=y
+	;;
+    "frv")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
+	UCLIBC_WANT_SSP=y
+	LINUX_VSN=4.16 # frv was removed in linux-4.17
 	;;
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
@@ -363,6 +369,9 @@ build_cross_gcc() {
 	    ;;
 	"csky")
 	    MULTILIB_CONFIG="--disable-multilib --with-endian=little"
+	    ;;
+	"frv")
+	    LIBSSP_CONFIG="--disable-libssp"
 	    ;;
 	"ia64")
 	    MULTILIB_CONFIG="--disable-multilib --with-system-libunwind=yes"
