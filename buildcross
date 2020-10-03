@@ -24,6 +24,7 @@
 # alpha		alpha-unknown-linux-gnu
 # arc		arc-unknown-linux-gnu
 # armv7l	armv7l-unknown-linux-gnueabi
+# bfin		bfin-unknown-linux-uclibc
 # c6x		c6x-unknown-uclinux
 # csky		csky-unknown-linux-gnu (only little-endian)
 # h8300		h8300-unknown-linux-uclibc
@@ -106,6 +107,13 @@ UCLIBC_WANT_BIG_ENDIAN=
 case "${TARGET_ARCH}" in
     "armv7l")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnueabi"
+	;;
+    "bfin")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
+	UCLIBC_WANT_LINUXTHREADS=y
+	UCLIBC_WANT_SSP=y
+	LINUX_VSN=4.16 # blackfin was removed in linux-4.17
+	GCC_VSN=9.3.0 # gcc-10.2.0 gives linkage errors in uClibc-ng
 	;;
     "c6x")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-uclinux"
@@ -487,6 +495,7 @@ build_linux_headers() {
     case "${TARGET_ARCH}" in
 	"aarch64") KERNEL_ARCH="arm64";;
 	"armv7l") KERNEL_ARCH="arm";;
+	"bfin") KERNEL_ARCH="blackfin";;
 	"hppa") KERNEL_ARCH="parisc";;
 	"mips64") KERNEL_ARCH="mips";;
 	ppc64*) KERNEL_ARCH="powerpc";;
