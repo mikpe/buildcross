@@ -87,7 +87,7 @@ CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
 BINUTILS_VSN=2.35.1
 GCC_VSN=10.2.0
 GLIBC_VSN=2.32
-UCLIBC_VSN=1.0.35
+UCLIBC_VSN=1.0.36
 MUSL_VSN=1.2.1
 MINGW64_VSN=7.0.0
 GMP_VSN=6.2.0
@@ -183,7 +183,7 @@ get_sources() {
     get_tarball "binutils-${BINUTILS_VSN}"
     get_tarball "gcc-${GCC_VSN}"
     [ -n "${GLIBC_VSN}" ] && get_tarball "glibc-${GLIBC_VSN}"
-    [ -n "${UCLIBC_VSN}" ] && get_tarball "uClibc-ng-${UCLIBC_VSN}" "bz2" "https://downloads.uclibc-ng.org/releases/${UCLIBC_VSN}"
+    [ -n "${UCLIBC_VSN}" ] && get_tarball "uClibc-ng-${UCLIBC_VSN}" "xz" "https://downloads.uclibc-ng.org/releases/${UCLIBC_VSN}"
     [ -n "${MUSL_VSN}" ] && get_tarball "musl-${MUSL_VSN}" "gz"
     [ -n "${MINGW64_VSN}" ] && get_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
     get_tarball "gmp-${GMP_VSN}"
@@ -558,7 +558,7 @@ build_target_glibc() {
 build_target_uclibc() {
     local CROSS_COMPILE="${TARGET_TRIPLE}-"
     log "building uClibc-ng-${UCLIBC_VSN} for ${TARGET_TRIPLE}"
-    unpack_tarball "uClibc-ng-${UCLIBC_VSN}" "bz2"
+    unpack_tarball "uClibc-ng-${UCLIBC_VSN}"
     cd "uClibc-ng-${UCLIBC_VSN}"
     make clean
     if [ ! -f "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig" ]; then
