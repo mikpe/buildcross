@@ -62,7 +62,7 @@
 #   (for now, may change time permitting)
 # - non-Linux targets except mingw-w64, e.g. BSD and plain ELF ones
 #
-# Specific unsupprted targets:
+# Specific unsupported targets:
 #
 # am33/mn10300	not in any supported libc, removed in linux-4.17 (TODO: try newlib)
 # avr32		not in any upstream toolchain components except uClibc-ng, removed in linux-4.12
