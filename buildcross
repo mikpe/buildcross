@@ -32,6 +32,7 @@
 # h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
 # ia64		ia64-unknown-linux-gnu
+# m32r		m32r-unknown-elf
 # m68k		m68k-unknown-linux-gnu
 # microblaze	microblaze-unknown-linux-gnu
 # mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
@@ -68,7 +69,6 @@
 # avr32		not in any upstream toolchain components except uClibc-ng, removed in linux-4.12
 # hexagon	not in any upstream toolchain components, removed in linux-4.17
 # lm32		not in upstream Linux kernel (TODO: try newlib)
-# m32r		not in any supported libc, removed in linux-4.17 (TODO: try newlib)
 # metag		not in upstream GCC, removed in linux-4.17
 # ubicom32	not in any upstream toolchain components or kernel
 # unicore32	not in any upstream toolchain components, removed in linux-5.9
@@ -150,6 +150,9 @@ case "${TARGET_ARCH}" in
 	;;
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
+	;;
+    "m32r")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	;;
     "mingw64")
 	TARGET_TRIPLE="x86_64-w64-mingw32"
