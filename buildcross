@@ -60,7 +60,7 @@
 #   (for now, may change time permitting)
 # - Linux targets using another libc than glibc, uclibc-ng, or musl
 #   (for now, may change time permitting)
-# - non-Linux targets except mingw-w64, e.g. BSD and plain ELF ones
+# - non-Linux targets except mingw-w64 and plain ELF with newlib
 #
 # Specific unsupported targets:
 #
@@ -105,6 +105,7 @@ GLIBC_VSN=2.32
 UCLIBC_VSN=1.0.36
 MUSL_VSN=1.2.1
 MINGW64_VSN=7.0.0
+NEWLIB_VSN=3.3.0
 GMP_VSN=6.2.0
 LINUX_VSN=5.8
 MPC_VSN=1.2.0
@@ -173,22 +174,33 @@ case "${TARGET_TRIPLE}" in
 	UCLIBC_VSN=
 	MUSL_VSN=
 	MINGW64_VSN=
+	NEWLIB_VSN=
 	;;
     *linux-uclibc* | *uclinux*)
 	GLIBC_VSN=
 	MUSL_VSN=
 	MINGW64_VSN=
+	NEWLIB_VSN=
 	;;
     *linux-musl*)
 	GLIBC_VSN=
 	UCLIBC_VSN=
 	LINUX_VSN=
 	MINGW64_VSN=
+	NEWLIB_VSN=
 	;;
     x86_64-w64-mingw32)
 	GLIBC_VSN=
 	UCLIBC_VSN=
 	MUSL_VSN=
+	LINUX_VSN=
+	NEWLIB_VSN=
+	;;
+    *-elf)
+	GLIBC_VSN=
+	UCLIBC_VSN=
+	MUSL_VSN=
+	MINGW64_VSN=
 	LINUX_VSN=
 	;;
 esac
@@ -241,6 +253,7 @@ get_sources() {
     [ -n "${UCLIBC_VSN}" ] && get_tarball "uClibc-ng-${UCLIBC_VSN}" "xz" "https://downloads.uclibc-ng.org/releases/${UCLIBC_VSN}"
     [ -n "${MUSL_VSN}" ] && get_tarball "musl-${MUSL_VSN}" "gz"
     [ -n "${MINGW64_VSN}" ] && get_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
+    [ -n "${NEWLIB_VSN}" ] && get_tarball "newlib-${NEWLIB_VSN}" "gz"
     get_tarball "gmp-${GMP_VSN}"
     [ -n "${LINUX_VSN}" ] && get_linux_tarball "${LINUX_VSN}"
     get_tarball "mpfr-${MPFR_VSN}"
@@ -482,6 +495,8 @@ build_cross_gcc_with_libc() {
 	build_cross_gcc "musl"
     elif [ -n "${MINGW64_VSN}" ]; then
 	 build_cross_gcc "mingw64-full"
+    elif [ -n "${NEWLIB_VSN}" ]; then
+	: nothing to do
     fi
 }
 
@@ -693,6 +708,22 @@ build_target_mingw64crt() {
     rm -rf objdir-crt
 }
 
+build_target_newlib() {
+    log "building newlib-${NEWLIB_VSN} for ${TARGET_TRIPLE}"
+    unpack_tarball "newlib-${NEWLIB_VSN}" "gz"
+    rm -rf objdir-newlib
+    mkdir objdir-newlib
+    cd objdir-newlib
+    ${BUILD_DIR}/newlib-${NEWLIB_VSN}/configure \
+		--target="${TARGET_TRIPLE}" \
+		--build="${BUILD_TRIPLE}" \
+		--prefix=/
+    make ${DASHJ}
+    make DESTDIR="${CROSS_DIR}" install
+    cd ..
+    rm -rf objdir-newlib
+}
+
 build_target_libc() {
     if [ -n "${GLIBC_VSN}" ]; then
 	build_target_glibc
@@ -702,6 +733,8 @@ build_target_libc() {
 	 build_target_musl
     elif [ -n "${MINGW64_VSN}" ]; then
 	build_target_mingw64crt
+    elif [ -n "${NEWLIB_VSN}" ]; then
+	build_target_newlib
     fi
 }
 
