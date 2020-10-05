@@ -38,6 +38,7 @@
 # microblaze	microblaze-unknown-linux-gnu
 # mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
 # mips64	mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support
+# mn10300	mn10300-unknown-elf (no newlib)
 # nios2		nios2-unknown-linux-gnu
 # or1k		or1k-unknown-linux-musl
 # ppc64		ppc64-unknown-linux-gnu with -m64 and -m32 support
@@ -67,7 +68,6 @@
 #
 # Specific unsupported targets:
 #
-# am33/mn10300	not in any supported libc, removed in linux-4.17 (TODO: try newlib)
 # avr32		not in any upstream toolchain components except uClibc-ng, removed in linux-4.12
 # hexagon	not in any upstream toolchain components, removed in linux-4.17
 # metag		not in upstream GCC, removed in linux-4.17
@@ -159,6 +159,10 @@ case "${TARGET_ARCH}" in
 	;;
     "mingw64")
 	TARGET_TRIPLE="x86_64-w64-mingw32"
+	;;
+    "mn10300")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "or1k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-musl"
