@@ -46,6 +46,7 @@
 # s390x		s390x-unknown-linux-gnu with -m64 and -m31 support
 # sh4		sh4-unknown-linux-gnu
 # sparc64	sparc64-unknown-linux-gnu with -m64 and -m32 support
+# v850		v850-unknown-elf
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
 # xtensa	xtensa-unknown-linux-uclibc
 #
@@ -72,7 +73,6 @@
 # metag		not in upstream GCC, removed in linux-4.17
 # ubicom32	not in any upstream toolchain components or kernel
 # unicore32	not in any upstream toolchain components, removed in linux-5.9
-# v850		not in any supported libc, removed in linux-2.27 and uClibc-ng-1.0.11 (TODO: try newlib)
 
 set -e
 
@@ -162,6 +162,10 @@ case "${TARGET_ARCH}" in
 	;;
     "or1k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-musl"
+	;;
+    "v850")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	GCC_VSN=9.3.0 # gcc-10.2.0 gives linkage errors with newlib (-fno-common incompatibility?)
 	;;
     "xtensa")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
