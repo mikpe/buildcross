@@ -51,6 +51,7 @@
 # sparc64	sparc64-unknown-linux-gnu with -m64 and -m32 support
 # v850		v850-unknown-elf
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
+# visium	visium-unknown-elf
 # xtensa	xtensa-unknown-linux-uclibc
 #
 # Pending:
@@ -180,6 +181,9 @@ case "${TARGET_ARCH}" in
     "v850")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=9.3.0 # gcc-10.2.0 gives linkage errors with newlib (-fno-common incompatibility?)
+	;;
+    "visium")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	;;
     "xtensa")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
