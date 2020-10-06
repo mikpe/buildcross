@@ -70,8 +70,9 @@
 # Specific unsupported targets:
 #
 # avr32		not in any upstream toolchain components except uClibc-ng, removed in linux-4.12
-# hexagon	not in any upstream toolchain components, removed in linux-4.17
+# hexagon	not in any upstream toolchain components, removed in linux-4.17 (TODO: check llvm)
 # metag		not in upstream GCC, removed in linux-4.17
+# score		not in upstream components, removed in gcc-5.0 and linux-4.17
 # ubicom32	not in any upstream toolchain components or kernel
 # unicore32	not in any upstream toolchain components, removed in linux-5.9
 
