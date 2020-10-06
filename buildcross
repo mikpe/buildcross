@@ -39,6 +39,7 @@
 # mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
 # mips64	mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support
 # mn10300	mn10300-unknown-elf (no newlib)
+# moxie		moxie-unknown-elf (no newlib)
 # nds32		nds32le-unknown-elf
 # nios2		nios2-unknown-linux-gnu
 # or1k		or1k-unknown-linux-musl
@@ -163,6 +164,10 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="x86_64-w64-mingw32"
 	;;
     "mn10300")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN= # newlib gives linkage errors
+	;;
+    "moxie")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	NEWLIB_VSN= # newlib gives linkage errors
 	;;
