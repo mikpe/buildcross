@@ -49,6 +49,7 @@
 # s390x		s390x-unknown-linux-gnu with -m64 and -m31 support
 # sh4		sh4-unknown-linux-gnu
 # sparc64	sparc64-unknown-linux-gnu with -m64 and -m32 support
+# tilegx	tilegx-unknown-linux-gnu
 # v850		v850-unknown-elf
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
 # visium	visium-unknown-elf
@@ -178,6 +179,12 @@ case "${TARGET_ARCH}" in
 	;;
     "or1k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-musl"
+	;;
+    "tilegx")
+	BINUTILS_VSN=2.28.1 # later versions cannot build glibc
+	GCC_VSN=7.5.0 # later versions cannot build glibc
+	GLIBC_VSN=2.25 # later versions do not build
+	LINUX_VSN=4.16 # tile was removed in linux-4.17
 	;;
     "v850")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -448,6 +455,9 @@ build_cross_gcc() {
 	"riscv64")
 	    # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90419#c1
 	    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=lp64d"
+	    ;;
+	"tilegx")
+	    MULTILIB_CONFIG="--disable-multilib"
 	    ;;
 	"x86_64")
 	    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=m64,m32,mx32"
