@@ -28,6 +28,7 @@
 # c6x		c6x-unknown-uclinux
 # cris		crisv32-unknown-linux-uclibc
 # csky		csky-unknown-linux-gnu (only little-endian)
+# epiphany	epiphany-unknown-elf
 # frv		frv-unknown-linux-uclibc
 # h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
@@ -149,6 +150,10 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANT_SSP=y
 	LINUX_VSN=4.16 # cris was removed in linux-4.17
 	GCC_VSN=9.3.0 # gcc-10 marks cris as obsolete
+	;;
+    "epiphany")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "frv")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
