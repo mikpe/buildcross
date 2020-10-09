@@ -32,6 +32,7 @@
 # h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
 # ia64		ia64-unknown-linux-gnu
+# iq2000	iq2000-unknown-elf
 # lm32		lm32-unknown-elf
 # m32r		m32r-unknown-elf
 # m68k		m68k-unknown-linux-gnu
@@ -156,6 +157,9 @@ case "${TARGET_ARCH}" in
 	;;
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
+	;;
+    "iq2000")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	;;
     "lm32")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
