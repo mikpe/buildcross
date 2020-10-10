@@ -24,6 +24,7 @@
 # alpha		alpha-unknown-linux-gnu
 # arc		arc-unknown-linux-gnu
 # armv7l	armv7l-unknown-linux-gnueabi
+# avr		avr-unknown-elf (no newlib)
 # bfin		bfin-unknown-linux-uclibc
 # c6x		c6x-unknown-uclinux
 # cr16		cr16-unknown-elf (no newlib)
@@ -134,6 +135,10 @@ UCLIBC_WANT_BIG_ENDIAN=
 case "${TARGET_ARCH}" in
     "armv7l")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnueabi"
+	;;
+    "avr")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN= # not supported in newlib at all
 	;;
     "bfin")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
