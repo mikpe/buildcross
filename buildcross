@@ -30,6 +30,7 @@
 # cris		crisv32-unknown-linux-uclibc
 # csky		csky-unknown-linux-gnu (only little-endian)
 # epiphany	epiphany-unknown-elf
+# fr30		fr30-unknown-elf
 # frv		frv-unknown-linux-uclibc
 # h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
@@ -161,6 +162,9 @@ case "${TARGET_ARCH}" in
     "epiphany")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	NEWLIB_VSN= # newlib gives linkage errors
+	;;
+    "fr30")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	;;
     "frv")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
