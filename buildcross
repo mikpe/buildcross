@@ -45,6 +45,7 @@
 # microblaze	microblaze-unknown-linux-gnu
 # mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
 # mips64	mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support
+# mmix		mmix-knuth-mmixware (with newlib)
 # mn10300	mn10300-unknown-elf (no newlib)
 # moxie		moxie-unknown-elf (no newlib)
 # msp430	msp430-unknown-elf (no newlib)
@@ -205,6 +206,9 @@ case "${TARGET_ARCH}" in
     "mingw64")
 	TARGET_TRIPLE="x86_64-w64-mingw32"
 	;;
+    "mmix")
+	TARGET_TRIPLE="${TARGET_ARCH}-knuth-mmixware"
+	;;
     "mn10300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	NEWLIB_VSN= # newlib gives linkage errors
@@ -279,7 +283,7 @@ case "${TARGET_TRIPLE}" in
 	LINUX_VSN=
 	NEWLIB_VSN=
 	;;
-    *-elf)
+    *-elf | mmix-knuth-mmixware)
 	GLIBC_VSN=
 	UCLIBC_VSN=
 	MUSL_VSN=
