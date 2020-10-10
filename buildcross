@@ -88,6 +88,7 @@
 # m32c		broken in gcc (gcc-5/6 ICE building newlib, gcc-7/8/9/10 ICE building libgcc)
 # metag		not in upstream GCC, removed in linux-4.17
 # mep		broken in older gcc, removed in gcc-7
+# nvptx		not in binutils, requires the nvptx-tools package
 # score		not in upstream components, removed in gcc-5.0 and linux-4.17
 # ubicom32	not in any upstream toolchain components or kernel
 # unicore32	not in any upstream toolchain components, removed in linux-5.9
