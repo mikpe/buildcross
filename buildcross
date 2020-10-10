@@ -65,6 +65,7 @@
 # sparc64	sparc64-unknown-linux-gnu with -m64 and -m32 support
 # tilegx	tilegx-unknown-linux-gnu
 # v850		v850-unknown-elf
+# vax		vax-unknown-linux (no libc or kernel headers)
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
 # xstormy16	xstormy16-unknown-elf (no newlib)
 # visium	visium-unknown-elf
@@ -259,6 +260,10 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=9.3.0 # gcc-10.2.0 gives linkage errors with newlib (-fno-common incompatibility?)
 	;;
+    "vax")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux"
+	NEWLIB_VSN= # not in any supported libc
+	;;
     "visium")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	;;
@@ -305,7 +310,7 @@ case "${TARGET_TRIPLE}" in
 	LINUX_VSN=
 	NEWLIB_VSN=
 	;;
-    *-elf | mmix-knuth-mmixware | bpf-unknown-none | pdp11-unknown-aout)
+    *-elf | mmix-knuth-mmixware | bpf-unknown-none | pdp11-unknown-aout | vax-unknown-linux)
 	GLIBC_VSN=
 	UCLIBC_VSN=
 	MUSL_VSN=
