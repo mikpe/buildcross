@@ -33,6 +33,7 @@
 # epiphany	epiphany-unknown-elf
 # fr30		fr30-unknown-elf
 # frv		frv-unknown-linux-uclibc
+# ft32		ft32-unknown-elf (no newlib)
 # h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
 # ia64		ia64-unknown-linux-gnu
@@ -179,6 +180,10 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	UCLIBC_WANT_SSP=y
 	LINUX_VSN=4.16 # frv was removed in linux-4.17
+	;;
+    "ft32")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
