@@ -26,6 +26,7 @@
 # armv7l	armv7l-unknown-linux-gnueabi
 # bfin		bfin-unknown-linux-uclibc
 # c6x		c6x-unknown-uclinux
+# cr16		cr16-unknown-elf (no newlib)
 # cris		crisv32-unknown-linux-uclibc
 # csky		csky-unknown-linux-gnu (only little-endian)
 # epiphany	epiphany-unknown-elf
@@ -145,6 +146,10 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANT_LINUXTHREADS=y
 	UCLIBC_WANT_SSP=y
 	UCLIBC_WANT_BIG_ENDIAN=y
+	;;
+    "cr16")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "cris")
 	TARGET_TRIPLE="crisv32-unknown-linux-uclibc"
