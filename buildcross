@@ -26,6 +26,7 @@
 # armv7l	armv7l-unknown-linux-gnueabi
 # avr		avr-unknown-elf (no newlib)
 # bfin		bfin-unknown-linux-uclibc
+# bpf		bpf-unknown-none (no newlib)
 # c6x		c6x-unknown-uclinux
 # cr16		cr16-unknown-elf (no newlib)
 # cris		crisv32-unknown-linux-uclibc
@@ -156,6 +157,10 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANT_SSP=y
 	LINUX_VSN=4.16 # blackfin was removed in linux-4.17
 	GCC_VSN=9.3.0 # gcc-10.2.0 gives linkage errors in uClibc-ng
+	;;
+    "bpf")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-none"
+	NEWLIB_VSN= # not supported in newlib at all
 	;;
     "c6x")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-uclinux"
@@ -295,7 +300,7 @@ case "${TARGET_TRIPLE}" in
 	LINUX_VSN=
 	NEWLIB_VSN=
 	;;
-    *-elf | mmix-knuth-mmixware)
+    *-elf | mmix-knuth-mmixware | bpf-unknown-none)
 	GLIBC_VSN=
 	UCLIBC_VSN=
 	MUSL_VSN=
