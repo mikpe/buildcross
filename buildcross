@@ -55,6 +55,7 @@
 # tilegx	tilegx-unknown-linux-gnu
 # v850		v850-unknown-elf
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
+# xstormy16	xstormy16-unknown-elf (no newlib)
 # visium	visium-unknown-elf
 # xtensa	xtensa-unknown-linux-uclibc
 #
@@ -206,6 +207,10 @@ case "${TARGET_ARCH}" in
 	;;
     "visium")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	;;
+    "xstormy16")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "xtensa")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
