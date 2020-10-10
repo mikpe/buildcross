@@ -79,6 +79,7 @@
 #
 # Specific unsupported targets:
 #
+# amdgcn	not in binutils, though apparently in llvm's assembler and linker
 # avr32		not in any upstream toolchain components except uClibc-ng, removed in linux-4.12
 # hexagon	not in any upstream toolchain components, removed in linux-4.17 (TODO: check llvm)
 # kvx		not yet in any upstream toolchain components, except for uClibc-ng
