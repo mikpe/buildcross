@@ -54,6 +54,7 @@
 # or1k		or1k-unknown-linux-musl
 # ppc64		ppc64-unknown-linux-gnu with -m64 and -m32 support
 # ppc64le	ppc64le-unknown-linux-gnu (no -m32 support)
+# pru		pru-unknown-elf
 # riscv64	riscv64-unknown-linux-gnu
 # s390x		s390x-unknown-linux-gnu with -m64 and -m31 support
 # sh4		sh4-unknown-linux-gnu
@@ -226,6 +227,9 @@ case "${TARGET_ARCH}" in
 	;;
     "or1k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-musl"
+	;;
+    "pru")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	;;
     "tilegx")
 	BINUTILS_VSN=2.28.1 # later versions cannot build glibc
