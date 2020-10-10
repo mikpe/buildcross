@@ -57,6 +57,7 @@
 # pru		pru-unknown-elf
 # rl78		rl78-unknown-elf
 # riscv64	riscv64-unknown-linux-gnu
+# rx		rx-unknown-elf
 # s390x		s390x-unknown-linux-gnu with -m64 and -m31 support
 # sh4		sh4-unknown-linux-gnu
 # sparc64	sparc64-unknown-linux-gnu with -m64 and -m32 support
@@ -233,6 +234,9 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	;;
     "rl78")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	;;
+    "rx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	;;
     "tilegx")
