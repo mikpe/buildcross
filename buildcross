@@ -40,6 +40,7 @@
 # lm32		lm32-unknown-elf
 # m32r		m32r-unknown-elf
 # m68k		m68k-unknown-linux-gnu
+# mcore		mcore-unknown-elf (no newlib)
 # microblaze	microblaze-unknown-linux-gnu
 # mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
 # mips64	mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support
@@ -189,6 +190,10 @@ case "${TARGET_ARCH}" in
 	;;
     "m32r")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	;;
+    "mcore")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "mingw64")
 	TARGET_TRIPLE="x86_64-w64-mingw32"
