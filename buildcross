@@ -121,6 +121,7 @@ fi
 
 DOWNLOADS_DIR=`realpath ./downloads`
 SOURCES_DIR=`realpath ./sources`
+HOST_TOOLS_DIR=`realpath ./host-tools`
 BUILD_DIR=`realpath .`
 
 CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
@@ -385,17 +386,17 @@ unpack_tarball() {
 
 build_host_gmp() {
     local SUFFIX="$1"
-    if [ -d "${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" -o -d "${BUILD_DIR}/host-gcc-${GCC_VSN}" ]; then
+    if [ -d "${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${GCC_VSN}" ]; then
 	return
     fi
-    log "building host-gmp-${GMP_VSN}${SUFFIX}"
+    log "building host gmp-${GMP_VSN}${SUFFIX}"
     unpack_tarball "gmp-${GMP_VSN}"
     rm -rf objdir-gmp
     mkdir objdir-gmp
     cd objdir-gmp
     unset ABI
     ${SOURCES_DIR}/gmp-${GMP_VSN}/configure \
-		--prefix="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
+		--prefix="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" \
 		--disable-shared \
 		--enable-alloca=alloca \
 		ABI=64
@@ -407,17 +408,17 @@ build_host_gmp() {
 
 build_host_mpfr() {
     local SUFFIX="$1"
-    if [ -d "${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" -o -d "${BUILD_DIR}/host-gcc-${GCC_VSN}" ]; then
+    if [ -d "${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${GCC_VSN}" ]; then
 	return
     fi
-    log "building host-mpfr-${MPFR_VSN}${SUFFIX}"
+    log "building host mpfr-${MPFR_VSN}${SUFFIX}"
     unpack_tarball "mpfr-${MPFR_VSN}"
     rm -rf objdir-mpfr
     mkdir objdir-mpfr
     cd objdir-mpfr
     ${SOURCES_DIR}/mpfr-${MPFR_VSN}/configure \
-		--prefix="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
-		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
+		--prefix="${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}" \
+		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" \
 		--disable-shared
     make ${DASHJ}
     make install
@@ -427,18 +428,18 @@ build_host_mpfr() {
 
 build_host_mpc() {
     local SUFFIX="$1"
-    if [ -d "${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" -o -d "${BUILD_DIR}/host-gcc-${GCC_VSN}" ]; then
+    if [ -d "${HOST_TOOLS_DIR}/mpc-${MPC_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${GCC_VSN}" ]; then
 	return
     fi
-    log "building host-mpc-${MPC_VSN}${SUFFIX}"
+    log "building host mpc-${MPC_VSN}${SUFFIX}"
     unpack_tarball "mpc-${MPC_VSN}" "gz"
     rm -rf objdir-mpc
     mkdir objdir-mpc
     cd objdir-mpc
     ${SOURCES_DIR}/mpc-${MPC_VSN}/configure \
-		--prefix="${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" \
-		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
-		--with-mpfr="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
+		--prefix="${HOST_TOOLS_DIR}/mpc-${MPC_VSN}${SUFFIX}" \
+		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" \
+		--with-mpfr="${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}" \
 		--disable-shared
     make ${DASHJ}
     make install
@@ -450,10 +451,10 @@ build_host_gcc() {
     local SUFFIX="$1"
     local MAKE_TARGET
     local DISABLE_BOOTSTRAP
-    if [ -d "${BUILD_DIR}/host-gcc-${GCC_VSN}${SUFFIX}" -o -d "${BUILD_DIR}/host-gcc-${GCC_VSN}" ]; then
+    if [ -d "${HOST_TOOLS_DIR}/gcc-${GCC_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${GCC_VSN}" ]; then
 	return
     fi
-    log "building host-gcc-${GCC_VSN}${SUFFIX}"
+    log "building host gcc-${GCC_VSN}${SUFFIX}"
     if [ -z "${SUFFIX}" ]; then
 	DISABLE_BOOTSTRAP=
 	MAKE_TARGET=bootstrap-lean
@@ -466,10 +467,10 @@ build_host_gcc() {
     mkdir objdir-gcc
     cd objdir-gcc
     ${SOURCES_DIR}/gcc-${GCC_VSN}/configure \
-		--prefix="${BUILD_DIR}/host-gcc-${GCC_VSN}${SUFFIX}" \
-		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
-		--with-mpfr="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
-		--with-mpc="${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" \
+		--prefix="${HOST_TOOLS_DIR}/gcc-${GCC_VSN}${SUFFIX}" \
+		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" \
+		--with-mpfr="${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}" \
+		--with-mpc="${HOST_TOOLS_DIR}/mpc-${MPC_VSN}${SUFFIX}" \
 		--without-isl \
 		--disable-libgomp \
 		--disable-libmpx \
@@ -571,9 +572,9 @@ build_cross_gcc() {
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
 		--with-sysroot="${CROSS_DIR}" \
-		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
-		--with-mpfr="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
-		--with-mpc="${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" \
+		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" \
+		--with-mpfr="${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}" \
+		--with-mpc="${HOST_TOOLS_DIR}/mpc-${MPC_VSN}${SUFFIX}" \
 		--without-isl \
 		--disable-libatomic \
 		--disable-libgomp \
@@ -885,7 +886,7 @@ build_host_gcc "-cc"
 
 # update PATH to pick up our preliminary host gcc
 ORIG_PATH="${PATH}"
-export PATH="${BUILD_DIR}/host-gcc-${GCC_VSN}-cc/bin:${ORIG_PATH}"
+export PATH="${HOST_TOOLS_DIR}/gcc-${GCC_VSN}-cc/bin:${ORIG_PATH}"
 
 # build final host libraries and gcc using preliminary host gcc
 build_host_gmp
@@ -894,13 +895,13 @@ build_host_mpc
 build_host_gcc
 
 # remove preliminary host libraries and gcc
-rm -rf ${BUILD_DIR}/host-gmp-${GMP_VSN}-cc
-rm -rf ${BUILD_DIR}/host-mpfr-${MPFR_VSN}-cc
-rm -rf ${BUILD_DIR}/host-mpc-${MPC_VSN}-cc
-rm -rf ${BUILD_DIR}/host-gcc-${GCC_VSN}-cc
+rm -rf ${HOST_TOOLS_DIR}/gmp-${GMP_VSN}-cc
+rm -rf ${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}-cc
+rm -rf ${HOST_TOOLS_DIR}/mpc-${MPC_VSN}-cc
+rm -rf ${HOST_TOOLS_DIR}/gcc-${GCC_VSN}-cc
 
 # update PATH to pick up our final host gcc
-export PATH="${BUILD_DIR}/host-gcc-${GCC_VSN}/bin:${ORIG_PATH}"
+export PATH="${HOST_TOOLS_DIR}/gcc-${GCC_VSN}/bin:${ORIG_PATH}"
 
 # determine BUILD_TRIPLE, ensure it differs from TARGET_TRIPLE
 BUILD_TRIPLE=`gcc -v 2>&1 | grep '^Target:' | awk '{print $2}'`
@@ -921,7 +922,7 @@ fi
 build_cross_binutils
 
 # update PATH to pick up our cross tools
-export PATH="${CROSS_DIR}/bin:${BUILD_DIR}/host-gcc-${GCC_VSN}/bin:${ORIG_PATH}"
+export PATH="${CROSS_DIR}/bin:${HOST_TOOLS_DIR}/gcc-${GCC_VSN}/bin:${ORIG_PATH}"
 
 # mingw-w64 needs headers early on
 [ -n "${MINGW64_VSN}" ] && build_mingw64_headers
