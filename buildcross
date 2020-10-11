@@ -334,12 +334,13 @@ get_tarball() {
     local URL=${3:-"${DISTFILES}"}
     local ALT_URL="$4"
     if [ ! -f "$1.tar.${EXT}" ]; then
-	if ! wget "${URL}/$1.tar.${EXT}" ; then
+	wget -nv "${URL}/$1.tar.${EXT}" || :
+	if [ ! -f "$1.tar.${EXT}" ]; then
 	    if [ -n "${ALT_URL}" ]; then
-		wget "${ALT_URL}/$1.tar.${EXT}"
+		wget -nv "${ALT_URL}/$1.tar.${EXT}"
+	    else
+		exit 1
 	    fi
-	else
-	    exit 1
 	fi
     fi
 }
