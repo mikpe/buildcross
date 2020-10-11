@@ -378,9 +378,14 @@ get_sources() {
 }
 
 unpack_tarball() {
-    local EXT=${2:-"xz"}
     if [ ! -d "${SOURCES_DIR}/$1" ]; then
-	tar -C "${SOURCES_DIR}" -xf "${DOWNLOADS_DIR}/$1.tar.${EXT}"
+	if [ -f "${DOWNLOADS_DIR}/$1.tar.xz" ]; then
+	    tar -C "${SOURCES_DIR}" -xf "${DOWNLOADS_DIR}/$1.tar.xz"
+	elif [ -f "${DOWNLOADS_DIR}/$1.tar.bz2" ]; then
+	    tar -C "${SOURCES_DIR}" -xf "${DOWNLOADS_DIR}/$1.tar.bz2"
+	else
+	    tar -C "${SOURCES_DIR}" -xf "${DOWNLOADS_DIR}/$1.tar.gz"
+	fi
     fi
 }
 
@@ -432,7 +437,7 @@ build_host_mpc() {
 	return
     fi
     log "building host mpc-${MPC_VSN}${SUFFIX}"
-    unpack_tarball "mpc-${MPC_VSN}" "gz"
+    unpack_tarball "mpc-${MPC_VSN}"
     rm -rf objdir-mpc
     mkdir objdir-mpc
     cd objdir-mpc
@@ -681,7 +686,7 @@ build_mingw64_headers() {
 	return
     fi
     log "building mingw-w64-headers ${MINGW64_VSN}"
-    unpack_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
+    unpack_tarball "mingw-w64-v${MINGW64_VSN}"
     rm -rf objdir-headers
     mkdir objdir-headers
     cd objdir-headers
@@ -793,7 +798,7 @@ build_target_uclibc() {
 
 build_target_musl() {
     log "building musl-${MUSL_VSN} for ${TARGET_TRIPLE}"
-    unpack_tarball "musl-${MUSL_VSN}" "gz"
+    unpack_tarball "musl-${MUSL_VSN}"
     rm -rf objdir-musl
     mkdir objdir-musl
     cd objdir-musl
@@ -812,7 +817,7 @@ build_target_musl() {
 
 build_target_mingw64crt() {
     log "building mingw-w64-crt ${MINGW64_VSN}"
-    unpack_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
+    unpack_tarball "mingw-w64-v${MINGW64_VSN}"
     rm -rf objdir-crt
     mkdir objdir-crt
     cd objdir-crt
@@ -829,7 +834,7 @@ build_target_mingw64crt() {
 
 build_target_newlib() {
     log "building newlib-${NEWLIB_VSN} for ${TARGET_TRIPLE}"
-    unpack_tarball "newlib-${NEWLIB_VSN}" "gz"
+    unpack_tarball "newlib-${NEWLIB_VSN}"
     rm -rf objdir-newlib
     mkdir objdir-newlib
     cd objdir-newlib
