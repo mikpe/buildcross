@@ -120,6 +120,7 @@ if [ -z "${TARGET_ARCH}" ]; then
 fi
 
 DOWNLOADS_DIR=`realpath ./downloads`
+SOURCES_DIR=`realpath ./sources`
 BUILD_DIR=`realpath .`
 
 CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
@@ -377,8 +378,8 @@ get_sources() {
 
 unpack_tarball() {
     local EXT=${2:-"xz"}
-    if [ ! -d "$1" ]; then
-	tar xf "${DOWNLOADS_DIR}/$1.tar.${EXT}"
+    if [ ! -d "${SOURCES_DIR}/$1" ]; then
+	tar -C "${SOURCES_DIR}" -xf "${DOWNLOADS_DIR}/$1.tar.${EXT}"
     fi
 }
 
@@ -393,7 +394,7 @@ build_host_gmp() {
     mkdir objdir-gmp
     cd objdir-gmp
     unset ABI
-    ${BUILD_DIR}/gmp-${GMP_VSN}/configure \
+    ${SOURCES_DIR}/gmp-${GMP_VSN}/configure \
 		--prefix="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
 		--disable-shared \
 		--enable-alloca=alloca \
@@ -414,7 +415,7 @@ build_host_mpfr() {
     rm -rf objdir-mpfr
     mkdir objdir-mpfr
     cd objdir-mpfr
-    ${BUILD_DIR}/mpfr-${MPFR_VSN}/configure \
+    ${SOURCES_DIR}/mpfr-${MPFR_VSN}/configure \
 		--prefix="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
 		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
 		--disable-shared
@@ -434,7 +435,7 @@ build_host_mpc() {
     rm -rf objdir-mpc
     mkdir objdir-mpc
     cd objdir-mpc
-    ${BUILD_DIR}/mpc-${MPC_VSN}/configure \
+    ${SOURCES_DIR}/mpc-${MPC_VSN}/configure \
 		--prefix="${BUILD_DIR}/host-mpc-${MPC_VSN}${SUFFIX}" \
 		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
 		--with-mpfr="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
@@ -464,7 +465,7 @@ build_host_gcc() {
     rm -rf objdir-gcc
     mkdir objdir-gcc
     cd objdir-gcc
-    ${BUILD_DIR}/gcc-${GCC_VSN}/configure \
+    ${SOURCES_DIR}/gcc-${GCC_VSN}/configure \
 		--prefix="${BUILD_DIR}/host-gcc-${GCC_VSN}${SUFFIX}" \
 		--with-gmp="${BUILD_DIR}/host-gmp-${GMP_VSN}${SUFFIX}" \
 		--with-mpfr="${BUILD_DIR}/host-mpfr-${MPFR_VSN}${SUFFIX}" \
@@ -565,7 +566,7 @@ build_cross_gcc() {
     rm -rf objdir-gcc
     mkdir objdir-gcc
     cd objdir-gcc
-    ${BUILD_DIR}/gcc-${GCC_VSN}/configure \
+    ${SOURCES_DIR}/gcc-${GCC_VSN}/configure \
 		--target="${TARGET_TRIPLE}" \
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
@@ -633,7 +634,7 @@ build_cross_binutils() {
     rm -rf objdir-binutils
     mkdir objdir-binutils
     cd objdir-binutils
-    ${BUILD_DIR}/binutils-${BINUTILS_VSN}/configure \
+    ${SOURCES_DIR}/binutils-${BINUTILS_VSN}/configure \
 		--target="${TARGET_TRIPLE}" "${ENABLE_TARGETS}" \
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
@@ -668,10 +669,10 @@ build_linux_headers() {
 	*) KERNEL_ARCH="${TARGET_ARCH}"
     esac
     unpack_tarball "linux-${LINUX_VSN}"
-    cd linux-${LINUX_VSN}
+    cd "${SOURCES_DIR}/linux-${LINUX_VSN}"
     make ARCH="${KERNEL_ARCH}" INSTALL_HDR_PATH="${CROSS_DIR}/usr" headers_install
     make mrproper
-    cd ..
+    cd -
 }
 
 build_mingw64_headers() {
@@ -683,7 +684,7 @@ build_mingw64_headers() {
     rm -rf objdir-headers
     mkdir objdir-headers
     cd objdir-headers
-    ${BUILD_DIR}/mingw-w64-v${MINGW64_VSN}/mingw-w64-headers/configure \
+    ${SOURCES_DIR}/mingw-w64-v${MINGW64_VSN}/mingw-w64-headers/configure \
 		--prefix="${CROSS_DIR}/${TARGET_TRIPLE}" \
 		--enable-secure-api \
 		--host="${TARGET_TRIPLE}"
@@ -700,7 +701,7 @@ build_glibc() {
     rm -rf "${TARGET_TRIPLE}"
     mkdir "${TARGET_TRIPLE}"
     cd "${TARGET_TRIPLE}"
-    ${BUILD_DIR}/glibc-${GLIBC_VSN}/configure "${TARGET_CC}" \
+    ${SOURCES_DIR}/glibc-${GLIBC_VSN}/configure "${TARGET_CC}" \
 		CXX=/bin/false \
 		--host="${TARGET_TRIPLE}" \
 		--build="${BUILD_TRIPLE}" \
@@ -750,7 +751,7 @@ build_target_uclibc() {
     local CROSS_COMPILE="${TARGET_TRIPLE}-"
     log "building uClibc-ng-${UCLIBC_VSN} for ${TARGET_TRIPLE}"
     unpack_tarball "uClibc-ng-${UCLIBC_VSN}"
-    cd "uClibc-ng-${UCLIBC_VSN}"
+    cd "${SOURCES_DIR}/uClibc-ng-${UCLIBC_VSN}"
     make clean
     if [ ! -f "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig" ]; then
 	mkdir -p "extra/Configs/defconfigs/${TARGET_ARCH}"
@@ -795,7 +796,7 @@ build_target_musl() {
     rm -rf objdir-musl
     mkdir objdir-musl
     cd objdir-musl
-    ${BUILD_DIR}/musl-${MUSL_VSN}/configure \
+    ${SOURCES_DIR}/musl-${MUSL_VSN}/configure \
 		--host="${TARGET_TRIPLE}" \
 		--build="${BUILD_TRIPLE}" \
 		--prefix=/usr \
@@ -814,7 +815,7 @@ build_target_mingw64crt() {
     rm -rf objdir-crt
     mkdir objdir-crt
     cd objdir-crt
-    ${BUILD_DIR}/mingw-w64-v${MINGW64_VSN}/mingw-w64-crt/configure \
+    ${SOURCES_DIR}/mingw-w64-v${MINGW64_VSN}/mingw-w64-crt/configure \
 		--prefix="${CROSS_DIR}/${TARGET_TRIPLE}" \
 		--enable-lib32 \
 		--enable-lib64 \
@@ -831,7 +832,7 @@ build_target_newlib() {
     rm -rf objdir-newlib
     mkdir objdir-newlib
     cd objdir-newlib
-    ${BUILD_DIR}/newlib-${NEWLIB_VSN}/configure \
+    ${SOURCES_DIR}/newlib-${NEWLIB_VSN}/configure \
 		--target="${TARGET_TRIPLE}" \
 		--build="${BUILD_TRIPLE}" \
 		--prefix=/
@@ -863,6 +864,9 @@ log "buildcross ${VERSION} building toolchain for ${TARGET_ARCH} in ${CROSS_DIR}
 
 if [ ! -d "${DOWNLOADS_DIR}" ]; then
     mkdir -p "${DOWNLOADS_DIR}"
+fi
+if [ ! -d "${SOURCES_DIR}" ]; then
+    mkdir -p "${SOURCES_DIR}"
 fi
 
 get_sources
