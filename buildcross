@@ -119,7 +119,7 @@ if [ -z "${TARGET_ARCH}" ]; then
     exit 1
 fi
 
-SOURCE_DIR=`realpath .`
+DOWNLOADS_DIR=`realpath ./downloads`
 BUILD_DIR=`realpath .`
 
 CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
@@ -360,7 +360,7 @@ get_linux_tarball() {
 
 get_sources() {
     log "getting sources"
-    cd ${SOURCE_DIR}
+    cd "${DOWNLOADS_DIR}"
     get_tarball "binutils-${BINUTILS_VSN}"
     get_tarball "gcc-${GCC_VSN}"
     [ -n "${GLIBC_VSN}" ] && get_tarball "glibc-${GLIBC_VSN}"
@@ -378,7 +378,7 @@ get_sources() {
 unpack_tarball() {
     local EXT=${2:-"xz"}
     if [ ! -d "$1" ]; then
-	tar xf "${SOURCE_DIR}/$1.tar.${EXT}"
+	tar xf "${DOWNLOADS_DIR}/$1.tar.${EXT}"
     fi
 }
 
@@ -860,6 +860,10 @@ log "buildcross ${VERSION} building toolchain for ${TARGET_ARCH} in ${CROSS_DIR}
 #
 # Get Sources
 #
+
+if [ ! -d "${DOWNLOADS_DIR}" ]; then
+    mkdir -p "${DOWNLOADS_DIR}"
+fi
 
 get_sources
 
