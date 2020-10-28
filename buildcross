@@ -102,7 +102,7 @@
 
 set -e
 
-VERSION="4.0.0"
+VERSION="4.1.0"
 
 case "$1" in
     -j*)
@@ -135,8 +135,8 @@ MUSL_VSN=1.2.1
 MINGW64_VSN=7.0.0
 NEWLIB_VSN=3.3.0
 GMP_VSN=6.2.0
-LINUX_VSN=5.8
-MPC_VSN=1.2.0
+LINUX_VSN=5.9
+MPC_VSN=1.2.1
 MPFR_VSN=4.1.0
 
 # uClibc-ng configuration options
@@ -334,10 +334,10 @@ get_tarball() {
     local URL=${3:-"${DISTFILES}"}
     local ALT_URL="$4"
     if [ ! -f "$1.tar.${EXT}" ]; then
-	wget -nv "${URL}/$1.tar.${EXT}" || :
+	wget "${URL}/$1.tar.${EXT}" || :
 	if [ ! -f "$1.tar.${EXT}" ]; then
 	    if [ -n "${ALT_URL}" ]; then
-		wget -nv "${ALT_URL}/$1.tar.${EXT}"
+		wget "${ALT_URL}/$1.tar.${EXT}"
 	    else
 		exit 1
 	    fi
