@@ -504,6 +504,7 @@ build_cross_gcc() {
     local MULTILIB_CONFIG
     local MAKE_TARGET
     local INSTALL_TARGET
+    local CHECKING
     if [ -f "${CROSS_DIR}/.stage-gcc-${STAGE}" ]; then
 	return
     fi
@@ -511,6 +512,7 @@ build_cross_gcc() {
     LIBC_CONFIGS="--enable-threads=posix"
     LIBSSP_CONFIG="--enable-libssp"
     MULTILIB_CONFIG="--enable-multilib"
+    CHECKING="--enable-checking=release"
     case "${TARGET_ARCH}" in
 	"aarch64")
 	    LIBSSP_CONFIG="--disable-libssp"
@@ -592,7 +594,7 @@ build_cross_gcc() {
 		--disable-nls \
 		--disable-plugin \
 		--disable-shared \
-		--enable-checking=release \
+	        ${CHECKING} \
 		--enable-languages=c \
 		${MULTILIB_CONFIG} \
 		${LIBC_CONFIGS} ${LIBSSP_CONFIG}
