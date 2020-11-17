@@ -880,11 +880,15 @@ fi
 
 get_sources
 
+cd ${BUILD_DIR}
+
 #
 # Build Host GCC
 #
 
-cd ${BUILD_DIR}
+ORIG_PATH="${PATH}"
+
+if [ -z "${SKIP_HOST_TOOLS}" ]; then
 
 # build preliminary host libraries and gcc using system cc
 build_host_gmp "-cc"
@@ -893,7 +897,6 @@ build_host_mpc "-cc"
 build_host_gcc "-cc"
 
 # update PATH to pick up our preliminary host gcc
-ORIG_PATH="${PATH}"
 export PATH="${HOST_TOOLS_DIR}/gcc-${GCC_VSN}-cc/bin:${ORIG_PATH}"
 
 # build final host libraries and gcc using preliminary host gcc
@@ -910,6 +913,8 @@ rm -rf ${HOST_TOOLS_DIR}/gcc-${GCC_VSN}-cc
 
 # update PATH to pick up our final host gcc
 export PATH="${HOST_TOOLS_DIR}/gcc-${GCC_VSN}/bin:${ORIG_PATH}"
+
+fi # SKIP_HOST_TOOLS
 
 # determine BUILD_TRIPLE, ensure it differs from TARGET_TRIPLE
 BUILD_TRIPLE=`gcc -v 2>&1 | grep '^Target:' | awk '{print $2}'`
