@@ -52,6 +52,7 @@
 # msp430	msp430-unknown-elf (no newlib)
 # nds32		nds32le-unknown-elf
 # nios2		nios2-unknown-linux-gnu
+# ns32k		ns32k-unknown-netbsd (no libc)
 # or1k		or1k-unknown-linux-musl
 # pdp11		pdp11-unknown-aout (no newlib)
 # ppc64		ppc64-unknown-linux-gnu with -m64 and -m32 support
@@ -236,6 +237,12 @@ case "${TARGET_ARCH}" in
     "nds32")
 	TARGET_TRIPLE="nds32le-unknown-elf"
 	;;
+    "ns32k")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-netbsd"
+	GCC_VSN=3.4.6 # obsoleted in 4.0, removed in 4.1
+	SKIP_HOST_TOOLS=1 # PATH must point to a suitable old gcc
+	# we can't build libc, but netbsd-1.5.3's can be popped in
+	;;
     "or1k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-musl"
 	;;
@@ -312,7 +319,7 @@ case "${TARGET_TRIPLE}" in
 	LINUX_VSN=
 	NEWLIB_VSN=
 	;;
-    *-elf | mmix-knuth-mmixware | bpf-unknown-none | pdp11-unknown-aout | vax-unknown-linux)
+    *-elf | mmix-knuth-mmixware | bpf-unknown-none | ns32k-unknown-netbsd | pdp11-unknown-aout | vax-unknown-linux)
 	GLIBC_VSN=
 	UCLIBC_VSN=
 	MUSL_VSN=
@@ -536,6 +543,13 @@ build_cross_gcc() {
 	"mingw64")
 	    MULTILIB_CONFIG="--enable-multilib --enable-64bit --with-dwarf"
 	    LIBC_CONFIGS=
+	    ;;
+	"ns32k")
+	    # fixincludes requires /usr/include/ to exist, even if empty
+	    # libgcc requires /usr/include/machine/ansi.h to exist, even if empty
+	    mkdir -p "${CROSS_DIR}/usr/include/machine"
+	    touch "${CROSS_DIR}/usr/include/machine/ansi.h"
+	    CHECKING= # gcc-3.4.6 doesn't understand --enable-checking=release
 	    ;;
 	"ppc64le")
 	    LIBSSP_CONFIG="--disable-libssp"
