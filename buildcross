@@ -20,6 +20,7 @@
 #
 # Supported targets and resulting toolchains:
 #
+# a29k		a29k-unknown-coff (no libc)
 # aarch64	aarch64-unknown-linux-gnu
 # alpha		alpha-unknown-linux-gnu
 # arc		arc-unknown-linux-gnu
@@ -104,7 +105,7 @@
 
 set -e
 
-VERSION="4.3.0"
+VERSION="4.3.1"
 
 case "$1" in
     -j*)
@@ -150,6 +151,18 @@ UCLIBC_WANT_BIG_ENDIAN=
 
 # target-specfic overrides
 case "${TARGET_ARCH}" in
+    "a29k")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
+	GCC_VSN=2.95.3
+	BINUTILS_VSN=2.16.1
+	NEWLIB_VSN= # fails to build for a29k
+	# you need to:
+	# - adjust PATH to select gcc-3.x (3.4.6 and 3.3.6 are known to work)
+	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
+	# - if on x86_64, set CC to a wrapper script that enforces -m32
+	# - if on x86_64, set BUILD_TRIPLE=i686-pc-linux-gnu
+	SKIP_HOST_TOOLS=1
+	;;
     "armv7l")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnueabi"
 	;;
@@ -333,6 +346,7 @@ case "${TARGET_TRIPLE}" in
 	NEWLIB_VSN=
 	;;
     *-elf | \
+    a29k-unknown-coff | \
     bpf-unknown-none | \
     m88k-unknown-coff | \
     ns32k-unknown-netbsd | \
@@ -540,6 +554,9 @@ build_cross_gcc() {
     MULTILIB_CONFIG="--enable-multilib"
     CHECKING="--enable-checking=release"
     case "${TARGET_ARCH}" in
+	"a29k")
+	    CHECKING= # gcc-2.95.3 doesn't understand --enable-checking=release
+	    ;;
 	"aarch64")
 	    LIBSSP_CONFIG="--disable-libssp"
 	    MULTILIB_CONFIG="--disable-multilib"
