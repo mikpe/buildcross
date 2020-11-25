@@ -671,7 +671,7 @@ build_cross_binutils() {
 		--disable-nls \
 		--disable-plugins
     make ${DASHJ}
-    make install
+    make MAKEINFO=/bin/true install
     cd ..
     rm -rf objdir-binutils
 }
