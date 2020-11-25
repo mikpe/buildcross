@@ -936,7 +936,11 @@ export PATH="${HOST_TOOLS_DIR}/gcc-${GCC_VSN}/bin:${ORIG_PATH}"
 fi # SKIP_HOST_TOOLS
 
 # determine BUILD_TRIPLE, ensure it differs from TARGET_TRIPLE
-BUILD_TRIPLE=`gcc -v 2>&1 | grep '^Target:' | awk '{print $2}'`
+if [ -z "${BUILD_TRIPLE}" ]; then
+    BUILD_TRIPLE=`gcc -v 2>&1 | grep '^Target:' | awk '{print $2}'`
+else
+    echo using BUILD_TRIPLE "${BUILD_TRIPLE}"
+fi
 if [ -z "${BUILD_TRIPLE}" ]; then
     echo unable to determine build triple
     exit 1
