@@ -664,7 +664,7 @@ build_cross_binutils() {
     cd objdir-binutils
     ${SOURCES_DIR}/binutils-${BINUTILS_VSN}/configure \
 		--target="${TARGET_TRIPLE}" ${ENABLE_TARGETS} \
-		--build="${BUILD_TRIPLE}" \
+		--host="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
 		--with-sysroot="${CROSS_DIR}" \
 		--disable-gold \
