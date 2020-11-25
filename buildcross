@@ -319,7 +319,12 @@ case "${TARGET_TRIPLE}" in
 	LINUX_VSN=
 	NEWLIB_VSN=
 	;;
-    *-elf | mmix-knuth-mmixware | bpf-unknown-none | ns32k-unknown-netbsd | pdp11-unknown-aout | vax-unknown-linux)
+    *-elf | \
+    bpf-unknown-none | \
+    ns32k-unknown-netbsd | \
+    mmix-knuth-mmixware | \
+    pdp11-unknown-aout | \
+    vax-unknown-linux)
 	GLIBC_VSN=
 	UCLIBC_VSN=
 	MUSL_VSN=
