@@ -38,6 +38,7 @@
 # ft32		ft32-unknown-elf (no newlib)
 # h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
+# i960		i960-unknown-coff (no libc)
 # ia64		ia64-unknown-linux-gnu
 # iq2000	iq2000-unknown-elf
 # lm32		lm32-unknown-elf
@@ -217,6 +218,13 @@ case "${TARGET_ARCH}" in
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	;;
+    "i960")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
+	GCC_VSN=3.4.6
+	BINUTILS_VSN=2.16.1
+	NEWLIB_VSN= # fails to build for i960
+	SKIP_HOST_TOOLS=1
+	;;
     "iq2000")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	;;
@@ -348,6 +356,7 @@ case "${TARGET_TRIPLE}" in
     *-elf | \
     a29k-unknown-coff | \
     bpf-unknown-none | \
+    i960-unknown-coff | \
     m88k-unknown-coff | \
     ns32k-unknown-netbsd | \
     mmix-knuth-mmixware | \
@@ -572,6 +581,12 @@ build_cross_gcc() {
 	    ;;
 	"frv")
 	    LIBSSP_CONFIG="--disable-libssp"
+	    ;;
+	"i960")
+	    ENABLE_OBSOLETE="--enable-obsolete"
+	    # fixincludes requires /usr/include/ to exist, even if empty
+	    mkdir -p "${CROSS_DIR}/usr/include"
+	    CHECKING= # gcc-3.3.6 doesn't understand --enable-checking=release
 	    ;;
 	"ia64")
 	    MULTILIB_CONFIG="--disable-multilib --with-system-libunwind=yes"
