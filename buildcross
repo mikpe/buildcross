@@ -38,6 +38,7 @@
 # ft32		ft32-unknown-elf (no newlib)
 # h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
+# i860		i860-stardent-sysv4 (no libc)
 # i960		i960-unknown-coff (no libc)
 # ia64		ia64-unknown-linux-gnu
 # iq2000	iq2000-unknown-elf
@@ -218,6 +219,17 @@ case "${TARGET_ARCH}" in
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	;;
+    "i860")
+	TARGET_TRIPLE="${TARGET_ARCH}-stardent-sysv4"
+	GCC_VSN=3.2.3
+	BINUTILS_VSN=2.16.1
+	NEWLIB_VSN= # doesn't support i860
+	SKIP_HOST_TOOLS=1
+	# you need to:
+	# - adjust PATH to select gcc-3.x (3.4.6 is known to work)
+	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
+	# - if on x86_64, set CC to a wrapper script that enforces -m32
+	;;
     "i960")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
 	GCC_VSN=3.4.6
@@ -356,6 +368,7 @@ case "${TARGET_TRIPLE}" in
     *-elf | \
     a29k-unknown-coff | \
     bpf-unknown-none | \
+    i860-stardent-sysv4 | \
     i960-unknown-coff | \
     m88k-unknown-coff | \
     ns32k-unknown-netbsd | \
@@ -554,6 +567,7 @@ build_cross_gcc() {
     local MAKE_TARGET
     local INSTALL_TARGET
     local CHECKING
+    local ENABLE_OBSOLETE
     if [ -f "${CROSS_DIR}/.stage-gcc-${STAGE}" ]; then
 	return
     fi
@@ -562,6 +576,7 @@ build_cross_gcc() {
     LIBSSP_CONFIG="--enable-libssp"
     MULTILIB_CONFIG="--enable-multilib"
     CHECKING="--enable-checking=release"
+    ENABLE_OBSOLETE=
     case "${TARGET_ARCH}" in
 	"a29k")
 	    CHECKING= # gcc-2.95.3 doesn't understand --enable-checking=release
@@ -581,6 +596,10 @@ build_cross_gcc() {
 	    ;;
 	"frv")
 	    LIBSSP_CONFIG="--disable-libssp"
+	    ;;
+	"i860")
+	    ENABLE_OBSOLETE="--enable-obsolete"
+	    CHECKING= # gcc-3.2.3 doesn't understand --enable-checking=release
 	    ;;
 	"i960")
 	    ENABLE_OBSOLETE="--enable-obsolete"
@@ -644,7 +663,7 @@ build_cross_gcc() {
     mkdir objdir-gcc
     cd objdir-gcc
     ${SOURCES_DIR}/gcc-${GCC_VSN}/configure \
-		--target="${TARGET_TRIPLE}" \
+		--target="${TARGET_TRIPLE}" ${ENABLE_OBSOLETE} \
 		--host="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
 		--with-sysroot="${CROSS_DIR}" \
