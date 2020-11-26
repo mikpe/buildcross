@@ -566,7 +566,7 @@ build_cross_gcc() {
     local MULTILIB_CONFIG
     local MAKE_TARGET
     local INSTALL_TARGET
-    local CHECKING
+    local ENABLE_CHECKING
     local ENABLE_OBSOLETE
     if [ -f "${CROSS_DIR}/.stage-gcc-${STAGE}" ]; then
 	return
@@ -575,12 +575,14 @@ build_cross_gcc() {
     LIBC_CONFIGS="--enable-threads=posix"
     LIBSSP_CONFIG="--enable-libssp"
     MULTILIB_CONFIG="--enable-multilib"
-    CHECKING="--enable-checking=release"
     ENABLE_OBSOLETE=
-    case "${TARGET_ARCH}" in
-	"a29k")
-	    CHECKING= # gcc-2.95.3 doesn't understand --enable-checking=release
+    ENABLE_CHECKING="--enable-checking=release"
+    case "${GCC_VSN}" in
+	2.* | 3.*)
+	    ENABLE_CHECKING= # gcc prior to 4.0 doesn't understand --enable-checking=release
 	    ;;
+    esac
+    case "${TARGET_ARCH}" in
 	"aarch64")
 	    LIBSSP_CONFIG="--disable-libssp"
 	    MULTILIB_CONFIG="--disable-multilib"
@@ -599,13 +601,11 @@ build_cross_gcc() {
 	    ;;
 	"i860")
 	    ENABLE_OBSOLETE="--enable-obsolete"
-	    CHECKING= # gcc-3.2.3 doesn't understand --enable-checking=release
 	    ;;
 	"i960")
 	    ENABLE_OBSOLETE="--enable-obsolete"
 	    # fixincludes requires /usr/include/ to exist, even if empty
 	    mkdir -p "${CROSS_DIR}/usr/include"
-	    CHECKING= # gcc-3.3.6 doesn't understand --enable-checking=release
 	    ;;
 	"ia64")
 	    MULTILIB_CONFIG="--disable-multilib --with-system-libunwind=yes"
@@ -614,15 +614,11 @@ build_cross_gcc() {
 	    MULTILIB_CONFIG="--enable-multilib --enable-64bit --with-dwarf"
 	    LIBC_CONFIGS=
 	    ;;
-	"m88k")
-	    CHECKING= # gcc-2.95.3 doesn't understand --enable-checking=release
-	    ;;
 	"ns32k")
 	    # fixincludes requires /usr/include/ to exist, even if empty
 	    # libgcc requires /usr/include/machine/ansi.h to exist, even if empty
 	    mkdir -p "${CROSS_DIR}/usr/include/machine"
 	    touch "${CROSS_DIR}/usr/include/machine/ansi.h"
-	    CHECKING= # gcc-3.4.6 doesn't understand --enable-checking=release
 	    ;;
 	"ppc64le")
 	    LIBSSP_CONFIG="--disable-libssp"
@@ -681,7 +677,7 @@ build_cross_gcc() {
 		--disable-nls \
 		--disable-plugin \
 		--disable-shared \
-	        ${CHECKING} \
+	        ${ENABLE_CHECKING} \
 		--enable-languages=c \
 		${MULTILIB_CONFIG} \
 		${LIBC_CONFIGS} ${LIBSSP_CONFIG}
