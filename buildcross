@@ -107,6 +107,7 @@
 # score		not in upstream components, removed in gcc-5.0 and linux-4.17
 # ubicom32	not in any upstream toolchain components or kernel
 # unicore32	not in any upstream toolchain components, removed in linux-5.9
+# we32k		not in binutils
 
 set -e
 
