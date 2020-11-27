@@ -686,7 +686,7 @@ build_cross_gcc() {
     cd objdir-gcc
     ${SOURCES_DIR}/gcc-${GCC_VSN}/configure \
 		--target="${TARGET_TRIPLE}" ${ENABLE_OBSOLETE} \
-		--host="${BUILD_TRIPLE}" \
+		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
 		--with-sysroot="${CROSS_DIR}" \
 		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" \
@@ -754,7 +754,7 @@ build_cross_binutils() {
     cd objdir-binutils
     ${SOURCES_DIR}/binutils-${BINUTILS_VSN}/configure \
 		--target="${TARGET_TRIPLE}" ${ENABLE_TARGETS} \
-		--host="${BUILD_TRIPLE}" \
+		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
 		--with-sysroot="${CROSS_DIR}" \
 		--disable-gold \
