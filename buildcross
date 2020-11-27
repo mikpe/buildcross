@@ -42,6 +42,7 @@
 # i860		i860-stardent-sysv4 (no libc)
 # i960		i960-unknown-coff (no libc)
 # ia64		ia64-unknown-linux-gnu
+# ip2k		ip2k-unknown-elf (no libc)
 # iq2000	iq2000-unknown-elf
 # lm32		lm32-unknown-elf
 # m32r		m32r-unknown-elf
@@ -243,6 +244,12 @@ case "${TARGET_ARCH}" in
 	GCC_VSN=3.4.6
 	BINUTILS_VSN=2.16.1
 	NEWLIB_VSN= # fails to build for i960
+	SKIP_HOST_TOOLS=1
+	;;
+    "ip2k")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	GCC_VSN=3.3.6 # added in 3.3, 3.4 and 4.0 ICE, removed in 4.1
+	NEWLIB_VSN= # doesn't support ip2k
 	SKIP_HOST_TOOLS=1
 	;;
     "iq2000")
@@ -622,6 +629,10 @@ build_cross_gcc() {
 	    ;;
 	"ia64")
 	    MULTILIB_CONFIG="--disable-multilib --with-system-libunwind=yes"
+	    ;;
+	"ip2k")
+	    # fixincludes requires /usr/include/ to exist, even if empty
+	    mkdir -p "${CROSS_DIR}/usr/include"
 	    ;;
 	"mingw64")
 	    MULTILIB_CONFIG="--enable-multilib --enable-64bit --with-dwarf"
