@@ -69,6 +69,7 @@
 # riscv64	riscv64-unknown-linux-gnu
 # rx		rx-unknown-elf
 # s390x		s390x-unknown-linux-gnu with -m64 and -m31 support
+# score		score-unknown-elf
 # sh4		sh4-unknown-linux-gnu
 # sparc64	sparc64-unknown-linux-gnu with -m64 and -m32 support
 # tilegx	tilegx-unknown-linux-gnu
@@ -105,7 +106,6 @@
 # mt		broken in gcc (present in 4.1/4.2/4.3, but they all ICE)
 # pj		binutils rejects gcc's output and command-line options, did vanilla sources ever work?
 # nvptx		not in binutils, requires the nvptx-tools package
-# score		not in upstream components, removed in gcc-5.0 and linux-4.17
 # ubicom32	not in any upstream toolchain components or kernel
 # unicore32	not in any upstream toolchain components, removed in linux-5.9
 # we32k		not in binutils
@@ -327,6 +327,12 @@ case "${TARGET_ARCH}" in
 	;;
     "rx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	;;
+    "score")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	GCC_VSN=4.9.4 # removed in gcc-5.0
+	NEWLIB_VSN= # doesn't support score
+	SKIP_HOST_TOOLS=1 # PATH must point to a suitable old gcc
 	;;
     "tilegx")
 	BINUTILS_VSN=2.28.1 # later versions cannot build glibc
@@ -658,6 +664,9 @@ build_cross_gcc() {
 	"riscv64")
 	    # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90419#c1
 	    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=lp64d"
+	    ;;
+	"score")
+	    ENABLE_OBSOLETE="--enable-obsolete"
 	    ;;
 	"tilegx")
 	    MULTILIB_CONFIG="--disable-multilib"
