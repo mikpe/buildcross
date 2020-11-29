@@ -105,6 +105,7 @@
 # kvx		not yet in any upstream toolchain components, except for uClibc-ng
 # metag		not in upstream GCC, removed in linux-4.17
 # mt		broken in gcc (present in 4.1/4.2/4.3, but they all ICE)
+# picochip	not in binutils, removed in gcc-5
 # pj		binutils rejects gcc's output and command-line options, did vanilla sources ever work?
 # nvptx		not in binutils, requires the nvptx-tools package
 # ubicom32	not in any upstream toolchain components or kernel
