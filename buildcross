@@ -31,6 +31,7 @@
 # c6x		c6x-unknown-uclinux
 # cr16		cr16-unknown-elf (no newlib)
 # cris		crisv32-unknown-linux-uclibc
+# crx		crx-unknown-elf (no newlib)
 # csky		csky-unknown-linux-gnu (only little-endian)
 # d30v		d30v-unknown-elf (no libc)
 # epiphany	epiphany-unknown-elf
@@ -204,6 +205,12 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANT_SSP=y
 	LINUX_VSN=4.16 # cris was removed in linux-4.17
 	GCC_VSN=9.3.0 # gcc-10 marks cris as obsolete
+	;;
+    "crx")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	GCC_VSN=4.5.4 # 4.6 ICEs, removed in 4.7
+	NEWLIB_VSN= # gcc ICEs building newlib
+	SKIP_HOST_TOOLS=1
 	;;
     "d30v")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
