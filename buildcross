@@ -50,6 +50,7 @@
 # m68k		m68k-unknown-linux-gnu
 # m88k		m88k-unknown-coff (no libc)
 # mcore		mcore-unknown-elf (no newlib)
+# mep		mep-unknown-elf (no libc)
 # microblaze	microblaze-unknown-linux-gnu
 # mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
 # mips64	mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support
@@ -102,7 +103,6 @@
 # hexagon	not in any upstream toolchain components, removed in linux-4.17 (TODO: check llvm)
 # kvx		not yet in any upstream toolchain components, except for uClibc-ng
 # metag		not in upstream GCC, removed in linux-4.17
-# mep		broken in older gcc, removed in gcc-7
 # mt		broken in gcc (present in 4.1/4.2/4.3, but they all ICE)
 # pj		binutils rejects gcc's output and command-line options, did vanilla sources ever work?
 # nvptx		not in binutils, requires the nvptx-tools package
@@ -284,6 +284,12 @@ case "${TARGET_ARCH}" in
     "mcore")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	NEWLIB_VSN= # newlib gives linkage errors
+	;;
+    "mep")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	GCC_VSN=4.5.4 # later ones are broken, removed in gcc-7
+	NEWLIB_VSN= # fails to build for mep
+	SKIP_HOST_TOOLS=1
 	;;
     "mingw64")
 	TARGET_TRIPLE="x86_64-w64-mingw32"
@@ -647,6 +653,16 @@ build_cross_gcc() {
 	"ip2k")
 	    # fixincludes requires /usr/include/ to exist, even if empty
 	    mkdir -p "${CROSS_DIR}/usr/include"
+	    ;;
+	"mep")
+	    mkdir -p "${CROSS_DIR}/usr/include/sys"
+	    touch "${CROSS_DIR}/usr/include/sys/types.h"
+	    touch "${CROSS_DIR}/usr/include/stdio.h"
+	    touch "${CROSS_DIR}/usr/include/errno.h"
+	    touch "${CROSS_DIR}/usr/include/string.h"
+	    touch "${CROSS_DIR}/usr/include/stdlib.h"
+	    touch "${CROSS_DIR}/usr/include/unistd.h"
+	    touch "${CROSS_DIR}/usr/include/time.h"
 	    ;;
 	"mingw64")
 	    MULTILIB_CONFIG="--enable-multilib --enable-64bit --with-dwarf"
