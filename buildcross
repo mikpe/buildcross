@@ -65,7 +65,7 @@
 # or1k		or1k-unknown-linux-musl
 # pdp11		pdp11-unknown-aout (no newlib)
 # ppc64		ppc64-unknown-linux-gnu with -m64 and -m32 support
-# ppc64le	ppc64le-unknown-linux-gnu (no -m32 support) [BROKEN]
+# ppc64le	ppc64le-unknown-linux-gnu (no -m32 support)
 # pru		pru-unknown-elf
 # rl78		rl78-unknown-elf
 # riscv64	riscv64-unknown-linux-gnu
@@ -115,7 +115,7 @@
 
 set -e
 
-VERSION="4.3.2"
+VERSION="4.3.3"
 
 case "$1" in
     -j*)
@@ -684,6 +684,8 @@ build_cross_gcc() {
 	    touch "${CROSS_DIR}/usr/include/machine/ansi.h"
 	    ;;
 	"ppc64le")
+	    # see https://sourceware.org/bugzilla/show_bug.cgi?id=26360#c4
+	    ENABLE_OBSOLETE="--with-long-double-128"
 	    LIBSSP_CONFIG="--disable-libssp"
 	    ;;
 	"riscv64")
