@@ -34,7 +34,7 @@
 # crx		crx-unknown-elf (no newlib)
 # csky		csky-unknown-linux-gnu (only little-endian)
 # d30v		d30v-unknown-elf (no libc)
-# epiphany	epiphany-unknown-elf
+# epiphany	epiphany-unknown-elf (no newlib)
 # fr30		fr30-unknown-elf
 # frv		frv-unknown-linux-uclibc
 # ft32		ft32-unknown-elf (no newlib)
@@ -71,7 +71,7 @@
 # riscv64	riscv64-unknown-linux-gnu
 # rx		rx-unknown-elf
 # s390x		s390x-unknown-linux-gnu with -m64 and -m31 support
-# score		score-unknown-elf
+# score		score-unknown-elf (no newlib)
 # sh4		sh4-unknown-linux-gnu
 # sparc64	sparc64-unknown-linux-gnu with -m64 and -m32 support
 # tilegx	tilegx-unknown-linux-gnu
