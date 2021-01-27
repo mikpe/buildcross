@@ -115,7 +115,7 @@
 
 set -e
 
-VERSION="4.3.5"
+VERSION="4.4.0"
 
 case "$1" in
     -j*)
@@ -140,7 +140,7 @@ BUILD_DIR=`realpath .`
 CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
 
 # default component versions
-BINUTILS_VSN=2.35.1
+BINUTILS_VSN=2.36
 GCC_VSN=10.2.0
 GLIBC_VSN=2.32
 UCLIBC_VSN=1.0.36
@@ -196,6 +196,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANT_LINUXTHREADS=y
 	UCLIBC_WANT_SSP=y
 	UCLIBC_WANT_BIG_ENDIAN=y
+	BINUTILS_VSN=2.35.1 # binutils-2.36 ld segfaults linking ld-uClibc.so
 	;;
     "cr16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -257,6 +258,9 @@ case "${TARGET_ARCH}" in
 	BINUTILS_VSN=2.16.1
 	NEWLIB_VSN= # fails to build for i960
 	SKIP_HOST_TOOLS=1
+	;;
+    "ia64")
+	BINUTILS_VSN=2.35.1 # binutils-2.36 marks ia64 as obsolete
 	;;
     "ip2k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
