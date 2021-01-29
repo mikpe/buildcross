@@ -251,7 +251,7 @@ case "${TARGET_ARCH}" in
 	NEWLIB_VSN= # doesn't support i860
 	SKIP_HOST_TOOLS=1
 	# you need to:
-	# - adjust PATH to select gcc-3.x (3.4.6 is known to work)
+	# - adjust PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
 	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
 	# - if on x86_64, set CC to a wrapper script that enforces -m32
 	;;
