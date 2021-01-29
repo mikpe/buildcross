@@ -264,8 +264,11 @@ case "${TARGET_ARCH}" in
 	;;
     "ip2k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	GCC_VSN=3.3.6 # added in 3.3, 3.4 and 4.0 ICE, removed in 4.1
+	GCC_VSN=3.3.6 # added in 3.3, ICEs in 3.4 and 4.0, removed in 4.1
 	NEWLIB_VSN= # doesn't support ip2k
+	# you need to:
+	# - adjust PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
+	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
 	SKIP_HOST_TOOLS=1
 	;;
     "iq2000")
