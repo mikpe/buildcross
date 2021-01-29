@@ -25,19 +25,19 @@
 # alpha		alpha-unknown-linux-gnu
 # arc		arc-unknown-linux-gnu
 # armv7l	armv7l-unknown-linux-gnueabi
-# avr		avr-unknown-elf (no newlib)
+# avr		avr-unknown-elf (no libc)
 # bfin		bfin-unknown-linux-uclibc
-# bpf		bpf-unknown-none (no newlib)
+# bpf		bpf-unknown-none (no libc)
 # c6x		c6x-unknown-uclinux
-# cr16		cr16-unknown-elf (no newlib)
+# cr16		cr16-unknown-elf (no libc)
 # cris		crisv32-unknown-linux-uclibc
-# crx		crx-unknown-elf (no newlib)
+# crx		crx-unknown-elf (no libc)
 # csky		csky-unknown-linux-gnu (only little-endian)
 # d30v		d30v-unknown-elf (no libc)
-# epiphany	epiphany-unknown-elf (no newlib)
+# epiphany	epiphany-unknown-elf (no libc)
 # fr30		fr30-unknown-elf
 # frv		frv-unknown-linux-uclibc
-# ft32		ft32-unknown-elf (no newlib)
+# ft32		ft32-unknown-elf (no libc)
 # h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
 # i860		i860-stardent-sysv4 (no libc)
@@ -50,20 +50,20 @@
 # m32r		m32r-unknown-elf
 # m68k		m68k-unknown-linux-gnu
 # m88k		m88k-unknown-coff (no libc)
-# mcore		mcore-unknown-elf (no newlib)
+# mcore		mcore-unknown-elf (no libc)
 # mep		mep-unknown-elf (no libc)
 # microblaze	microblaze-unknown-linux-gnu
 # mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
 # mips64	mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support
 # mmix		mmix-knuth-mmixware (with newlib)
-# mn10300	mn10300-unknown-elf (no newlib)
-# moxie		moxie-unknown-elf (no newlib)
-# msp430	msp430-unknown-elf (no newlib)
+# mn10300	mn10300-unknown-elf (no libc)
+# moxie		moxie-unknown-elf (no libc)
+# msp430	msp430-unknown-elf (no libc)
 # nds32		nds32le-unknown-elf
 # nios2		nios2-unknown-linux-gnu
 # ns32k		ns32k-unknown-netbsd (no libc)
 # or1k		or1k-unknown-linux-musl
-# pdp11		pdp11-unknown-aout (no newlib)
+# pdp11		pdp11-unknown-aout (no libc)
 # ppc64		ppc64-unknown-linux-gnu with -m64 and -m32 support
 # ppc64le	ppc64le-unknown-linux-gnu (no -m32 support)
 # pru		pru-unknown-elf
@@ -71,14 +71,14 @@
 # riscv64	riscv64-unknown-linux-gnu
 # rx		rx-unknown-elf
 # s390x		s390x-unknown-linux-gnu with -m64 and -m31 support
-# score		score-unknown-elf (no newlib)
+# score		score-unknown-elf (no libc)
 # sh4		sh4-unknown-linux-gnu
 # sparc64	sparc64-unknown-linux-gnu with -m64 and -m32 support
 # tilegx	tilegx-unknown-linux-gnu
 # v850		v850-unknown-elf
 # vax		vax-unknown-linux (no libc or kernel headers)
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
-# xstormy16	xstormy16-unknown-elf (no newlib)
+# xstormy16	xstormy16-unknown-elf (no libc)
 # visium	visium-unknown-elf
 # xtensa	xtensa-unknown-linux-uclibc
 #
