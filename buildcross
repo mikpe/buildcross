@@ -220,6 +220,9 @@ case "${TARGET_ARCH}" in
 	GCC_VSN=3.4.6
 	BINUTILS_VSN=2.16.1
 	NEWLIB_VSN= # fails to build for d30v
+	# you need to:
+	# - adjust PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
+	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
 	SKIP_HOST_TOOLS=1
 	;;
     "epiphany")
