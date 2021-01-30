@@ -152,6 +152,9 @@ MUSL_VSN=1.2.2
 NEWLIB_VSN=4.1.0
 UCLIBC_VSN=1.0.37
 
+# binutils configuration options
+BINUTILS_WANTS_ENABLE_OBSOLETE=
+
 # uClibc-ng configuration options
 UCLIBC_WANT_LINUXTHREADS=
 UCLIBC_WANT_NPTL=
@@ -794,6 +797,7 @@ build_cross_gcc_with_libc() {
 
 build_cross_binutils() {
     local ENABLE_TARGETS
+    local ENABLE_OBSOLETE
     if [ -x "${CROSS_DIR}/bin/${TARGET_TRIPLE}-as" ]; then
 	return
     fi
@@ -804,12 +808,16 @@ build_cross_binutils() {
 	    ENABLE_TARGETS="--enable-targets=x86_64-w64-mingw32,i686-w64-mingw32"
 	    ;;
     esac
+    ENABLE_OBSOLETE=
+    if [ -n "${BINUTILS_WANTS_ENABLE_OBSOLETE}" ]; then
+	ENABLE_OBSOLETE="--enable-obsolete"
+    fi
     unpack_tarball "binutils-${BINUTILS_VSN}"
     rm -rf objdir-binutils
     mkdir objdir-binutils
     cd objdir-binutils
     ${SOURCES_DIR}/binutils-${BINUTILS_VSN}/configure \
-		--target="${TARGET_TRIPLE}" ${ENABLE_TARGETS} \
+		--target="${TARGET_TRIPLE}" ${ENABLE_TARGETS} ${ENABLE_OBSOLETE} \
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
 		--with-sysroot="${CROSS_DIR}" \
