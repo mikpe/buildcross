@@ -270,7 +270,7 @@ case "${TARGET_ARCH}" in
 	SKIP_HOST_TOOLS=1
 	;;
     "ia64")
-	BINUTILS_VSN=2.35.1 # binutils-2.36 marks ia64 as obsolete
+	BINUTILS_WANTS_ENABLE_OBSOLETE=1 # binutils-2.36 marks ia64 as obsolete
 	;;
     "ip2k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
