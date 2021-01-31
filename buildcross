@@ -213,7 +213,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANT_LINUXTHREADS=y
 	UCLIBC_WANT_SSP=y
 	LINUX_VSN=4.16 # cris was removed in linux-4.17
-	GCC_VSN=9.3.0 # gcc-10 marks cris as obsolete
+	GCC_WANTS_ENABLE_OBSOLETE=1 # gcc-10 marks cris as obsolete
 	;;
     "crx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
