@@ -155,6 +155,9 @@ UCLIBC_VSN=1.0.37
 # binutils configuration options
 BINUTILS_WANTS_ENABLE_OBSOLETE=
 
+# gcc configuration options
+GCC_WANTS_ENABLE_OBSOLETE=
+
 # uClibc-ng configuration options
 UCLIBC_WANT_LINUXTHREADS=
 UCLIBC_WANT_NPTL=
@@ -221,6 +224,7 @@ case "${TARGET_ARCH}" in
     "d30v")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=3.4.6
+	GCC_WANTS_ENABLE_OBSOLETE=1
 	BINUTILS_VSN=2.16.1
 	NEWLIB_VSN= # fails to build for d30v
 	# you need to:
@@ -250,6 +254,7 @@ case "${TARGET_ARCH}" in
     "i860")
 	TARGET_TRIPLE="${TARGET_ARCH}-stardent-sysv4"
 	GCC_VSN=3.2.3
+	GCC_WANTS_ENABLE_OBSOLETE=1
 	BINUTILS_VSN=2.16.1
 	NEWLIB_VSN= # doesn't support i860
 	SKIP_HOST_TOOLS=1
@@ -261,6 +266,7 @@ case "${TARGET_ARCH}" in
     "i960")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
 	GCC_VSN=3.4.6
+	GCC_WANTS_ENABLE_OBSOLETE=1
 	BINUTILS_VSN=2.16.1
 	NEWLIB_VSN= # fails to build for i960
 	# you need to:
@@ -363,6 +369,7 @@ case "${TARGET_ARCH}" in
     "score")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=4.9.4 # removed in gcc-5.0
+	GCC_WANTS_ENABLE_OBSOLETE=1
 	NEWLIB_VSN= # doesn't support score
 	SKIP_HOST_TOOLS=1 # PATH must point to a suitable old gcc
 	;;
@@ -643,6 +650,10 @@ build_cross_gcc() {
 	    ENABLE_CHECKING= # gcc prior to 4.0 doesn't understand --enable-checking=release
 	    ;;
     esac
+    ENABLE_OBSOLETE=
+    if [ -n "${GCC_WANTS_ENABLE_OBSOLETE}" ]; then
+	ENABLE_OBSOLETE="--enable-obsolete"
+    fi
     case "${TARGET_ARCH}" in
 	"aarch64")
 	    LIBSSP_CONFIG="--disable-libssp"
@@ -658,18 +669,13 @@ build_cross_gcc() {
 	    MULTILIB_CONFIG="--disable-multilib --with-endian=little"
 	    ;;
 	"d30v")
-	    ENABLE_OBSOLETE="--enable-obsolete"
 	    # fixincludes requires /usr/include/ to exist, even if empty
 	    mkdir -p "${CROSS_DIR}/usr/include"
 	    ;;
 	"frv")
 	    LIBSSP_CONFIG="--disable-libssp"
 	    ;;
-	"i860")
-	    ENABLE_OBSOLETE="--enable-obsolete"
-	    ;;
 	"i960")
-	    ENABLE_OBSOLETE="--enable-obsolete"
 	    # fixincludes requires /usr/include/ to exist, even if empty
 	    mkdir -p "${CROSS_DIR}/usr/include"
 	    ;;
@@ -708,9 +714,6 @@ build_cross_gcc() {
 	"riscv64")
 	    # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90419#c1
 	    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=lp64d"
-	    ;;
-	"score")
-	    ENABLE_OBSOLETE="--enable-obsolete"
 	    ;;
 	"tilegx")
 	    MULTILIB_CONFIG="--disable-multilib"
