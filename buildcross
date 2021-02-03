@@ -68,7 +68,7 @@
 # ppc64le	ppc64le-unknown-linux-gnu (no -m32 support)
 # pru		pru-unknown-elf
 # rl78		rl78-unknown-elf
-# riscv64	riscv64-unknown-linux-gnu
+# riscv64	riscv64-unknown-linux-gnu (no 32-bit support)
 # rx		rx-unknown-elf
 # s390x		s390x-unknown-linux-gnu with -m64 and -m31 support
 # score		score-unknown-elf (no libc)
@@ -86,7 +86,6 @@
 #
 # aarch64	waiting for glibc -mabi=ilp32 support
 # nds32		waiting for glibc support, uclibc-ng does not build against upstream kernel headers
-# riscv64	waiting for glibc -mabi=ilp32d support
 #
 # Unsupported:
 #
