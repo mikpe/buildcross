@@ -114,7 +114,7 @@
 
 set -e
 
-VERSION="4.5.1"
+VERSION="4.6.0"
 
 case "$1" in
     -j*)
@@ -140,7 +140,7 @@ CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
 
 # default component versions
 BINUTILS_VSN=2.36.1
-GCC_VSN=10.2.0
+GCC_VSN=10.3.0
 GLIBC_VSN=2.33
 GMP_VSN=6.2.1
 LINUX_VSN=5.11
@@ -149,7 +149,7 @@ MPC_VSN=1.2.1
 MPFR_VSN=4.1.0
 MUSL_VSN=1.2.2
 NEWLIB_VSN=4.1.0
-UCLIBC_VSN=1.0.37
+UCLIBC_VSN=1.0.38
 
 # binutils configuration options
 BINUTILS_WANTS_ENABLE_OBSOLETE=
@@ -382,7 +382,6 @@ case "${TARGET_ARCH}" in
 	;;
     "v850")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	GCC_VSN=9.3.0 # gcc-10.2.0 gives linkage errors with newlib (-fno-common incompatibility?)
 	;;
     "vax")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux"
