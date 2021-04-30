@@ -77,9 +77,9 @@
 # tilegx	tilegx-unknown-linux-gnu
 # v850		v850-unknown-elf
 # vax		vax-unknown-linux (no libc or kernel headers)
+# visium	visium-unknown-elf
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
 # xstormy16	xstormy16-unknown-elf (no libc)
-# visium	visium-unknown-elf
 # xtensa	xtensa-unknown-linux-uclibc
 #
 # Pending:
