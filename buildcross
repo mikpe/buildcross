@@ -201,7 +201,6 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANT_LINUXTHREADS=y
 	UCLIBC_WANT_SSP=y
 	UCLIBC_WANT_BIG_ENDIAN=y
-	BINUTILS_VSN=2.35.1 # PR 27271, 2.36 ld segfaults linking ld-uClibc.so, fixed on branch and for 2.37
 	LINUX_VSN=5.11 # c6x was removed in linux-5.12
 	;;
     "cr16")
