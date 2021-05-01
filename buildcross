@@ -114,7 +114,7 @@
 
 set -e
 
-VERSION="5.0.0"
+VERSION="5.0.1"
 
 case "$1" in
     -j*)
@@ -158,11 +158,11 @@ BINUTILS_WANTS_ENABLE_OBSOLETE=
 GCC_WANTS_ENABLE_OBSOLETE=
 
 # uClibc-ng configuration options
-UCLIBC_WANT_LINUXTHREADS=
-UCLIBC_WANT_NPTL=
-UCLIBC_WANT_SSP=
-UCLIBC_WANT_LITTLE_ENDIAN=
-UCLIBC_WANT_BIG_ENDIAN=
+UCLIBC_WANTS_LINUXTHREADS=
+UCLIBC_WANTS_NPTL=
+UCLIBC_WANTS_SSP=
+UCLIBC_WANTS_LITTLE_ENDIAN=
+UCLIBC_WANTS_BIG_ENDIAN=
 
 # target-specfic overrides
 case "${TARGET_ARCH}" in
@@ -190,8 +190,8 @@ case "${TARGET_ARCH}" in
 	;;
     "bfin")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
-	UCLIBC_WANT_LINUXTHREADS=y
-	UCLIBC_WANT_SSP=y
+	UCLIBC_WANTS_LINUXTHREADS=y
+	UCLIBC_WANTS_SSP=y
 	LINUX_VSN=4.16 # blackfin was removed in linux-4.17
 	GCC_VSN=9.3.0 # gcc-10.2.0 gives linkage errors in uClibc-ng
 	;;
@@ -201,9 +201,9 @@ case "${TARGET_ARCH}" in
 	;;
     "c6x")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-uclinux"
-	UCLIBC_WANT_LINUXTHREADS=y
-	UCLIBC_WANT_SSP=y
-	UCLIBC_WANT_BIG_ENDIAN=y
+	UCLIBC_WANTS_LINUXTHREADS=y
+	UCLIBC_WANTS_SSP=y
+	UCLIBC_WANTS_BIG_ENDIAN=y
 	LINUX_VSN=5.11 # c6x was removed in linux-5.12
 	;;
     "cr16")
@@ -212,8 +212,8 @@ case "${TARGET_ARCH}" in
 	;;
     "cris")
 	TARGET_TRIPLE="crisv32-unknown-linux-uclibc"
-	UCLIBC_WANT_LINUXTHREADS=y
-	UCLIBC_WANT_SSP=y
+	UCLIBC_WANTS_LINUXTHREADS=y
+	UCLIBC_WANTS_SSP=y
 	LINUX_VSN=4.16 # cris was removed in linux-4.17
 	GCC_WANTS_ENABLE_OBSOLETE=1 # gcc-10 marks cris as obsolete
 	GCC_VSN=10.3.0 # gcc-11.1.0 dropped support for this target triple
@@ -247,7 +247,7 @@ case "${TARGET_ARCH}" in
 	;;
     "frv")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
-	UCLIBC_WANT_SSP=y
+	UCLIBC_WANTS_SSP=y
 	LINUX_VSN=4.16 # frv was removed in linux-4.17
 	;;
     "ft32")
@@ -431,8 +431,8 @@ case "${TARGET_ARCH}" in
 	;;
     "xtensa")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
-	UCLIBC_WANT_NPTL=y
-	UCLIBC_WANT_SSP=y
+	UCLIBC_WANTS_NPTL=y
+	UCLIBC_WANTS_SSP=y
 	;;
 esac
 
@@ -769,10 +769,10 @@ build_cross_gcc() {
 	    INSTALL_TARGET="install-gcc"
 	    ;;
 	"uclibc")
-	    if [ -z "${UCLIBC_WANT_NPTL}" -a -z "${UCLIBC_WANT_LINUXTHREADS}" ]; then
+	    if [ -z "${UCLIBC_WANTS_NPTL}" -a -z "${UCLIBC_WANTS_LINUXTHREADS}" ]; then
 		LIBC_CONFIGS="--disable-threads"
 	    fi
-	    if [ -z "${UCLIBC_WANT_SSP}" ]; then
+	    if [ -z "${UCLIBC_WANTS_SSP}" ]; then
 		LIBSSP_CONFIG="--disable-libssp"
 	    fi
 	    ;;
@@ -987,18 +987,18 @@ build_target_uclibc() {
 	    echo 'CONFIG_CRISV32=y' >> .config
 	    ;;
     esac
-    if [ -n "${UCLIBC_WANT_NPTL}" ]; then
+    if [ -n "${UCLIBC_WANTS_NPTL}" ]; then
 	echo 'UCLIBC_HAS_THREADS_NATIVE=y' >> .config
-    elif [ -n "${UCLIBC_WANT_LINUXTHREADS}" ]; then
+    elif [ -n "${UCLIBC_WANTS_LINUXTHREADS}" ]; then
 	echo 'UCLIBC_HAS_LINUXTHREADS=y' >> .config
     fi
-    if [ -n "${UCLIBC_WANT_SSP}" ]; then
+    if [ -n "${UCLIBC_WANTS_SSP}" ]; then
 	echo 'UCLIBC_HAS_SSP=y' >> .config
     fi
-    if [ -n "${UCLIBC_WANT_LITTLE_ENDIAN}" ]; then
+    if [ -n "${UCLIBC_WANTS_LITTLE_ENDIAN}" ]; then
 	echo 'ARCH_WANTS_BIG_ENDIAN=n' >> .config
 	echo 'ARCH_WANTS_LITTLE_ENDIAN=y' >> .config
-    elif [ -n "${UCLIBC_WANT_BIG_ENDIAN}" ]; then
+    elif [ -n "${UCLIBC_WANTS_BIG_ENDIAN}" ]; then
 	echo 'ARCH_WANTS_LITTLE_ENDIAN=n' >> .config
 	echo 'ARCH_WANTS_BIG_ENDIAN=y' >> .config
     fi
