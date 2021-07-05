@@ -144,7 +144,7 @@ GCC_VSN=11.1.0
 GLIBC_VSN=2.33
 GMP_VSN=6.2.1
 LINUX_VSN=5.12
-MINGW64_VSN=8.0.0
+MINGW64_VSN=9.0.0
 MPC_VSN=1.2.1
 MPFR_VSN=4.1.0
 MUSL_VSN=1.2.2
@@ -338,7 +338,6 @@ case "${TARGET_ARCH}" in
 	;;
     "mingw64")
 	TARGET_TRIPLE="x86_64-w64-mingw32"
-	GCC_VSN=10.3.0 # gcc-11.1.0 fails to build mingw-8.0.0
 	;;
     "mips64")
 	GCC_VSN=10.3.0 # gcc-11.1.0 fails to build glibc-2.33
@@ -733,7 +732,7 @@ build_cross_gcc() {
 	    ;;
 	"mingw64")
 	    MULTILIB_CONFIG="--enable-multilib --enable-64bit --with-dwarf"
-	    LIBC_CONFIGS=
+	    LIBC_CONFIGS="--enable-threads=win32"
 	    ;;
 	"ns32k")
 	    # fixincludes requires /usr/include/ to exist, even if empty
@@ -906,7 +905,6 @@ build_mingw64_headers() {
     cd objdir-headers
     ${SOURCES_DIR}/mingw-w64-v${MINGW64_VSN}/mingw-w64-headers/configure \
 		--prefix="${CROSS_DIR}/${TARGET_TRIPLE}" \
-		--enable-secure-api \
 		--host="${TARGET_TRIPLE}"
     ln -sf "${TARGET_TRIPLE}" "${CROSS_DIR}/mingw"
     make install
