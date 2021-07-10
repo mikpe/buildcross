@@ -45,6 +45,7 @@
 # ia64		ia64-unknown-linux-gnu
 # ip2k		ip2k-unknown-elf (no libc)
 # iq2000	iq2000-unknown-elf (no libc)
+# kvx		kvx-unknown-elf
 # lm32		lm32-unknown-elf
 # m32c		m32c-unknown-elf
 # m32r		m32r-unknown-elf
@@ -102,7 +103,6 @@
 # avr32		not in any upstream toolchain components except uClibc-ng, removed in linux-4.12
 # gmicro	not in binutils, removed in gcc-3.0
 # hexagon	not in any upstream toolchain components, removed in linux-4.17 (TODO: check llvm)
-# kvx		not yet in any upstream toolchain components, except for uClibc-ng
 # metag		not in upstream GCC, removed in linux-4.17
 # mt		broken in gcc (present in 4.1/4.2/4.3, but they all ICE)
 # picochip	not in binutils, removed in gcc-5
@@ -300,6 +300,16 @@ case "${TARGET_ARCH}" in
     "iq2000")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	NEWLIB_VSN= # newlib fails to build, fixed after 4.1.0
+	;;
+    "kvx")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	# from https://github.com/kalray/build-scripts.git
+	BINUTILS_VSN="https://github.com/kalray/gdb-binutils.git;6165fd8a8b42fdf1968db08bbc11e8319cabc61c;-;kalray"
+	GCC_VSN="https://github.com/kalray/gcc.git;32ce4ec583aa5e3498cf9ccf3c06a8b6ca290cf5;coolidge;kalray"
+	NEWLIB_VSN="https://github.com/kalray/newlib.git;84b71a545d86f28289ec805e6e25e896683bac4e;coolidge;kalray"
+	# kvx-gcc is based on gcc-7.5.0, so use that to build it
+	HOST_GCC_VSN=7.5.0
+	# there is a linux and uClibc-ng port, but uClibc-ng fails to build with relocation errors
 	;;
     "lm32")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
