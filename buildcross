@@ -46,7 +46,7 @@
 # ip2k		ip2k-unknown-elf (no libc)
 # iq2000	iq2000-unknown-elf (no libc)
 # kvx		kvx-unknown-elf
-# lm32		lm32-unknown-elf
+# lm32		lm32-uclinux-uclibc
 # m32c		m32c-unknown-elf
 # m32r		m32r-unknown-elf
 # m68k		m68k-unknown-linux-gnu
@@ -312,7 +312,8 @@ case "${TARGET_ARCH}" in
 	# there is a linux and uClibc-ng port, but uClibc-ng fails to build with relocation errors
 	;;
     "lm32")
-	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	TARGET_TRIPLE="${TARGET_ARCH}-uclinux-uclibc"
+	LINUX_VSN="https://github.com/m-labs/linux-milkymist.git;1f446f97a4362092dab13d996193a9dc7b0be8e9;master;m-labs"
 	;;
     "m32c")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -1078,6 +1079,10 @@ build_target_uclibc() {
     unpack_tarball "uClibc-ng-${UCLIBC_VSN}"
     cd "${SOURCES_DIR}/uClibc-ng-${UCLIBC_VSN}"
     make clean
+    # the lm32 defconfig is misplaced
+    if [ -f "extra/Configs/defconfigs/lm32" ]; then
+	rm "extra/Configs/defconfigs/lm32"
+    fi
     if [ ! -f "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig" ]; then
 	mkdir -p "extra/Configs/defconfigs/${TARGET_ARCH}"
 	echo "TARGET_${TARGET_ARCH}=y" > "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig"
