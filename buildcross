@@ -44,7 +44,7 @@
 # i960		i960-unknown-coff (no libc)
 # ia64		ia64-unknown-linux-gnu
 # ip2k		ip2k-unknown-elf (no libc)
-# iq2000	iq2000-unknown-elf
+# iq2000	iq2000-unknown-elf (no libc)
 # lm32		lm32-unknown-elf
 # m32c		m32c-unknown-elf
 # m32r		m32r-unknown-elf
@@ -77,7 +77,7 @@
 # tilegx	tilegx-unknown-linux-gnu
 # v850		v850-unknown-elf
 # vax		vax-unknown-linux (no libc or kernel headers)
-# visium	visium-unknown-elf
+# visium	visium-unknown-elf (no libc)
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
 # xstormy16	xstormy16-unknown-elf (no libc)
 # xtensa	xtensa-unknown-linux-uclibc
@@ -299,6 +299,7 @@ case "${TARGET_ARCH}" in
 	;;
     "iq2000")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN= # newlib fails to build, fixed after 4.1.0
 	;;
     "lm32")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -423,6 +424,7 @@ case "${TARGET_ARCH}" in
 	;;
     "visium")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN= # newlib fails to build, fixed after 4.1.0
 	;;
     "xstormy16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
