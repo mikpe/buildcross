@@ -441,6 +441,12 @@ if [ -z "${TARGET_TRIPLE}" ]; then
     TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnu"
 fi
 
+# Host GCC version is normally the same as the cross GCC version,
+# except when building the cross GCC from non-upstream git.
+if [ -z "${HOST_GCC_VSN}" ]; then
+    HOST_GCC_VSN="${GCC_VSN}"
+fi
+
 # disable the components we don't want
 case "${TARGET_TRIPLE}" in
     *linux-gnu*)
@@ -527,16 +533,66 @@ get_linux_tarball() {
     get_tarball "linux-${LINUX_VSN}" "xz" "${DISTFILES}" "https://www.kernel.org/pub/linux/kernel/${KERNEL_DIR}"
 }
 
+get_git() {
+    local REPO="$1"
+    local REF="$2"
+    local BRANCH="$3"
+    local VENDOR="$4"
+    local DIR
+    if [ "${BRANCH}" = "-" ]; then
+	BRANCH=""
+    fi
+    if [ -n "${BRANCH}" ]; then
+	BRANCH="-b ${BRANCH}"
+    fi
+    if [ "${VENDOR}" = "-" ]; then
+	VENDOR=""
+    fi
+    if [ -n "${VENDOR}" ]; then
+	VENDOR="${VENDOR}-"
+    fi
+    DIR="${VENDOR}`basename ${REPO}`"
+    if [ -d "${DIR}" ]; then
+	cd "${DIR}"
+	git fetch
+	cd -
+    else
+	git clone ${BRANCH} "${REPO}" "${DIR}"
+    fi
+    cd "${DIR}"
+    git reset --hard "${REF}"
+    cd -
+}
+
+get_source() {
+    local PREFIX="$1"
+    local VSN="$2"
+    local EXT="$3"
+    local URL="$4"
+    local ALTURL="$5"
+    case "${VSN}" in
+	*://*.git*)
+	    # REPO;REF;BRANCH;VENDOR
+	    set `echo "${VSN}" | tr ';' ' '`
+	    get_git "$1" "$2" "$3" "$4"
+	    ;;
+	*)
+	    get_tarball "${PREFIX}${VSN}" "${EXT}" "${URL}" "${ALTURL}"
+	    ;;
+    esac
+}
+
 get_sources() {
     log "getting sources"
     cd "${DOWNLOADS_DIR}"
-    get_tarball "binutils-${BINUTILS_VSN}"
-    get_tarball "gcc-${GCC_VSN}"
+    get_source "binutils-" "${BINUTILS_VSN}"
+    get_source "gcc-" "${GCC_VSN}"
+    get_tarball "gcc-${HOST_GCC_VSN}"
     [ -n "${GLIBC_VSN}" ] && get_tarball "glibc-${GLIBC_VSN}"
     [ -n "${UCLIBC_VSN}" ] && get_tarball "uClibc-ng-${UCLIBC_VSN}" "xz" "https://downloads.uclibc-ng.org/releases/${UCLIBC_VSN}"
     [ -n "${MUSL_VSN}" ] && get_tarball "musl-${MUSL_VSN}" "gz"
     [ -n "${MINGW64_VSN}" ] && get_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
-    [ -n "${NEWLIB_VSN}" ] && get_tarball "newlib-${NEWLIB_VSN}" "gz"
+    [ -n "${NEWLIB_VSN}" ] && get_source "newlib-" "${NEWLIB_VSN}" "gz"
     get_tarball "gmp-${GMP_VSN}"
     [ -n "${LINUX_VSN}" ] && get_linux_tarball "${LINUX_VSN}"
     get_tarball "mpfr-${MPFR_VSN}"
@@ -556,9 +612,37 @@ unpack_tarball() {
     fi
 }
 
+unpack_source() {
+    local PREFIX="$1"
+    local VSN="$2"
+    local REPO
+    local VENDOR
+    local DIR
+    case "${VSN}" in
+	*://*.git*)
+	    # REPO;REF;BRANCH;VENDOR
+	    set `echo "${VSN}" | tr ';' ' '`
+	    REPO="$1"
+	    VENDOR="$4"
+	    if [ "${VENDOR}" = "-" ]; then
+		VENDOR=""
+	    fi
+	    if [ -n "${VENDOR}" ]; then
+		VENDOR="${VENDOR}-"
+	    fi
+	    DIR="${VENDOR}`basename ${REPO}`"
+	    echo "${DOWNLOADS_DIR}/${DIR}"
+	    ;;
+	*)
+	    unpack_tarball "${PREFIX}${VSN}"
+	    echo "${SOURCES_DIR}/${PREFIX}${VSN}"
+	    ;;
+    esac
+}
+
 build_host_gmp() {
     local SUFFIX="$1"
-    if [ -d "${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${GCC_VSN}" ]; then
+    if [ -d "${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}" ]; then
 	return
     fi
     log "building host gmp-${GMP_VSN}${SUFFIX}"
@@ -580,7 +664,7 @@ build_host_gmp() {
 
 build_host_mpfr() {
     local SUFFIX="$1"
-    if [ -d "${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${GCC_VSN}" ]; then
+    if [ -d "${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}" ]; then
 	return
     fi
     log "building host mpfr-${MPFR_VSN}${SUFFIX}"
@@ -600,7 +684,7 @@ build_host_mpfr() {
 
 build_host_mpc() {
     local SUFFIX="$1"
-    if [ -d "${HOST_TOOLS_DIR}/mpc-${MPC_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${GCC_VSN}" ]; then
+    if [ -d "${HOST_TOOLS_DIR}/mpc-${MPC_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}" ]; then
 	return
     fi
     log "building host mpc-${MPC_VSN}${SUFFIX}"
@@ -623,10 +707,10 @@ build_host_gcc() {
     local SUFFIX="$1"
     local MAKE_TARGET
     local DISABLE_BOOTSTRAP
-    if [ -d "${HOST_TOOLS_DIR}/gcc-${GCC_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${GCC_VSN}" ]; then
+    if [ -d "${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}" ]; then
 	return
     fi
-    log "building host gcc-${GCC_VSN}${SUFFIX}"
+    log "building host gcc-${HOST_GCC_VSN}${SUFFIX}"
     if [ -z "${SUFFIX}" ]; then
 	DISABLE_BOOTSTRAP=
 	MAKE_TARGET=bootstrap-lean
@@ -634,12 +718,12 @@ build_host_gcc() {
 	DISABLE_BOOTSTRAP="--disable-bootstrap"
 	MAKE_TARGET=
     fi
-    unpack_tarball "gcc-${GCC_VSN}"
+    unpack_tarball "gcc-${HOST_GCC_VSN}"
     rm -rf objdir-gcc
     mkdir objdir-gcc
     cd objdir-gcc
-    ${SOURCES_DIR}/gcc-${GCC_VSN}/configure \
-		--prefix="${HOST_TOOLS_DIR}/gcc-${GCC_VSN}${SUFFIX}" \
+    ${SOURCES_DIR}/gcc-${HOST_GCC_VSN}/configure \
+		--prefix="${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}${SUFFIX}" \
 		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" \
 		--with-mpfr="${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}" \
 		--with-mpc="${HOST_TOOLS_DIR}/mpc-${MPC_VSN}${SUFFIX}" \
@@ -672,10 +756,11 @@ build_cross_gcc() {
     local INSTALL_TARGET
     local ENABLE_CHECKING
     local ENABLE_OBSOLETE
+    local SOURCE_PATH
     if [ -f "${CROSS_DIR}/.stage-gcc-${STAGE}" ]; then
 	return
     fi
-    log "building cross-gcc-${GCC_VSN}-${STAGE}"
+    log "building cross-gcc ${GCC_VSN} ${STAGE}"
     LIBC_CONFIGS="--enable-threads=posix"
     LIBSSP_CONFIG="--enable-libssp"
     MULTILIB_CONFIG="--enable-multilib"
@@ -778,11 +863,11 @@ build_cross_gcc() {
 	    fi
 	    ;;
     esac
-    unpack_tarball "gcc-${GCC_VSN}"
+    SOURCE_PATH=`unpack_source "gcc-" "${GCC_VSN}"`
     rm -rf objdir-gcc
     mkdir objdir-gcc
     cd objdir-gcc
-    ${SOURCES_DIR}/gcc-${GCC_VSN}/configure \
+    ${SOURCE_PATH}/configure \
 		--target="${TARGET_TRIPLE}" ${ENABLE_OBSOLETE} \
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
@@ -837,10 +922,11 @@ build_cross_gcc_with_libc() {
 build_cross_binutils() {
     local ENABLE_TARGETS
     local ENABLE_OBSOLETE
+    local SOURCE_PATH
     if [ -x "${CROSS_DIR}/bin/${TARGET_TRIPLE}-as" ]; then
 	return
     fi
-    log "building cross-binutils-${BINUTILS_VSN}"
+    log "building cross-binutils ${BINUTILS_VSN}"
     ENABLE_TARGETS=
     case "${TARGET_ARCH}" in
 	"mingw64")
@@ -851,18 +937,20 @@ build_cross_binutils() {
     if [ -n "${BINUTILS_WANTS_ENABLE_OBSOLETE}" ]; then
 	ENABLE_OBSOLETE="--enable-obsolete"
     fi
-    unpack_tarball "binutils-${BINUTILS_VSN}"
+    SOURCE_PATH=`unpack_source "binutils-" "${BINUTILS_VSN}"`
     rm -rf objdir-binutils
     mkdir objdir-binutils
     cd objdir-binutils
-    ${SOURCES_DIR}/binutils-${BINUTILS_VSN}/configure \
+    ${SOURCE_PATH}/configure \
 		--target="${TARGET_TRIPLE}" ${ENABLE_TARGETS} ${ENABLE_OBSOLETE} \
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
 		--with-sysroot="${CROSS_DIR}" \
+		--disable-gdb \
 		--disable-gold \
 		--disable-nls \
-		--disable-plugins
+		--disable-plugins \
+		--disable-readline
     make ${DASHJ}
     make MAKEINFO=/bin/true install
     cd ..
@@ -1047,12 +1135,13 @@ build_target_mingw64crt() {
 }
 
 build_target_newlib() {
-    log "building newlib-${NEWLIB_VSN} for ${TARGET_TRIPLE}"
-    unpack_tarball "newlib-${NEWLIB_VSN}"
+    local SOURCE_PATH
+    log "building newlib ${NEWLIB_VSN} for ${TARGET_TRIPLE}"
+    SOURCE_PATH=`unpack_source "newlib-" "${NEWLIB_VSN}"`
     rm -rf objdir-newlib
     mkdir objdir-newlib
     cd objdir-newlib
-    ${SOURCES_DIR}/newlib-${NEWLIB_VSN}/configure \
+    ${SOURCE_PATH}/configure \
 		--target="${TARGET_TRIPLE}" \
 		--build="${BUILD_TRIPLE}" \
 		--prefix=/
@@ -1108,7 +1197,7 @@ build_host_mpc "-cc"
 build_host_gcc "-cc"
 
 # update PATH to pick up our preliminary host gcc
-export PATH="${HOST_TOOLS_DIR}/gcc-${GCC_VSN}-cc/bin:${ORIG_PATH}"
+export PATH="${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}-cc/bin:${ORIG_PATH}"
 
 # build final host libraries and gcc using preliminary host gcc
 build_host_gmp
@@ -1120,10 +1209,10 @@ build_host_gcc
 rm -rf ${HOST_TOOLS_DIR}/gmp-${GMP_VSN}-cc
 rm -rf ${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}-cc
 rm -rf ${HOST_TOOLS_DIR}/mpc-${MPC_VSN}-cc
-rm -rf ${HOST_TOOLS_DIR}/gcc-${GCC_VSN}-cc
+rm -rf ${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}-cc
 
 # update PATH to pick up our final host gcc
-export PATH="${HOST_TOOLS_DIR}/gcc-${GCC_VSN}/bin:${ORIG_PATH}"
+export PATH="${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}/bin:${ORIG_PATH}"
 
 fi # SKIP_HOST_TOOLS
 
@@ -1150,7 +1239,7 @@ fi
 build_cross_binutils
 
 # update PATH to pick up our cross tools
-export PATH="${CROSS_DIR}/bin:${HOST_TOOLS_DIR}/gcc-${GCC_VSN}/bin:${ORIG_PATH}"
+export PATH="${CROSS_DIR}/bin:${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}/bin:${ORIG_PATH}"
 
 # mingw-w64 needs headers early on
 [ -n "${MINGW64_VSN}" ] && build_mingw64_headers
