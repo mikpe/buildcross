@@ -587,7 +587,13 @@ get_source() {
 	    get_git "$1" "$2" "$3" "$4"
 	    ;;
 	*)
-	    get_tarball "${PREFIX}${VSN}" "${EXT}" "${URL}" "${ALTURL}"
+	    case "${PREFIX}" in
+		"linux-")
+		    get_linux_tarball "${VSN}"
+		    ;;
+		*)
+		    get_tarball "${PREFIX}${VSN}" "${EXT}" "${URL}" "${ALTURL}"
+	    esac
 	    ;;
     esac
 }
@@ -604,7 +610,7 @@ get_sources() {
     [ -n "${MINGW64_VSN}" ] && get_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
     [ -n "${NEWLIB_VSN}" ] && get_source "newlib-" "${NEWLIB_VSN}" "gz"
     get_tarball "gmp-${GMP_VSN}"
-    [ -n "${LINUX_VSN}" ] && get_linux_tarball "${LINUX_VSN}"
+    [ -n "${LINUX_VSN}" ] && get_source "linux-" "${LINUX_VSN}"
     get_tarball "mpfr-${MPFR_VSN}"
     get_tarball "mpc-${MPC_VSN}" "gz"
     cd -
@@ -969,10 +975,11 @@ build_cross_binutils() {
 
 build_linux_headers() {
     local KERNEL_ARCH
+    local SOURCE_PATH
     if [ -f "${CROSS_DIR}/usr/include/linux/version.h" ]; then
 	return
     fi
-    log "building linux-headers-${LINUX_VSN}"
+    log "building linux-headers ${LINUX_VSN}"
     case "${TARGET_ARCH}" in
 	"aarch64") KERNEL_ARCH="arm64";;
 	"armv7l") KERNEL_ARCH="arm";;
@@ -987,8 +994,8 @@ build_linux_headers() {
 	"x86_64") KERNEL_ARCH="x86";;
 	*) KERNEL_ARCH="${TARGET_ARCH}"
     esac
-    unpack_tarball "linux-${LINUX_VSN}"
-    cd "${SOURCES_DIR}/linux-${LINUX_VSN}"
+    SOURCE_PATH=`unpack_source "linux-" "${LINUX_VSN}"`
+    cd "${SOURCE_PATH}"
     make ARCH="${KERNEL_ARCH}" INSTALL_HDR_PATH="${CROSS_DIR}/usr" headers_install
     make mrproper
     cd -
