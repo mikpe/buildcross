@@ -193,7 +193,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_LINUXTHREADS=y
 	UCLIBC_WANTS_SSP=y
 	LINUX_VSN=4.16 # blackfin was removed in linux-4.17
-	GCC_VSN=9.3.0 # gcc-10.2.0 gives linkage errors in uClibc-ng
+	GCC_VSN=9.4.0 # gcc-10.x/11.x give linkage errors in uClibc-ng
 	;;
     "bpf")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-none"
