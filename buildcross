@@ -606,7 +606,7 @@ get_sources() {
     get_source "gcc-" "${GCC_VSN}"
     [ -n "${HOST_GCC_VSN}" ] && get_tarball "gcc-${HOST_GCC_VSN}"
     [ -n "${GLIBC_VSN}" ] && get_tarball "glibc-${GLIBC_VSN}"
-    [ -n "${UCLIBC_VSN}" ] && get_tarball "uClibc-ng-${UCLIBC_VSN}" "xz" "https://downloads.uclibc-ng.org/releases/${UCLIBC_VSN}"
+    [ -n "${UCLIBC_VSN}" ] && get_source "uClibc-ng-" "${UCLIBC_VSN}" "xz" "https://downloads.uclibc-ng.org/releases/${UCLIBC_VSN}"
     [ -n "${MUSL_VSN}" ] && get_tarball "musl-${MUSL_VSN}" "gz"
     [ -n "${MINGW64_VSN}" ] && get_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
     [ -n "${NEWLIB_VSN}" ] && get_source "newlib-" "${NEWLIB_VSN}" "gz"
@@ -1098,9 +1098,10 @@ build_target_glibc() {
 
 build_target_uclibc() {
     local CROSS_COMPILE="${TARGET_TRIPLE}-"
-    log "building uClibc-ng-${UCLIBC_VSN} for ${TARGET_TRIPLE}"
-    unpack_tarball "uClibc-ng-${UCLIBC_VSN}"
-    cd "${SOURCES_DIR}/uClibc-ng-${UCLIBC_VSN}"
+    local SOURCE_PATH
+    log "building uClibc ${UCLIBC_VSN} for ${TARGET_TRIPLE}"
+    SOURCE_PATH=`unpack_source "uClibc-ng-" "${UCLIBC_VSN}"`
+    cd "${SOURCE_PATH}"
     make clean
     # the lm32 defconfig is misplaced
     if [ -f "extra/Configs/defconfigs/lm32" ]; then
