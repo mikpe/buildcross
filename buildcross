@@ -981,6 +981,7 @@ build_cross_binutils() {
 build_linux_headers() {
     local KERNEL_ARCH
     local SOURCE_PATH
+    local CROSS_COMPILE="${TARGET_TRIPLE}-"
     if [ -f "${CROSS_DIR}/usr/include/linux/version.h" ]; then
 	return
     fi
@@ -1001,7 +1002,7 @@ build_linux_headers() {
     esac
     SOURCE_PATH=`unpack_source "linux-" "${LINUX_VSN}"`
     cd "${SOURCE_PATH}"
-    make ARCH="${KERNEL_ARCH}" INSTALL_HDR_PATH="${CROSS_DIR}/usr" headers_install
+    make ARCH="${KERNEL_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" INSTALL_HDR_PATH="${CROSS_DIR}/usr" headers_install
     make mrproper
     cd -
 }
