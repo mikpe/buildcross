@@ -780,6 +780,7 @@ build_cross_gcc() {
 	return
     fi
     log "building cross-gcc ${GCC_VSN} ${STAGE}"
+    SOURCE_PATH=`unpack_source "gcc-" "${GCC_VSN}"`
     LIBC_CONFIGS="--enable-threads=posix"
     LIBSSP_CONFIG="--enable-libssp"
     MULTILIB_CONFIG="--enable-multilib"
@@ -882,7 +883,6 @@ build_cross_gcc() {
 	    fi
 	    ;;
     esac
-    SOURCE_PATH=`unpack_source "gcc-" "${GCC_VSN}"`
     rm -rf objdir-gcc
     mkdir objdir-gcc
     cd objdir-gcc
@@ -948,6 +948,7 @@ build_cross_binutils() {
 	return
     fi
     log "building cross-binutils ${BINUTILS_VSN}"
+    SOURCE_PATH=`unpack_source "binutils-" "${BINUTILS_VSN}"`
     ENABLE_TARGETS=
     case "${TARGET_ARCH}" in
 	"mingw64")
@@ -958,7 +959,6 @@ build_cross_binutils() {
     if [ -n "${BINUTILS_WANTS_ENABLE_OBSOLETE}" ]; then
 	ENABLE_OBSOLETE="--enable-obsolete"
     fi
-    SOURCE_PATH=`unpack_source "binutils-" "${BINUTILS_VSN}"`
     rm -rf objdir-binutils
     mkdir objdir-binutils
     cd objdir-binutils
