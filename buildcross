@@ -891,9 +891,9 @@ build_cross_gcc() {
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
 		--with-sysroot="${CROSS_DIR}" \
-		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" \
-		--with-mpfr="${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}" \
-		--with-mpc="${HOST_TOOLS_DIR}/mpc-${MPC_VSN}${SUFFIX}" \
+		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}" \
+		--with-mpfr="${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}" \
+		--with-mpc="${HOST_TOOLS_DIR}/mpc-${MPC_VSN}" \
 		--without-cloog \
 		--without-isl \
 		--disable-libatomic \
