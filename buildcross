@@ -967,11 +967,29 @@ build_cross_binutils() {
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
 		--with-sysroot="${CROSS_DIR}" \
+		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}" \
+		--with-mpfr="${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}" \
+		--with-mpc="${HOST_TOOLS_DIR}/mpc-${MPC_VSN}" \
+		--disable-cgen \
+		--disable-dejagnu \
+		--disable-elf2flt \
+		--disable-gcc \
 		--disable-gdb \
 		--disable-gold \
+		--disable-itcl \
+		--disable-libdecnumber \
+		--disable-libgui \
+		--disable-newlib \
 		--disable-nls \
 		--disable-plugins \
-		--disable-readline
+		--disable-rda \
+		--disable-readline \
+		--disable-sid \
+		--disable-sim \
+		--disable-tcl \
+		--disable-tk \
+		--disable-utils \
+		--disable-winsup
     make ${DASHJ}
     make MAKEINFO=/bin/true install
     cd ..
