@@ -454,7 +454,7 @@ fi
 
 # Host GCC version is normally the same as the cross GCC version,
 # except when building the cross GCC from non-upstream git.
-if [ -z "${HOST_GCC_VSN}" ]; then
+if [ -z "${HOST_GCC_VSN}" -a -z "${SKIP_HOST_TOOLS}" ]; then
     HOST_GCC_VSN="${GCC_VSN}"
 fi
 
@@ -604,7 +604,7 @@ get_sources() {
     cd "${DOWNLOADS_DIR}"
     get_source "binutils-" "${BINUTILS_VSN}"
     get_source "gcc-" "${GCC_VSN}"
-    get_tarball "gcc-${HOST_GCC_VSN}"
+    [ -n "${HOST_GCC_VSN}" ] && get_tarball "gcc-${HOST_GCC_VSN}"
     [ -n "${GLIBC_VSN}" ] && get_tarball "glibc-${GLIBC_VSN}"
     [ -n "${UCLIBC_VSN}" ] && get_tarball "uClibc-ng-${UCLIBC_VSN}" "xz" "https://downloads.uclibc-ng.org/releases/${UCLIBC_VSN}"
     [ -n "${MUSL_VSN}" ] && get_tarball "musl-${MUSL_VSN}" "gz"
