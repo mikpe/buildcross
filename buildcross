@@ -744,9 +744,11 @@ build_host_gcc() {
 		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" \
 		--with-mpfr="${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}" \
 		--with-mpc="${HOST_TOOLS_DIR}/mpc-${MPC_VSN}${SUFFIX}" \
+		--without-cloog \
 		--without-isl \
 		--disable-libgomp \
 		--disable-libmpx \
+		--disable-libmudflap \
 		--disable-libquadmath \
 		--disable-libsanitizer \
 		--disable-lto \
@@ -758,7 +760,7 @@ build_host_gcc() {
 		--enable-languages=c,c++ \
 		--enable-threads=posix \
 		${DISABLE_BOOTSTRAP}
-    make ${DASHJ} ${MAKE_TARGET}
+    make ${DASHJ} MAKEINFO=/bin/true ${MAKE_TARGET}
     make install
     cd ..
     rm -rf objdir-gcc
@@ -892,11 +894,13 @@ build_cross_gcc() {
 		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" \
 		--with-mpfr="${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}" \
 		--with-mpc="${HOST_TOOLS_DIR}/mpc-${MPC_VSN}${SUFFIX}" \
+		--without-cloog \
 		--without-isl \
 		--disable-libatomic \
 		--disable-libgomp \
 		--disable-libitm \
 		--disable-libmpx \
+		--disable-libmudflap \
 		--disable-libquadmath \
 		--disable-libsanitizer \
 		--disable-lto \
@@ -907,7 +911,7 @@ build_cross_gcc() {
 		--enable-languages=c \
 		${MULTILIB_CONFIG} \
 		${LIBC_CONFIGS} ${LIBSSP_CONFIG}
-    make ${DASHJ} ${MAKE_TARGET}
+    make ${DASHJ} MAKEINFO=/bin/true ${MAKE_TARGET}
     make ${INSTALL_TARGET}
     touch "${CROSS_DIR}/.stage-gcc-${STAGE}"
     cd ..
