@@ -304,16 +304,16 @@ case "${TARGET_ARCH}" in
     "kvx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	# from https://github.com/kalray/build-scripts.git
-	BINUTILS_VSN="https://github.com/kalray/gdb-binutils.git;6165fd8a8b42fdf1968db08bbc11e8319cabc61c;-;kalray"
-	GCC_VSN="https://github.com/kalray/gcc.git;32ce4ec583aa5e3498cf9ccf3c06a8b6ca290cf5;coolidge;kalray"
-	NEWLIB_VSN="https://github.com/kalray/newlib.git;84b71a545d86f28289ec805e6e25e896683bac4e;coolidge;kalray"
+	BINUTILS_VSN="git;https://github.com/kalray/gdb-binutils.git;-;-;6165fd8a8b42fdf1968db08bbc11e8319cabc61c;kalray"
+	GCC_VSN="git;https://github.com/kalray/gcc.git;-;coolidge;32ce4ec583aa5e3498cf9ccf3c06a8b6ca290cf5;kalray"
+	NEWLIB_VSN="git;https://github.com/kalray/newlib.git;-;coolidge;84b71a545d86f28289ec805e6e25e896683bac4e;kalray"
 	# kvx-gcc is based on gcc-7.5.0, so use that to build it
 	HOST_GCC_VSN=7.5.0
 	# there is a linux and uClibc-ng port, but uClibc-ng fails to build with relocation errors
 	;;
     "lm32")
 	TARGET_TRIPLE="${TARGET_ARCH}-uclinux-uclibc"
-	LINUX_VSN="https://github.com/m-labs/linux-milkymist.git;1f446f97a4362092dab13d996193a9dc7b0be8e9;master;m-labs"
+	LINUX_VSN="git;https://github.com/m-labs/linux-milkymist.git;-;master;1f446f97a4362092dab13d996193a9dc7b0be8e9"
 	;;
     "m32c")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -546,9 +546,10 @@ get_linux_tarball() {
 
 get_git() {
     local REPO="$1"
-    local REF="$2"
+    # $2 is SUBDIR which is unused here
     local BRANCH="$3"
-    local VENDOR="$4"
+    local REF="$4"
+    local VENDOR="$5"
     local DIR
     if [ "${BRANCH}" = "-" ]; then
 	BRANCH=""
@@ -582,10 +583,11 @@ get_source() {
     local URL="$4"
     local ALTURL="$5"
     case "${VSN}" in
-	*://*.git*)
-	    # REPO;REF;BRANCH;VENDOR
+	git\;*)
+	    # git;REPO;SUBDIR;BRANCH;REF;VENDOR
 	    set `echo "${VSN}" | tr ';' ' '`
-	    get_git "$1" "$2" "$3" "$4"
+	    shift
+	    get_git "$1" "$2" "$3" "$4" "$5"
 	    ;;
 	*)
 	    case "${PREFIX}" in
@@ -633,22 +635,31 @@ unpack_source() {
     local PREFIX="$1"
     local VSN="$2"
     local REPO
+    local SUBDIR
     local VENDOR
-    local DIR
     case "${VSN}" in
-	*://*.git*)
-	    # REPO;REF;BRANCH;VENDOR
+	git\;*)
+	    # git;REPO;SUBDIR;BRANCH;REF;VENDOR
 	    set `echo "${VSN}" | tr ';' ' '`
+	    shift
 	    REPO="$1"
-	    VENDOR="$4"
+	    SUBDIR="$2"
+	    # $3 is BRANCH which is unused here
+	    # $4 is REF which is unused here
+	    VENDOR="$5"
+	    if [ "${SUBDIR}" = "-" ]; then
+		SUBDIR=""
+	    fi
+	    if [ -n "${SUBDIR}" ]; then
+		SUBDIR="/${SUBDIR}"
+	    fi
 	    if [ "${VENDOR}" = "-" ]; then
 		VENDOR=""
 	    fi
 	    if [ -n "${VENDOR}" ]; then
 		VENDOR="${VENDOR}-"
 	    fi
-	    DIR="${VENDOR}`basename ${REPO}`"
-	    echo "${DOWNLOADS_DIR}/${DIR}"
+	    echo "${DOWNLOADS_DIR}/${VENDOR}`basename ${REPO}`${SUBDIR}"
 	    ;;
 	*)
 	    unpack_tarball "${PREFIX}${VSN}"
