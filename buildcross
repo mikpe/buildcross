@@ -1110,7 +1110,7 @@ build_target_uclibc() {
 	mkdir -p "extra/Configs/defconfigs/${TARGET_ARCH}"
 	echo "TARGET_${TARGET_ARCH}=y" > "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig"
     fi
-    make TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" defconfig
+    make ARCH="${TARGET_ARCH}" TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" defconfig
     sed -i -e s,\^KERNEL_HEADERS=.\*\$,KERNEL_HEADERS=\"${CROSS_DIR}/usr/include\",g .config
     sed -i -e s,\^RUNTIME_PREFIX=.\*\$,RUNTIME_PREFIX=\"/\",g .config
     sed -i -e s,\^DEVEL_PREFIX=.\*\$,DEVEL_PREFIX=\"/usr\",g .config
@@ -1135,7 +1135,7 @@ build_target_uclibc() {
 	echo 'ARCH_WANTS_LITTLE_ENDIAN=n' >> .config
 	echo 'ARCH_WANTS_BIG_ENDIAN=y' >> .config
     fi
-    make TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" olddefconfig
+    make ARCH="${TARGET_ARCH}" TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" oldconfig
     make ${DASHJ}
     make PREFIX="${CROSS_DIR}" install
     cp .config "${CROSS_DIR}"
