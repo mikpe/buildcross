@@ -100,6 +100,10 @@
 #
 # Specific unsupported targets:
 #
+# 1750a/m1750	there was a 1750a target in gcc, but it required a non-standard assembler/linker
+#		and was removed in gcc-3.3; an m1750-coff target was developed for gcc-2.7.2 and
+#		binutils-2.7 with a custom libc, but it was never upstreamed and it requires some
+#		patching to build
 # amdgcn	not in binutils, though apparently in llvm's assembler and linker
 # avr32		not in any upstream toolchain components except uClibc-ng, removed in linux-4.12
 # gmicro	not in binutils, removed in gcc-3.0
