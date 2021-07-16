@@ -116,7 +116,7 @@
 # pj		binutils rejects gcc's output and command-line options, did vanilla sources ever work?
 # nvptx		not in binutils, requires the nvptx-tools package
 # unicore32	not in any upstream toolchain components, removed in linux-5.9
-# we32k		not in binutils
+# we32k		incomplete in binutils (no gas or ld), removed in binutils-2.31 and gcc-3.3
 # z8k		there was a z8k-coff target in Cygnus' tree, but the gcc parts were never upstreamed,
 #		and it requires some patching and custom procedures to build
 
