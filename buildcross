@@ -354,6 +354,8 @@ case "${TARGET_ARCH}" in
 	# - if on x86_64, set CC to a wrapper script that enforces -m32
 	# - if on x86_64, set BUILD_TRIPLE=i686-pc-linux-gnu
 	SKIP_HOST_TOOLS=1
+	# OpenBSD has an m88k port based on heavily patched gcc-3.3.6 and
+	# binutils-2.15, but those changes have not been upstreamed.
 	;;
     "mcore")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
