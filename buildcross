@@ -60,6 +60,7 @@
 # mn10300	mn10300-unknown-elf (no libc)
 # moxie		moxie-unknown-elf (no libc)
 # msp430	msp430-unknown-elf (no libc)
+# mt		mt-unknown-elf
 # nds32		nds32le-unknown-elf
 # nios2		nios2-unknown-linux-gnu
 # ns32k		ns32k-unknown-netbsd (no libc)
@@ -115,7 +116,6 @@
 # gmicro	not in binutils, removed in gcc-3.0
 # hexagon	not in any upstream toolchain components, removed in linux-4.17 (TODO: check llvm)
 # metag		not in upstream GCC, removed in linux-4.17
-# mt		broken in gcc (present in 4.1/4.2/4.3, but they all ICE)
 # picochip	not in binutils, removed in gcc-5
 # pj		binutils rejects gcc's output and command-line options, did vanilla sources ever work?
 # nvptx		not in binutils, requires the nvptx-tools package
@@ -130,7 +130,7 @@
 
 set -e
 
-VERSION="6.2.0"
+VERSION="6.2.1"
 
 case "$1" in
     -j*)
@@ -386,6 +386,23 @@ case "${TARGET_ARCH}" in
     "msp430")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	NEWLIB_VSN= # newlib gives linkage errors
+	;;
+    "mt")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	# binutils must be built in 32-bit mode to avoid a 32/64 bit
+	# extension bug, some version after 2.20.1 fixed that bug, but
+	# versions after 2.20.1 also fail to assemble parts of newlib
+	BINUTILS_VSN=2.20.1
+	# gcc must be built in 32-bit mode to avoid a 32/64 bit extension
+	# bug, 4.3.6 could also be built (same bug though), but we stay
+	# with 4.2.4 to avoid dependencies on 32-bit gmp and mpfr
+	GCC_VSN=4.2.4
+	# 2.2.0-1 is the latest newlib to be buildable by mt-elf gcc
+	NEWLIB_VSN=2.2.0-1
+	# on x86_64 you must set CC to a wrapper script that enforces -m32
+	# PATH must select a older gcc suitable for building gcc-4.2.4 and
+	# binutils-2.20.1 (gcc-4.1 and 4.2 are known to work)
+	SKIP_HOST_TOOLS=1
 	;;
     "nds32")
 	TARGET_TRIPLE="nds32le-unknown-elf"
