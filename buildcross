@@ -304,9 +304,6 @@ case "${TARGET_ARCH}" in
 	# - if on x86_64, set CC to a wrapper script that enforces -m32
 	SKIP_HOST_TOOLS=1
 	;;
-    "ia64")
-	BINUTILS_WANTS_ENABLE_OBSOLETE=1 # binutils-2.36 marks ia64 as obsolete
-	;;
     "ip2k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=3.3.6 # added in 3.3, ICEs in 3.4 and 4.0, removed in 4.1
