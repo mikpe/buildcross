@@ -1147,6 +1147,7 @@ build_target_glibc() {
 build_target_uclibc() {
     local CROSS_COMPILE="${TARGET_TRIPLE}-"
     local SOURCE_PATH
+    local OLDDEFCONFIG="olddefconfig"
     log "building uClibc ${UCLIBC_VSN} for ${TARGET_TRIPLE}"
     SOURCE_PATH=`unpack_source "uClibc-ng-" "${UCLIBC_VSN}"`
     cd "${SOURCE_PATH}"
@@ -1178,6 +1179,8 @@ build_target_uclibc() {
 	    echo 'FORCE_SHAREABLE_TEXT_SEGMENTS=y' >> .config
 	    # needed to avoid undefined reference to scalb when linking libm.so
 	    echo 'UCLIBC_SUSV3_LEGACY=y' >> .config
+	    # ubicom32's old uclibc doesn't understand "olddefconfig", which newer ones _require_
+	    OLDDEFCONFIG="oldconfig"
 	    ;;
     esac
     if [ -n "${UCLIBC_WANTS_NPTL}" ]; then
@@ -1195,7 +1198,7 @@ build_target_uclibc() {
 	echo 'ARCH_WANTS_LITTLE_ENDIAN=n' >> .config
 	echo 'ARCH_WANTS_BIG_ENDIAN=y' >> .config
     fi
-    make ARCH="${TARGET_ARCH}" TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" oldconfig
+    make ARCH="${TARGET_ARCH}" TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" ${OLDDEFCONFIG}
     make ${DASHJ}
     make PREFIX="${CROSS_DIR}" install
     cp .config "${CROSS_DIR}"
