@@ -49,6 +49,7 @@
 # lm32		lm32-uclinux-uclibc
 # m32c		m32c-unknown-elf
 # m32r		m32r-unknown-elf
+# m68hc11	m68hc11-unknown-elf
 # m68k		m68k-unknown-linux-gnu
 # m88k		m88k-unknown-coff (no libc)
 # mcore		mcore-unknown-elf (no libc)
@@ -338,6 +339,14 @@ case "${TARGET_ARCH}" in
 	;;
     "m32r")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	;;
+    "m68hc11")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	BINUTILS_VSN=2.26.1 # later version cannot assemble m68hc11-gcc's libgcc .asm files
+	GCC_VSN=4.2.4 # later versions ICE, removed in 4.7
+	NEWLIB_VSN=2.2.0-1 # later versions cannot be built by the 4.2-based m68hc11-gcc
+	# PATH must select an older gcc suitable for building the above (4.2 is known to work)
+	SKIP_HOST_TOOLS=1
 	;;
     "m88k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
