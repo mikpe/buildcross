@@ -128,6 +128,7 @@
 # we32k		incomplete in binutils (no gas or ld), removed in binutils-2.31 and gcc-3.3
 # z8k		see https://github.com/mikpe/ecosSWtools for sources and instructions for building
 #		a z8k-coff toolchain
+# zpu		the toolchain in https://github.com/zylin/zpugcc doesn't build
 
 set -e
 
