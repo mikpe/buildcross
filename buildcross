@@ -47,6 +47,7 @@
 # iq2000	iq2000-unknown-elf (no libc)
 # kvx		kvx-unknown-elf
 # lm32		lm32-uclinux-uclibc
+# loongarch64	loongarch64-unknown-linux-gnu
 # m32c		m32c-unknown-elf
 # m32r		m32r-unknown-elf
 # m68hc11	m68hc11-unknown-elf
@@ -89,6 +90,7 @@
 # Pending:
 #
 # aarch64	waiting for glibc -mabi=ilp32 support
+# loongarch64	waiting for -m32 support (binutils breakage)
 # nds32		waiting for glibc support, uclibc-ng does not build against upstream kernel headers
 #
 # Unsupported:
@@ -323,6 +325,13 @@ case "${TARGET_ARCH}" in
     "lm32")
 	TARGET_TRIPLE="${TARGET_ARCH}-uclinux-uclibc"
 	LINUX_VSN="git;https://github.com/m-labs/linux-milkymist.git;-;master;1f446f97a4362092dab13d996193a9dc7b0be8e9"
+	;;
+    "loongarch64")
+	BINUTILS_VSN="git;https://github.com/loongson/binutils-gdb.git;-;loongarch-2_37;HEAD;loongson"
+	GCC_VSN="git;https://github.com/loongson/gcc.git;-;loongarch_upstream;HEAD;loongson"
+	GLIBC_VSN="git;https://github.com/loongson/glibc.git;-;loongarch_2_34_for_upstream;HEAD;loongson"
+	LINUX_VSN="git;https://github.com/loongson/linux.git;-;loongarch-next;HEAD;loongson"
+	HOST_GCC_VSN=11.2.0
 	;;
     "m32c")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -858,6 +867,9 @@ build_cross_gcc() {
 	    # fixincludes requires /usr/include/ to exist, even if empty
 	    mkdir -p "${CROSS_DIR}/usr/include"
 	    ;;
+	"loongarch64")
+	    MULTILIB_CONFIG="--disable-multilib"
+	    ;;
 	"mep")
 	    mkdir -p "${CROSS_DIR}/usr/include/sys"
 	    touch "${CROSS_DIR}/usr/include/sys/types.h"
@@ -1048,6 +1060,7 @@ build_linux_headers() {
 	"armv7l") KERNEL_ARCH="arm";;
 	"bfin") KERNEL_ARCH="blackfin";;
 	"hppa") KERNEL_ARCH="parisc";;
+	"loongarch64") KERNEL_ARCH="loongarch";;
 	"mips64") KERNEL_ARCH="mips";;
 	ppc64*) KERNEL_ARCH="powerpc";;
 	"riscv64") KERNEL_ARCH="riscv";;
