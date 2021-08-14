@@ -1,4 +1,4 @@
-<#!/bin/sh
+#!/bin/sh
 #
 # buildcross - a tool for building GCC cross toolchains
 # Copyright (C) 2019-2021  Mikael Pettersson
