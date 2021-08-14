@@ -627,7 +627,7 @@ get_sources() {
     get_source "binutils-" "${BINUTILS_VSN}"
     get_source "gcc-" "${GCC_VSN}"
     [ -n "${HOST_GCC_VSN}" ] && get_tarball "gcc-${HOST_GCC_VSN}"
-    [ -n "${GLIBC_VSN}" ] && get_tarball "glibc-${GLIBC_VSN}"
+    [ -n "${GLIBC_VSN}" ] && get_source "glibc-" "${GLIBC_VSN}"
     [ -n "${UCLIBC_VSN}" ] && get_source "uClibc-ng-" "${UCLIBC_VSN}" "xz" "https://downloads.uclibc-ng.org/releases/${UCLIBC_VSN}"
     [ -n "${MUSL_VSN}" ] && get_tarball "musl-${MUSL_VSN}" "gz"
     [ -n "${MINGW64_VSN}" ] && get_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
@@ -1083,13 +1083,14 @@ build_mingw64_headers() {
 }
 
 build_glibc() {
-    local TARGET_TRIPLE="$1"
-    local TARGET_CC="$2"
+    local SOURCE_PATH="$1"
+    local TARGET_TRIPLE="$2"
+    local TARGET_CC="$3"
     log "building glibc-${GLIBC_VSN} for ${TARGET_TRIPLE} ${TARGET_CC}"
     rm -rf "${TARGET_TRIPLE}"
     mkdir "${TARGET_TRIPLE}"
     cd "${TARGET_TRIPLE}"
-    ${SOURCES_DIR}/glibc-${GLIBC_VSN}/configure "${TARGET_CC}" \
+    ${SOURCE_PATH}/configure "${TARGET_CC}" \
 		CXX=/bin/false \
 		--host="${TARGET_TRIPLE}" \
 		--build="${BUILD_TRIPLE}" \
@@ -1104,33 +1105,34 @@ build_glibc() {
 
 build_target_glibc() {
     local TARGET_CC
-    unpack_tarball "glibc-${GLIBC_VSN}"
+    local SOURCE_PATH
+    SOURCE_PATH=`unpack_source "glibc-" "${GLIBC_VSN}"`
     rm -rf objdir-glibc
     mkdir objdir-glibc
     cd objdir-glibc
     # build extra glibcs for alternative ABIs like -m32
     case "${TARGET_ARCH}" in
 	"mips64")
-	    build_glibc "mips-unknown-linux-gnu" "CC=mips64-unknown-linux-gnu-gcc -mabi=32"
-	    build_glibc "mips-unknown-linux-gnu" "CC=mips64-unknown-linux-gnu-gcc -mabi=n32"
+	    build_glibc "${SOURCE_PATH}" "mips-unknown-linux-gnu" "CC=mips64-unknown-linux-gnu-gcc -mabi=32"
+	    build_glibc "${SOURCE_PATH}" "mips-unknown-linux-gnu" "CC=mips64-unknown-linux-gnu-gcc -mabi=n32"
 	    TARGET_CC="CC=mips64-unknown-linux-gnu-gcc -mabi=64"
 	    ;;
 	"ppc64")
-	    build_glibc "ppc-unknown-linux-gnu" "CC=ppc64-unknown-linux-gnu-gcc -m32"
+	    build_glibc "${SOURCE_PATH}" "ppc-unknown-linux-gnu" "CC=ppc64-unknown-linux-gnu-gcc -m32"
 	    ;;
 	"s390x")
-	    build_glibc "s390-unknown-linux-gnu" "CC=s390x-unknown-linux-gnu-gcc -m31"
+	    build_glibc "${SOURCE_PATH}" "s390-unknown-linux-gnu" "CC=s390x-unknown-linux-gnu-gcc -m31"
 	    ;;
 	"sparc64")
-	    build_glibc "sparcv9-unknown-linux-gnu" "CC=sparc64-unknown-linux-gnu-gcc -m32 -mcpu=ultrasparc"
+	    build_glibc "${SOURCE_PATH}" "sparcv9-unknown-linux-gnu" "CC=sparc64-unknown-linux-gnu-gcc -m32 -mcpu=ultrasparc"
 	    ;;
 	"x86_64")
-	    build_glibc "i686-unknown-linux-gnu" "CC=x86_64-unknown-linux-gnu-gcc -m32"
-	    build_glibc "x86_64-unknown-linux-gnu" "CC=x86_64-unknown-linux-gnu-gcc -mx32"
+	    build_glibc "${SOURCE_PATH}" "i686-unknown-linux-gnu" "CC=x86_64-unknown-linux-gnu-gcc -m32"
+	    build_glibc "${SOURCE_PATH}" "x86_64-unknown-linux-gnu" "CC=x86_64-unknown-linux-gnu-gcc -mx32"
 	    ;;
     esac
     # build main glibc
-    build_glibc "${TARGET_TRIPLE}" "${TARGET_CC}"
+    build_glibc "${SOURCE_PATH}" "${TARGET_TRIPLE}" "${TARGET_CC}"
     cd ..
     rm -rf objdir-glibc
 }
