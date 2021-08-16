@@ -174,6 +174,7 @@ NEWLIB_VSN=4.1.0
 UCLIBC_VSN=1.0.38
 
 # binutils configuration options
+BINUTILS_WANTS_DISABLE_WERROR=
 BINUTILS_WANTS_ENABLE_OBSOLETE=
 
 # gcc configuration options
@@ -452,6 +453,7 @@ case "${TARGET_ARCH}" in
     "ubicom32")
 	TARGET_TRIPLE="${TARGET_ARCH}-linux-uclibc"
 	BINUTILS_VSN="git;https://source.codeaurora.org/external/ubicom/ubicom32-toolchain;src;IP8K;236bff6653554ce3360dd94cc5291f54c8a550d0"
+	BINUTILS_WANTS_DISABLE_WERROR=1
 	GCC_VSN="git;https://source.codeaurora.org/external/ubicom/ubicom32-toolchain;src/gcc;IP8K;236bff6653554ce3360dd94cc5291f54c8a550d0"
 	LINUX_VSN="git;https://source.codeaurora.org/external/ubicom/ubicom32-android;-;-;f67b0c971d4aee1825c6288c65f213c298db6062"
 	UCLIBC_VSN="git;https://source.codeaurora.org/external/ubicom/ubicom32-uclibc;-;-;e043cec698ee5fa4057eb68b50c3e1f993586a46"
@@ -992,6 +994,7 @@ build_cross_gcc_with_libc() {
 build_cross_binutils() {
     local ENABLE_TARGETS
     local ENABLE_OBSOLETE
+    local DISABLE_WERROR
     local SOURCE_PATH
     if [ -x "${CROSS_DIR}/bin/${TARGET_TRIPLE}-as" ]; then
 	return
@@ -1005,18 +1008,21 @@ build_cross_binutils() {
 	    ;;
 	"ubicom32")
 	    touch ${SOURCE_PATH}/gcc/DEV-PHASE
-	    ENABLE_TARGETS="--disable-werror"
 	    ;;
     esac
     ENABLE_OBSOLETE=
     if [ -n "${BINUTILS_WANTS_ENABLE_OBSOLETE}" ]; then
 	ENABLE_OBSOLETE="--enable-obsolete"
     fi
+    DISABLE_WERROR=
+    if [ -n "${BINUTILS_WANTS_DISABLE_WERROR}" ]; then
+	DISABLE_WERROR="--disable-werror"
+    fi
     rm -rf objdir-binutils
     mkdir objdir-binutils
     cd objdir-binutils
     ${SOURCE_PATH}/configure \
-		--target="${TARGET_TRIPLE}" ${ENABLE_TARGETS} ${ENABLE_OBSOLETE} \
+		--target="${TARGET_TRIPLE}" ${ENABLE_TARGETS} ${ENABLE_OBSOLETE} ${DISABLE_WERROR} \
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
 		--with-sysroot="${CROSS_DIR}" \
