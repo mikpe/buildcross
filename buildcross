@@ -79,6 +79,7 @@
 # sh4		sh4-unknown-linux-gnu
 # sparc64	sparc64-unknown-linux-gnu with -m64 and -m32 support
 # tilegx	tilegx-unknown-linux-gnu
+# tms9900	tms9900-unknown-elf (no libc)
 # ubicom32	ubicom32-linux-uclibc
 # v850		v850-unknown-elf
 # vax		vax-unknown-linux (no libc or kernel headers)
@@ -449,6 +450,15 @@ case "${TARGET_ARCH}" in
 	GCC_VSN=7.5.0 # later versions cannot build glibc
 	GLIBC_VSN=2.25 # later versions do not build
 	LINUX_VSN=4.16 # tile was removed in linux-4.17
+	;;
+    "tms9900")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	BINUTILS_VSN="git;https://github.com/mikpe/binutils-gdb.git;-;binutils-2_19_1-tms9900;HEAD;mikpe"
+	BINUTILS_WANTS_DISABLE_WERROR=1
+	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;gcc-4.4.0-tms9900;HEAD;mikpe"
+	NEWLIB_VSN= # newlib doesn't support tms9900, but insomnia and tursi have published custom ti99 libcs
+	SKIP_HOST_TOOLS=1 # PATH must point to gcc-9 or older
+	# TODO: extend sim990 to run tms9900 ELF executables
 	;;
     "ubicom32")
 	TARGET_TRIPLE="${TARGET_ARCH}-linux-uclibc"
