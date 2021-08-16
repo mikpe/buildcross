@@ -1049,7 +1049,7 @@ build_cross_binutils() {
 		--disable-tk \
 		--disable-utils \
 		--disable-winsup
-    make ${DASHJ}
+    make ${DASHJ} MAKEINFO=/bin/true
     make MAKEINFO=/bin/true install
     cd ..
     rm -rf objdir-binutils
