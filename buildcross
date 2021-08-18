@@ -136,7 +136,7 @@
 
 set -e
 
-VERSION="6.6.0"
+VERSION="6.7.0"
 
 case "$1" in
     -j*)
