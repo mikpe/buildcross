@@ -63,7 +63,7 @@
 # moxie		moxie-unknown-elf (no libc)
 # msp430	msp430-unknown-elf (no libc)
 # mt		mt-unknown-elf
-# nds32		nds32le-unknown-elf
+# nds32		nds32le-unknown-linux-gnu
 # nios2		nios2-unknown-linux-gnu
 # ns32k		ns32k-unknown-netbsd (no libc)
 # or1k		or1k-unknown-linux-musl
@@ -92,7 +92,6 @@
 #
 # aarch64	waiting for glibc -mabi=ilp32 support
 # loongarch64	waiting for -m32 support (binutils breakage)
-# nds32		waiting for glibc support, uclibc-ng does not build against upstream kernel headers
 #
 # Unsupported:
 #
@@ -416,7 +415,9 @@ case "${TARGET_ARCH}" in
 	SKIP_HOST_TOOLS=1
 	;;
     "nds32")
-	TARGET_TRIPLE="nds32le-unknown-elf"
+	TARGET_TRIPLE="nds32le-unknown-linux-gnu"
+	GLIBC_VSN="git;https://github.com/andestech/glibc.git;-;nds32-glibc-2.27-v0;HEAD;andestech"
+	GLIBC_WANTS_DISABLE_WERROR=1
 	;;
     "ns32k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-netbsd"
@@ -901,6 +902,9 @@ build_cross_gcc() {
 	    MULTILIB_CONFIG="--enable-multilib --enable-64bit --with-dwarf"
 	    LIBC_CONFIGS="--enable-threads=win32"
 	    ;;
+	"nds32")
+	    MULTILIB_CONFIG="--disable-multilib --with-arch=v3 --with-cpu=n13"
+	    ;;
 	"ns32k")
 	    # fixincludes requires /usr/include/ to exist, even if empty
 	    # libgcc requires /usr/include/machine/ansi.h to exist, even if empty
@@ -1155,6 +1159,10 @@ build_target_glibc() {
 	    build_glibc "${SOURCE_PATH}" "mips-unknown-linux-gnu" "CC=mips64-unknown-linux-gnu-gcc -mabi=32"
 	    build_glibc "${SOURCE_PATH}" "mips-unknown-linux-gnu" "CC=mips64-unknown-linux-gnu-gcc -mabi=n32"
 	    TARGET_CC="CC=mips64-unknown-linux-gnu-gcc -mabi=64"
+	    ;;
+	"nds32")
+	    # -fcommon is needed to build nds32's glibc-2.27 with gcc >= 10
+	    TARGET_CC="CC=nds32le-unknown-linux-gnu-gcc -fcommon"
 	    ;;
 	"ppc64")
 	    build_glibc "${SOURCE_PATH}" "ppc-unknown-linux-gnu" "CC=ppc64-unknown-linux-gnu-gcc -m32"
