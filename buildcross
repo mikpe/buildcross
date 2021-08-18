@@ -181,6 +181,9 @@ BINUTILS_WANTS_ENABLE_OBSOLETE=
 # gcc configuration options
 GCC_WANTS_ENABLE_OBSOLETE=
 
+# glibc configuration options
+GLIBC_WANTS_DISABLE_WERROR=
+
 # uClibc-ng configuration options
 UCLIBC_WANTS_LINUXTHREADS=
 UCLIBC_WANTS_NPTL=
@@ -1117,11 +1120,16 @@ build_glibc() {
     local SOURCE_PATH="$1"
     local TARGET_TRIPLE="$2"
     local TARGET_CC="$3"
+    local DISABLE_WERROR
     log "building glibc-${GLIBC_VSN} for ${TARGET_TRIPLE} ${TARGET_CC}"
+    DISABLE_WERROR=
+    if [ -n "${GLIBC_WANTS_DISABLE_WERROR}" ]; then
+	DISABLE_WERROR="--disable-werror"
+    fi
     rm -rf "${TARGET_TRIPLE}"
     mkdir "${TARGET_TRIPLE}"
     cd "${TARGET_TRIPLE}"
-    ${SOURCE_PATH}/configure "${TARGET_CC}" \
+    ${SOURCE_PATH}/configure "${TARGET_CC}" ${DISABLE_WERROR} \
 		CXX=/bin/false \
 		--host="${TARGET_TRIPLE}" \
 		--build="${BUILD_TRIPLE}" \
