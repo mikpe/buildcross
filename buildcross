@@ -52,7 +52,7 @@
 # m32r		m32r-unknown-elf
 # m68hc11	m68hc11-unknown-elf
 # m68k		m68k-unknown-linux-gnu
-# m88k		m88k-unknown-coff (no libc)
+# m88k		m88k-unknown-openbsd (elf, no libc)
 # mcore		mcore-unknown-elf (no libc)
 # mep		mep-unknown-elf (no libc)
 # microblaze	microblaze-unknown-linux-gnu
@@ -136,7 +136,7 @@
 
 set -e
 
-VERSION="6.7.0"
+VERSION="6.7.1"
 
 case "$1" in
     -j*)
@@ -356,18 +356,15 @@ case "${TARGET_ARCH}" in
 	SKIP_HOST_TOOLS=1
 	;;
     "m88k")
-	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
-	GCC_VSN=2.95.3
-	BINUTILS_VSN=2.16.1
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-openbsd"
+	# binutils and gcc from OpenBSD for m88k
+	BINUTILS_VSN="git;https://github.com/mikpe/binutils-gdb.git;-;binutils-2_15-m88k-openbsd;HEAD;mikpe"
+	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;gcc-3.3.6-m88k-openbsd;HEAD;mikpe"
 	NEWLIB_VSN= # fails to build for m88k
 	# you need to:
-	# - adjust PATH to select gcc-3.x (3.4.6 and 3.3.6 are known to work)
-	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
-	# - if on x86_64, set CC to a wrapper script that enforces -m32
-	# - if on x86_64, set BUILD_TRIPLE=i686-pc-linux-gnu
+	# - adjust PATH to select a gcc capable of building the above, 3.3.6 to 5.5.0 are known to work
+	# - if PATH selects gcc < 4.0, set BUILD_TRIPLE because gcc -v < 4.0 doesn't list Target:
 	SKIP_HOST_TOOLS=1
-	# OpenBSD has an m88k port based on heavily patched gcc-3.3.6 and
-	# binutils-2.15, but those changes have not been upstreamed.
 	;;
     "mcore")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -541,6 +538,7 @@ case "${TARGET_TRIPLE}" in
     m88k-unknown-coff | \
     ns32k-unknown-netbsd | \
     mmix-knuth-mmixware | \
+    m88k-unknown-openbsd | \
     pdp11-unknown-aout | \
     vax-unknown-linux)
 	GLIBC_VSN=
@@ -887,6 +885,15 @@ build_cross_gcc() {
 	    ;;
 	"loongarch64")
 	    MULTILIB_CONFIG="--disable-multilib"
+	    ;;
+	"m88k")
+	    ENABLE_CHECKING=
+	    mkdir -p "${CROSS_DIR}/usr/include/sys"
+	    touch "${CROSS_DIR}/usr/include/sys/mman.h"
+	    echo "typedef unsigned long size_t;" > "${CROSS_DIR}/usr/include/sys/types.h"
+	    echo "#define FLT_MANT_DIG 24"  > "${CROSS_DIR}/usr/include/float.h"
+	    echo "#define DBL_MANT_DIG 53" >> "${CROSS_DIR}/usr/include/float.h"
+	    echo "extern void abort(void);" > "${CROSS_DIR}/usr/include/stddef.h"
 	    ;;
 	"mep")
 	    mkdir -p "${CROSS_DIR}/usr/include/sys"
