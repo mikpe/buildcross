@@ -81,7 +81,7 @@
 # tilegx	tilegx-unknown-linux-gnu
 # tms9900	tms9900-unknown-elf (no libc)
 # ubicom32	ubicom32-linux-uclibc
-# v850		v850-unknown-elf
+# v850		v850e-uclinux-uclibc
 # vax		vax-unknown-linux (no libc or kernel headers)
 # visium	visium-unknown-elf (no libc)
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
@@ -136,7 +136,7 @@
 
 set -e
 
-VERSION="6.7.1"
+VERSION="6.7.2"
 
 case "$1" in
     -j*)
@@ -471,7 +471,10 @@ case "${TARGET_ARCH}" in
 	SKIP_HOST_TOOLS=1 # ubicom32-gcc is based on gcc-4.4.1, you'll need something compatible in PATH
 	;;
     "v850")
-	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	TARGET_TRIPLE="${TARGET_ARCH}e-uclinux-uclibc"
+	LINUX_VSN=2.6.26 # v850 was removed in linux-2.6.27
+	# v850 was removed in uClibc-ng-1.0.11, this is an unofficial forward-port from 1.0.10
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.38-v850;HEAD;mikpe"
 	;;
     "vax")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux"
@@ -584,6 +587,9 @@ get_linux_tarball() {
 	    ;;
 	4\.*)
 	    KERNEL_DIR=v4.x
+	    ;;
+	2\.6\.*)
+	    KERNEL_DIR=v2.6
 	    ;;
     esac
     get_tarball "linux-${LINUX_VSN}" "xz" "${DISTFILES}" "https://www.kernel.org/pub/linux/kernel/${KERNEL_DIR}"
@@ -1103,8 +1109,20 @@ build_linux_headers() {
 	*) KERNEL_ARCH="${TARGET_ARCH}"
     esac
     SOURCE_PATH=`unpack_source "linux-" "${LINUX_VSN}"`
+    case "${TARGET_ARCH}" in
+	"v850")
+	    # fix glibc conflict in 2.6.26, upstream d15bd1067b1fcb2b7250d22bc0c7c7fea0b759f7
+	    sed -i -e 's,getline(,get_line(,g' "${SOURCE_PATH}/scripts/unifdef.c"
+	    ;;
+    esac
     cd "${SOURCE_PATH}"
     make ARCH="${KERNEL_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" INSTALL_HDR_PATH="${CROSS_DIR}/usr" headers_install
+    case "${TARGET_ARCH}" in
+	"v850")
+	    # install additional headers needed by uClibc-ng
+	    cp include/asm-v850/{clinkage,macrology,asm}.h "${CROSS_DIR}/usr/include/asm/"
+	    ;;
+    esac
     make mrproper
     cd -
 }
