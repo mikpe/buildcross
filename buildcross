@@ -29,15 +29,15 @@
 # bfin		bfin-unknown-linux-uclibc
 # bpf		bpf-unknown-none (no libc)
 # c6x		c6x-unknown-uclinux
-# cr16		cr16-unknown-elf (no libc)
+# cr16		cr16-unknown-elf
 # cris		crisv32-unknown-linux-uclibc
 # crx		crx-unknown-elf (no libc)
 # csky		csky-unknown-linux-gnu (only little-endian)
 # d30v		d30v-unknown-elf (no libc)
-# epiphany	epiphany-unknown-elf (no libc)
+# epiphany	epiphany-unknown-elf
 # fr30		fr30-unknown-elf
 # frv		frv-unknown-linux-uclibc
-# ft32		ft32-unknown-elf (no libc)
+# ft32		ft32-unknown-elf
 # h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
 # i860		i860-stardent-sysv4 (no libc)
@@ -53,15 +53,15 @@
 # m68hc11	m68hc11-unknown-elf
 # m68k		m68k-unknown-linux-gnu
 # m88k		m88k-unknown-openbsd (elf, no libc)
-# mcore		mcore-unknown-elf (no libc)
+# mcore		mcore-unknown-elf
 # mep		mep-unknown-elf (no libc)
 # microblaze	microblaze-unknown-linux-gnu
 # mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
 # mips64	mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support
 # mmix		mmix-knuth-mmixware (with newlib)
-# mn10300	mn10300-unknown-elf (no libc)
-# moxie		moxie-unknown-elf (no libc)
-# msp430	msp430-unknown-elf (no libc)
+# mn10300	mn10300-unknown-elf
+# moxie		moxie-unknown-elf
+# msp430	msp430-unknown-elf
 # mt		mt-unknown-elf
 # nds32		nds32le-unknown-linux-gnu
 # nios2		nios2-unknown-linux-gnu
@@ -85,7 +85,7 @@
 # vax		vax-unknown-linux (no libc or kernel headers)
 # visium	visium-unknown-elf (no libc)
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
-# xstormy16	xstormy16-unknown-elf (no libc)
+# xstormy16	xstormy16-unknown-elf
 # xtensa	xtensa-unknown-linux-uclibc
 #
 # Pending:
@@ -136,7 +136,7 @@
 
 set -e
 
-VERSION="6.7.4"
+VERSION="6.7.5"
 
 case "$1" in
     -j*)
@@ -231,7 +231,6 @@ case "${TARGET_ARCH}" in
 	;;
     "cr16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "cris")
 	TARGET_TRIPLE="crisv32-unknown-linux-uclibc"
@@ -260,7 +259,6 @@ case "${TARGET_ARCH}" in
 	;;
     "epiphany")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "fr30")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -272,7 +270,6 @@ case "${TARGET_ARCH}" in
 	;;
     "ft32")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
@@ -368,7 +365,6 @@ case "${TARGET_ARCH}" in
 	;;
     "mcore")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "mep")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -384,15 +380,12 @@ case "${TARGET_ARCH}" in
 	;;
     "mn10300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "moxie")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "msp430")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "mt")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -488,7 +481,6 @@ case "${TARGET_ARCH}" in
 	;;
     "xstormy16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN= # newlib gives linkage errors
 	;;
     "xtensa")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
