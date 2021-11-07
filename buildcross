@@ -136,7 +136,7 @@
 
 set -e
 
-VERSION="6.7.6"
+VERSION="6.7.7"
 
 case "$1" in
     -j*)
@@ -179,6 +179,7 @@ BINUTILS_WANTS_ENABLE_OBSOLETE=
 
 # gcc configuration options
 GCC_WANTS_ENABLE_OBSOLETE=
+GCC_WANTS_ENABLE_INITFINI_ARRAY=
 
 # glibc configuration options
 GLIBC_WANTS_DISABLE_WERROR=
@@ -506,6 +507,8 @@ case "${TARGET_TRIPLE}" in
 	MUSL_VSN=
 	MINGW64_VSN=
 	NEWLIB_VSN=
+	# c.f. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100896
+	GCC_WANTS_ENABLE_INITFINI_ARRAY=1
 	;;
     *linux-uclibc* | *uclinux*)
 	GLIBC_VSN=
@@ -831,6 +834,7 @@ build_cross_gcc() {
     local INSTALL_TARGET
     local ENABLE_CHECKING
     local ENABLE_OBSOLETE
+    local ENABLE_INITFINI_ARRAY
     local SOURCE_PATH
     if [ -f "${CROSS_DIR}/.stage-gcc-${STAGE}" ]; then
 	return
@@ -850,6 +854,10 @@ build_cross_gcc() {
     ENABLE_OBSOLETE=
     if [ -n "${GCC_WANTS_ENABLE_OBSOLETE}" ]; then
 	ENABLE_OBSOLETE="--enable-obsolete"
+    fi
+    ENABLE_INITFINI_ARRAY=
+    if [ -n "${GCC_WANTS_ENABLE_INITFINI_ARRAY}" ]; then
+	ENABLE_INITFINI_ARRAY="--enable-initfini-array"
     fi
     case "${TARGET_ARCH}" in
 	"aarch64")
@@ -985,7 +993,7 @@ build_cross_gcc() {
 	        ${ENABLE_CHECKING} \
 		--enable-languages=c \
 		${MULTILIB_CONFIG} \
-		${LIBC_CONFIGS} ${LIBSSP_CONFIG}
+		${LIBC_CONFIGS} ${LIBSSP_CONFIG} ${ENABLE_INITFINI_ARRAY}
     make ${DASHJ} MAKEINFO=/bin/true ${MAKE_TARGET}
     make ${INSTALL_TARGET}
     touch "${CROSS_DIR}/.stage-gcc-${STAGE}"
