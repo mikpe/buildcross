@@ -475,7 +475,7 @@ case "${TARGET_ARCH}" in
 	BINUTILS_VSN="git;https://github.com/mikpe/binutils-gdb.git;-;binutils-2_37-v850;HEAD;mikpe"
 	LINUX_VSN=2.6.26 # v850 was removed in linux-2.6.27
 	# v850 was removed in uClibc-ng-1.0.11, this is an unofficial forward-port from 1.0.10
-	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.38-v850;HEAD;mikpe"
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.39-v850;HEAD;mikpe"
 	;;
     "vax")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux"
