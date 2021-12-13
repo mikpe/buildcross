@@ -278,7 +278,8 @@ case "${TARGET_ARCH}" in
 	;;
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
-	GCC_VSN=10.3.0 # gcc-11.x ICE building uClibc-ng-1.0.38
+	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101697
+	GCC_VSN=10.3.0 # gcc-11/12 ICE building uClibc-ng
 	;;
     "i860")
 	TARGET_TRIPLE="${TARGET_ARCH}-stardent-sysv4"
