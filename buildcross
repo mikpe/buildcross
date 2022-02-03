@@ -136,7 +136,7 @@
 
 set -e
 
-VERSION="6.8.0"
+VERSION="6.8.1"
 
 case "$1" in
     -j*)
@@ -171,7 +171,7 @@ MPC_VSN=1.2.1
 MPFR_VSN=4.1.0
 MUSL_VSN=1.2.2
 NEWLIB_VSN=4.2.0.20211231
-UCLIBC_VSN=1.0.39
+UCLIBC_VSN=1.0.40
 
 # binutils configuration options
 BINUTILS_WANTS_DISABLE_WERROR=
@@ -216,7 +216,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	UCLIBC_WANTS_LINUXTHREADS=y
 	UCLIBC_WANTS_SSP=y
-	UCLIBC_VSN=1.0.38 # 1.0.39 fails to build with linkage errors
+	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
 	LINUX_VSN=4.16 # blackfin was removed in linux-4.17
 	GCC_VSN=9.4.0 # gcc-10.x/11.x give linkage errors in uClibc-ng
 	;;
@@ -229,7 +229,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_LINUXTHREADS=y
 	UCLIBC_WANTS_SSP=y
 	UCLIBC_WANTS_BIG_ENDIAN=y
-	UCLIBC_VSN=1.0.38 # 1.0.39 fails to build with linkage errors
+	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
 	LINUX_VSN=5.11 # c6x was removed in linux-5.12
 	;;
     "cr16")
@@ -239,7 +239,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="crisv32-unknown-linux-uclibc"
 	UCLIBC_WANTS_LINUXTHREADS=y
 	UCLIBC_WANTS_SSP=y
-	UCLIBC_VSN=1.0.38 # 1.0.39 fails to build with linkage errors
+	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
 	LINUX_VSN=4.16 # cris was removed in linux-4.17
 	GCC_WANTS_ENABLE_OBSOLETE=1 # gcc-10 marks cris as obsolete
 	GCC_VSN=10.3.0 # gcc-11.1.0 dropped support for this target triple
@@ -270,7 +270,7 @@ case "${TARGET_ARCH}" in
     "frv")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	UCLIBC_WANTS_SSP=y
-	UCLIBC_VSN=1.0.38 # 1.0.39 fails to build with linkage errors
+	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
 	LINUX_VSN=4.16 # frv was removed in linux-4.17
 	;;
     "ft32")
@@ -474,7 +474,7 @@ case "${TARGET_ARCH}" in
 	BINUTILS_VSN="git;https://github.com/mikpe/binutils-gdb.git;-;binutils-2_37-v850;HEAD;mikpe"
 	LINUX_VSN=2.6.26 # v850 was removed in linux-2.6.27
 	# v850 was removed in uClibc-ng-1.0.11, this is an unofficial forward-port from 1.0.10
-	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.39-v850;HEAD;mikpe"
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.40-v850;HEAD;mikpe"
 	;;
     "vax")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux"
@@ -490,7 +490,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	UCLIBC_WANTS_NPTL=y
 	UCLIBC_WANTS_SSP=y
-	UCLIBC_VSN=1.0.38 # 1.0.39 fails to build with linkage errors
+	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
 	;;
 esac
 
