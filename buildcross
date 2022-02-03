@@ -1224,7 +1224,7 @@ build_target_uclibc() {
     cd "${SOURCE_PATH}"
     make clean
     # the lm32 defconfig is misplaced
-    if [ -f "extra/Configs/defconfigs/lm32" ]; then
+    if [ "${TARGET_ARCH}" = "lm32" -a -f "extra/Configs/defconfigs/lm32" ]; then
 	rm "extra/Configs/defconfigs/lm32"
     fi
     if [ \( ! -f "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig" \) -a \( "${TARGET_ARCH}" != "ubicom32" \) ]; then
