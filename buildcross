@@ -1106,6 +1106,7 @@ build_linux_headers() {
 	"hppa") KERNEL_ARCH="parisc";;
 	"loongarch64") KERNEL_ARCH="loongarch";;
 	"mips64") KERNEL_ARCH="mips";;
+	"or1k") KERNEL_ARCH="openrisc";;
 	ppc64*) KERNEL_ARCH="powerpc";;
 	"riscv64") KERNEL_ARCH="riscv";;
 	"s390x") KERNEL_ARCH="s390";;
