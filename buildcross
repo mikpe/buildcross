@@ -67,6 +67,7 @@
 # nios2		nios2-unknown-linux-gnu
 # ns32k		ns32k-unknown-netbsd (no libc)
 # or1k		or1k-unknown-linux-gnu
+# or1k-musl	or1k-unknown-linux-musl
 # pdp11		pdp11-unknown-aout (no libc)
 # ppc64		ppc64-unknown-linux-gnu with -m64 and -m32 support
 # ppc64le	ppc64le-unknown-linux-gnu (no -m32 support)
@@ -420,6 +421,10 @@ case "${TARGET_ARCH}" in
 	GCC_WANTS_ENABLE_OBSOLETE=1 # obsoleted in 4.0, removed in 4.1
 	SKIP_HOST_TOOLS=1 # PATH must point to a suitable old gcc
 	# we can't build libc, but netbsd-1.5.3's can be popped in
+	;;
+    "or1k-musl")
+	TARGET_ARCH="or1k"
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-musl"
 	;;
     "pdp11")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-aout"
