@@ -317,6 +317,7 @@ case "${TARGET_ARCH}" in
 	# - adjust PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
 	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
 	SKIP_HOST_TOOLS=1
+	BINUTILS_VSN=2.37 # 2.38 doesn't build with older GCCs due to 0b literals
 	;;
     "iq2000")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -419,6 +420,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-netbsd"
 	GCC_VSN=4.0.4
 	GCC_WANTS_ENABLE_OBSOLETE=1 # obsoleted in 4.0, removed in 4.1
+	BINUTILS_VSN=2.37 # obsoleted in 2.38, and 2.38 doesn't build with older GCCs due to 0b literals
 	SKIP_HOST_TOOLS=1 # PATH must point to a suitable old gcc
 	# we can't build libc, but netbsd-1.5.3's can be popped in
 	;;
