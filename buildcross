@@ -379,6 +379,7 @@ case "${TARGET_ARCH}" in
 	;;
     "mingw64")
 	TARGET_TRIPLE="x86_64-w64-mingw32"
+	BINUTILS_VSN=2.37 # 2.38 randomly generates broken .a files
 	;;
     "mmix")
 	TARGET_TRIPLE="${TARGET_ARCH}-knuth-mmixware"
