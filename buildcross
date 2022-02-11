@@ -336,7 +336,6 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN="git;https://github.com/m-labs/linux-milkymist.git;-;master;1f446f97a4362092dab13d996193a9dc7b0be8e9"
 	;;
     "loongarch64")
-	BINUTILS_VSN="git;https://github.com/loongson/binutils-gdb.git;-;loongarch-2_37;HEAD;loongson"
 	GCC_VSN="git;https://github.com/loongson/gcc.git;-;loongarch_upstream;HEAD;loongson"
 	GLIBC_VSN="git;https://github.com/loongson/glibc.git;-;loongarch_2_34_for_upstream;HEAD;loongson"
 	LINUX_VSN="git;https://github.com/loongson/linux.git;-;loongarch-next;HEAD;loongson"
