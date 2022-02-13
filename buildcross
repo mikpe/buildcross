@@ -620,9 +620,6 @@ get_git() {
     if [ "${BRANCH}" = "-" ]; then
 	BRANCH=""
     fi
-    if [ -n "${BRANCH}" ]; then
-	BRANCH="-b ${BRANCH}"
-    fi
     if [ "${VENDOR}" = "-" ]; then
 	VENDOR=""
     fi
@@ -633,8 +630,14 @@ get_git() {
     if [ -d "${DIR}" ]; then
 	cd "${DIR}"
 	git fetch
+	if [ -n "${BRANCH}" ]; then
+	    git checkout "${BRANCH}"
+	fi
 	cd -
     else
+	if [ -n "${BRANCH}" ]; then
+	    BRANCH="-b ${BRANCH}"
+	fi
 	git clone ${BRANCH} "${REPO}" "${DIR}"
     fi
     cd "${DIR}"
