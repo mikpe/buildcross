@@ -327,11 +327,11 @@ case "${TARGET_ARCH}" in
     "kvx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	# from https://github.com/kalray/build-scripts.git
-	BINUTILS_VSN="git;https://github.com/kalray/gdb-binutils.git;-;-;6165fd8a8b42fdf1968db08bbc11e8319cabc61c;kalray"
-	GCC_VSN="git;https://github.com/kalray/gcc.git;-;coolidge;32ce4ec583aa5e3498cf9ccf3c06a8b6ca290cf5;kalray"
-	NEWLIB_VSN="git;https://github.com/kalray/newlib.git;-;coolidge;84b71a545d86f28289ec805e6e25e896683bac4e;kalray"
-	# kvx-gcc is based on gcc-7.5.0, so use that to build it
-	HOST_GCC_VSN=7.5.0
+	BINUTILS_VSN="git;https://github.com/kalray/gdb-binutils.git;-;-;3f4b2cce66a12f7c0d2be188d281586ad84ff454;kalray"
+	GCC_VSN="git;https://github.com/kalray/gcc.git;-;coolidge;eba44d60cef1ea122daa16fc65725a843adfd719;kalray"
+	NEWLIB_VSN="git;https://github.com/kalray/newlib.git;-;coolidge;e820347f759071b3fe190bf0d56b7b7a1a99cdc4;kalray"
+	# kvx-gcc is based on gcc-9.4, so use that to build it
+	HOST_GCC_VSN=9.4.0
 	# there is a linux and uClibc-ng port, but uClibc-ng fails to build with relocation errors
 	;;
     "lm32")
