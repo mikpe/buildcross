@@ -203,8 +203,10 @@ case "${TARGET_ARCH}" in
 	# you need to:
 	# - adjust PATH to select gcc-3.x (3.4.6 and 3.3.6 are known to work)
 	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
-	# - if on x86_64, set CC to a wrapper script that enforces -m32
-	# - if on x86_64, set BUILD_TRIPLE=i686-pc-linux-gnu
+	# - if on x86_64:
+	#   + set CC to a wrapper script that enforces -m32
+	#   + set BUILD_TRIPLE=i686-pc-linux-gnu
+	#   + use setarch i686
 	SKIP_HOST_TOOLS=1
 	;;
     "armv7l")
@@ -261,6 +263,7 @@ case "${TARGET_ARCH}" in
 	# you need to:
 	# - adjust PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
 	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
+	# - if on x86_64, set BUILD_TRIPLE=x86_64-unknown-linux-gnu NOT x86_64-pc-linux-gnu
 	SKIP_HOST_TOOLS=1
 	;;
     "epiphany")
@@ -293,6 +296,7 @@ case "${TARGET_ARCH}" in
 	# you need to:
 	# - adjust PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
 	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
+	# - if on x86_64, set BUILD_TRIPLE=x86_64-unknown-linux-gnu NOT x86_64-pc-linux-gnu
 	# - if on x86_64, set CC to a wrapper script that enforces -m32
 	;;
     "i960")
@@ -307,6 +311,7 @@ case "${TARGET_ARCH}" in
 	# you need to:
 	# - adjust PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
 	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
+	# - if on x86_64, set BUILD_TRIPLE=x86_64-unknown-linux-gnu NOT x86_64-pc-linux-gnu
 	# - if on x86_64, set CC to a wrapper script that enforces -m32
 	SKIP_HOST_TOOLS=1
 	;;
