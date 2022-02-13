@@ -45,7 +45,7 @@
 # ia64		ia64-unknown-linux-gnu
 # ip2k		ip2k-unknown-elf (no libc)
 # iq2000	iq2000-unknown-elf
-# kvx		kvx-unknown-elf
+# kvx		kvx-unknown-uclibc
 # lm32		lm32-uclinux-uclibc
 # loongarch64	loongarch64-unknown-linux-gnu
 # m32c		m32c-unknown-elf
@@ -326,14 +326,15 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	;;
     "kvx")
-	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	# from https://github.com/kalray/build-scripts.git
 	BINUTILS_VSN="git;https://github.com/kalray/gdb-binutils.git;-;-;3f4b2cce66a12f7c0d2be188d281586ad84ff454;kalray"
 	GCC_VSN="git;https://github.com/kalray/gcc.git;-;coolidge;eba44d60cef1ea122daa16fc65725a843adfd719;kalray"
-	NEWLIB_VSN="git;https://github.com/kalray/newlib.git;-;coolidge;e820347f759071b3fe190bf0d56b7b7a1a99cdc4;kalray"
+	LINUX_VSN="git;https://github.com/kalray/linux_coolidge.git;-;coolidge;b02c139d3608c8ae87f5398a3a29854f6df7a041;kalray"
+	UCLIBC_VSN="git;https://github.com/kalray/uclibc-ng.git;-;coolidge;5ec7fd3865e43efbdafe3440c37ae5cff8188f20;kalray"
+	UCLIBC_WANTS_STATIC=1 # kvx-uclibc defaults to building shared libraries but fails with relocation errors
 	# kvx-gcc is based on gcc-9.4, so use that to build it
 	HOST_GCC_VSN=9.4.0
-	# there is a linux and uClibc-ng port, but uClibc-ng fails to build with relocation errors
 	;;
     "lm32")
 	TARGET_TRIPLE="${TARGET_ARCH}-uclinux-uclibc"
