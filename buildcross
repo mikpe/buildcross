@@ -191,6 +191,7 @@ UCLIBC_WANTS_NPTL=
 UCLIBC_WANTS_SSP=
 UCLIBC_WANTS_LITTLE_ENDIAN=
 UCLIBC_WANTS_BIG_ENDIAN=
+UCLIBC_WANTS_STATIC=
 
 # target-specfic overrides
 case "${TARGET_ARCH}" in
@@ -1281,6 +1282,9 @@ build_target_uclibc() {
     elif [ -n "${UCLIBC_WANTS_BIG_ENDIAN}" ]; then
 	echo 'ARCH_WANTS_LITTLE_ENDIAN=n' >> .config
 	echo 'ARCH_WANTS_BIG_ENDIAN=y' >> .config
+    fi
+    if [ -n "${UCLIBC_WANTS_STATIC}" ]; then
+	echo 'HAVE_SHARED=n' >> .config
     fi
     make ARCH="${TARGET_ARCH}" TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" ${OLDDEFCONFIG}
     make ${DASHJ}
