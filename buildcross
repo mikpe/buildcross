@@ -1255,10 +1255,10 @@ build_target_uclibc() {
 	echo "TARGET_${TARGET_ARCH}=y" > "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig"
     fi
     make ARCH="${TARGET_ARCH}" TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" defconfig
-    sed -i -e s,\^KERNEL_HEADERS=.\*\$,KERNEL_HEADERS=\"${CROSS_DIR}/usr/include\",g .config
-    sed -i -e s,\^RUNTIME_PREFIX=.\*\$,RUNTIME_PREFIX=\"/\",g .config
-    sed -i -e s,\^DEVEL_PREFIX=.\*\$,DEVEL_PREFIX=\"/usr\",g .config
-    sed -i -e s,\^CROSS_COMPILER_PREFIX=.\*\$,CROSS_COMPILER_PREFIX=\"${CROSS_COMPILE}\",g .config
+    echo "KERNEL_HEADERS=\"${CROSS_DIR}/usr/include\"" >> .config
+    echo "RUNTIME_PREFIX=\"/\"" >> .config
+    echo "DEVEL_PREFIX=\"/usr\"" >> .config
+    echo "CROSS_COMPILER_PREFIX=\"${CROSS_COMPILE}\"" >> .config
     case "${TARGET_ARCH}" in
 	"cris")
 	    echo 'CONFIG_CRISV32=y' >> .config
