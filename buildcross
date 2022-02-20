@@ -41,7 +41,7 @@
 # h8300		h8300-unknown-linux-uclibc
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
 # i860		i860-stardent-sysv4 (no libc)
-# i960		i960-unknown-coff (no libc)
+# i960		i960-unknown-elf
 # ia64		ia64-unknown-linux-gnu
 # ip2k		ip2k-unknown-elf (no libc)
 # iq2000	iq2000-unknown-elf
@@ -303,11 +303,12 @@ case "${TARGET_ARCH}" in
 	# There is a port based on uclinux-2.0.x and uclibc-0.9.27,
 	# but it's buried in pre-2013 releases of uClinux-dist on
 	# SourceForge, and it requires major patching to build.
-	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
-	GCC_VSN=3.4.6
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	GCC_VSN=3.4.6 # obsoleted in 3.4, removed in 4.0
 	GCC_WANTS_ENABLE_OBSOLETE=1
-	BINUTILS_VSN=2.16.1
-	NEWLIB_VSN= # fails to build for i960
+	BINUTILS_VSN=2.30 # obsoleted in 2.28, removed in 2.31
+	BINUTILS_WANTS_ENABLE_OBSOLETE=1
+	NEWLIB_VSN=2.2.0-1 # later ones cannot be built by the 3.x-based i960-gcc
 	# you need to:
 	# - adjust PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
 	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
@@ -557,7 +558,6 @@ case "${TARGET_TRIPLE}" in
     a29k-unknown-coff | \
     bpf-unknown-none | \
     i860-stardent-sysv4 | \
-    i960-unknown-coff | \
     m88k-unknown-coff | \
     ns32k-unknown-netbsd | \
     mmix-knuth-mmixware | \
