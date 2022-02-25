@@ -26,6 +26,7 @@
 # arc		arc-unknown-linux-gnu
 # armv7l	armv7l-unknown-linux-gnueabi
 # avr		avr-unknown-elf (no libc)
+# avr32		avr32-unknown-linux-uclibc
 # bfin		bfin-unknown-linux-uclibc
 # bpf		bpf-unknown-none (no libc)
 # c6x		c6x-unknown-uclinux
@@ -109,7 +110,6 @@
 #		an m1750-coff toolchain (the alternative 1750a target required a non-standard
 #		assembler/linker and was removed in gcc-3.3, it's not supported)
 # amdgcn	not in binutils, though apparently in llvm's assembler and linker
-# avr32		not in any upstream toolchain components except uClibc-ng, removed in linux-4.12
 # clipper	not in binutils, removed in gcc-3.3
 # convex	not in binutils, removed in gcc-3.3
 # d10v		see https://github.com/mikpe/ecosSWtools for sources and instructions for building
@@ -215,6 +215,15 @@ case "${TARGET_ARCH}" in
     "avr")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	NEWLIB_VSN= # not supported in newlib at all
+	;;
+    "avr32")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
+	BINUTILS_VSN="git;https://github.com/embecosm/avr32-binutils-gdb.git;-;avr32-binutils-2.23;HEAD;-"
+	GCC_VSN="git;https://github.com/embecosm/avr32-gcc.git;-;avr32-gcc-4.4;HEAD;-"
+	LINUX_VSN=4.11 # avr32 was removed in linux-4.12
+	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
+	# set PATH to select gcc-4.x (4.4.7 is known to work)
+	SKIP_HOST_TOOLS=1
 	;;
     "bfin")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
@@ -895,6 +904,13 @@ build_cross_gcc() {
 	    ;;
 	"armv7l")
 	    MULTILIB_CONFIG="--disable-multilib --with-arch=armv7-a --with-tune=cortex-a9 --with-float=hard --with-fpu=vfpv3-d16"
+	    ;;
+	"avr32")
+	    # required fixes, do them in place to avoid needing a private fork of the repo
+	    # avr32-linux* incorrectly adds crti.o and crtn.o to EXTRA_MULTILIB_PARTS (c.f. avr32-uclinux)
+	    sed -i -e 's,tmake_file="t-linux avr32/t-avr32 avr32/t-elf",tmake_file="t-linux avr32/t-avr32-linux",g' "${SOURCE_PATH}/gcc/config.gcc"
+	    # avr32-linux-uclibc fails to remove crtbeginT.o from EXTRA_MULTILIB_PARTS (c.f. bfin-linux-uclibc)
+	    sed -i -e 's,^avr32-\*-\*),avr32-*-linux-uclibc*)\n\textra_parts="crtbegin.o crtbeginS.o crtend.o crtendS.o"\n\t;;\navr32-*-*),g' "${SOURCE_PATH}/libgcc/config.host"
 	    ;;
 	"csky")
 	    MULTILIB_CONFIG="--disable-multilib --with-endian=little"
