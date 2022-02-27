@@ -40,6 +40,7 @@
 # frv		frv-unknown-linux-uclibc
 # ft32		ft32-unknown-elf
 # h8300		h8300-unknown-linux-uclibc
+# hexagon	hexagon-unknown-linux-gnu
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
 # i860		i860-stardent-sysv4 (no libc)
 # i960		i960-unknown-elf
@@ -117,7 +118,6 @@
 # elxsi		not in binutils, removed in gcc-3.3
 # fx80		not in binutils, removed in gcc-3.0
 # gmicro	not in binutils, removed in gcc-3.0
-# hexagon	not in any upstream toolchain components, removed in linux-4.17 (TODO: check llvm)
 # m6809		https://gitlab.com/dfffffff has ports of gcc and newlib, but the assembler and linker
 #		are custom, there is no disassembler, and the build procedures are non-standard
 # picochip	not in binutils, removed in gcc-5
@@ -292,6 +292,16 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101697
 	GCC_VSN=10.3.0 # gcc-11/12 ICE building uClibc-ng
+	;;
+    "hexagon")
+	# toolchain salvaged from sourceryg++-2012.03-140-hexagon-linux.src.tar
+	BINUTILS_VSN="git;https://github.com/mikpe/binutils-gdb.git;-;binutils_2_21_53_20110905-sourceryg++-2012.03-140;HEAD;mikpe"
+	BINUTILS_WANTS_DISABLE_WERROR=1
+	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;gcc-4.6.1-sourceryg++-2012.03-140;HEAD;mikpe"
+	GLIBC_VSN="git;https://github.com/mikpe/eglibc.git;-;glibc-2.15-sourceryg++-2012.03-140;HEAD;mikpe"
+	# set PATH to select gcc-4.x (4.2.4 is known to work)
+	# if on x86_64, gcc must support -m32
+	SKIP_HOST_TOOLS=1
 	;;
     "i860")
 	TARGET_TRIPLE="${TARGET_ARCH}-stardent-sysv4"
@@ -929,6 +939,9 @@ build_cross_gcc() {
 	"frv")
 	    LIBSSP_CONFIG="--disable-libssp"
 	    ;;
+	"hexagon")
+	    LIBSSP_CONFIG="--disable-libssp"
+	    ;;
 	"i960")
 	    # fixincludes requires /usr/include/ to exist, even if empty
 	    mkdir -p "${CROSS_DIR}/usr/include"
@@ -1080,13 +1093,19 @@ build_cross_binutils() {
     local ENABLE_OBSOLETE
     local DISABLE_WERROR
     local SOURCE_PATH
+    local CFLAGS
     if [ -x "${CROSS_DIR}/bin/${TARGET_TRIPLE}-as" ]; then
 	return
     fi
     log "building cross-binutils ${BINUTILS_VSN}"
     SOURCE_PATH=`unpack_source "binutils-" "${BINUTILS_VSN}"`
     ENABLE_TARGETS=
+    CFLAGS=
     case "${TARGET_ARCH}" in
+	"hexagon")
+	    # hexagon binutils are broken when built in 64-bit mode
+	    CFLAGS="-O2 -m32"
+	    ;;
 	"mingw64")
 	    ENABLE_TARGETS="--enable-targets=x86_64-w64-mingw32,i686-w64-mingw32"
 	    ;;
@@ -1105,7 +1124,7 @@ build_cross_binutils() {
     rm -rf objdir-binutils
     mkdir objdir-binutils
     cd objdir-binutils
-    ${SOURCE_PATH}/configure \
+    ${SOURCE_PATH}/configure CFLAGS="${CFLAGS}" \
 		--target="${TARGET_TRIPLE}" ${ENABLE_TARGETS} ${ENABLE_OBSOLETE} ${DISABLE_WERROR} \
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
@@ -1173,6 +1192,10 @@ build_linux_headers() {
     cd "${SOURCE_PATH}"
     make ARCH="${KERNEL_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" INSTALL_HDR_PATH="${CROSS_DIR}/usr" headers_install
     case "${TARGET_ARCH}" in
+	"hexagon")
+	    # fix broken __aligned(8) directive
+	    sed -i -e 's,__aligned(8);,__attribute__((__aligned__(8)));,g' "${CROSS_DIR}/usr/include/asm/sigcontext.h"
+	    ;;
 	"v850")
 	    # install additional headers needed by uClibc-ng
 	    cp include/asm-v850/{clinkage,macrology,asm}.h "${CROSS_DIR}/usr/include/asm/"
@@ -1221,7 +1244,8 @@ build_glibc() {
 		--without-cvs \
 		--disable-profile
     make ${DASHJ}
-    make DESTDIR="${CROSS_DIR}" install
+    # override install_root instead of DESTDIR for compatibility with some old (e)glibcs
+    make install_root="${CROSS_DIR}" install
     cd ..
     rm -rf "${TARGET_TRIPLE}"
 }
