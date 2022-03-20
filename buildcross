@@ -416,7 +416,8 @@ case "${TARGET_ARCH}" in
 	;;
     "mingw64")
 	TARGET_TRIPLE="x86_64-w64-mingw32"
-	BINUTILS_VSN=2.37 # 2.38 randomly generates broken .a files
+	# 2.38 broke dlltool, see https://sourceware.org/bugzilla/show_bug.cgi?id=28885
+	BINUTILS_VSN=2.37
 	;;
     "mmix")
 	TARGET_TRIPLE="${TARGET_ARCH}-knuth-mmixware"
