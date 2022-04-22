@@ -135,7 +135,7 @@
 
 set -e
 
-VERSION="6.12.1"
+VERSION="6.12.2"
 
 case "$1" in
     -j*)
@@ -161,7 +161,7 @@ CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
 
 # default component versions
 BINUTILS_VSN=2.38
-GCC_VSN=11.2.0
+GCC_VSN=11.3.0
 GLIBC_VSN=2.35
 GMP_VSN=6.2.1
 LINUX_VSN=5.17
@@ -367,7 +367,7 @@ case "${TARGET_ARCH}" in
 	GCC_VSN="git;https://github.com/loongson/gcc.git;-;loongarch_upstream;HEAD;loongson"
 	GLIBC_VSN="git;https://github.com/loongson/glibc.git;-;loongarch_2_34_for_upstream;HEAD;loongson"
 	LINUX_VSN="git;https://github.com/loongson/linux.git;-;loongarch-next;HEAD;loongson"
-	HOST_GCC_VSN=11.2.0
+	HOST_GCC_VSN=11.3.0
 	;;
     "m32c")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
