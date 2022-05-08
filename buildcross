@@ -179,6 +179,7 @@ BINUTILS_WANTS_ENABLE_OBSOLETE=
 # gcc configuration options
 GCC_WANTS_ENABLE_OBSOLETE=
 GCC_WANTS_ENABLE_INITFINI_ARRAY=
+GCC_WANTS_DISABLE_GCOV=
 
 # glibc configuration options
 GLIBC_WANTS_DISABLE_WERROR=
@@ -897,6 +898,7 @@ build_cross_gcc() {
     local ENABLE_CHECKING
     local ENABLE_OBSOLETE
     local ENABLE_INITFINI_ARRAY
+    local DISABLE_GCOV
     local SOURCE_PATH
     if [ -f "${CROSS_DIR}/.stage-gcc-${STAGE}" ]; then
 	return
@@ -920,6 +922,10 @@ build_cross_gcc() {
     ENABLE_INITFINI_ARRAY=
     if [ -n "${GCC_WANTS_ENABLE_INITFINI_ARRAY}" ]; then
 	ENABLE_INITFINI_ARRAY="--enable-initfini-array"
+    fi
+    DISABLE_GCOV=
+    if [ -n "${GCC_WANTS_DISABLE_GCOV}" ]; then
+	DISABLE_GCOV="--disable-gcov"
     fi
     case "${TARGET_ARCH}" in
 	"aarch64")
@@ -1068,7 +1074,7 @@ build_cross_gcc() {
 	        ${ENABLE_CHECKING} \
 		--enable-languages=c \
 		${MULTILIB_CONFIG} \
-		${LIBC_CONFIGS} ${LIBSSP_CONFIG} ${ENABLE_INITFINI_ARRAY}
+		${LIBC_CONFIGS} ${LIBSSP_CONFIG} ${ENABLE_INITFINI_ARRAY} ${DISABLE_GCOV}
     make ${DASHJ} MAKEINFO=/bin/true ${MAKE_TARGET}
     make ${INSTALL_TARGET}
     touch "${CROSS_DIR}/.stage-gcc-${STAGE}"
