@@ -368,10 +368,11 @@ case "${TARGET_ARCH}" in
 	GCC_WANTS_DISABLE_GCOV=1
 	;;
     "loongarch64")
-	GCC_VSN="git;https://github.com/loongson/gcc.git;-;loongarch_upstream;HEAD;loongson" # gcc-12.1.0 doesn't build
+	# gcc-12.1.0 requires binutils master (future 2.39) or the head of the 2.38 branch.
+	BINUTILS_VSN="git;https://github.com/mikpe/binutils-gdb.git;-;binutils-2_38-branch;HEAD;mikpe"
 	GLIBC_VSN="git;https://github.com/loongson/glibc.git;-;loongarch_2_34_for_upstream;HEAD;loongson"
+	GLIBC_WANTS_DISABLE_WERROR=1
 	LINUX_VSN="git;https://github.com/loongson/linux.git;-;loongarch-next;HEAD;loongson"
-	HOST_GCC_VSN=11.3.0
 	;;
     "m32c")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
