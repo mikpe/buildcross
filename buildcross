@@ -230,7 +230,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_SSP=y
 	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
 	LINUX_VSN=4.16 # blackfin was removed in linux-4.17
-	GCC_VSN=9.4.0 # gcc-10.x/11.x/12.x give linkage errors in uClibc-ng
+	GCC_VSN=9.5.0 # gcc-10.x/11.x/12.x give linkage errors in uClibc-ng
 	;;
     "bpf")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-none"
@@ -358,8 +358,8 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN="git;https://github.com/kalray/linux_coolidge.git;-;coolidge;b02c139d3608c8ae87f5398a3a29854f6df7a041;kalray"
 	UCLIBC_VSN="git;https://github.com/kalray/uclibc-ng.git;-;coolidge;5ec7fd3865e43efbdafe3440c37ae5cff8188f20;kalray"
 	UCLIBC_WANTS_STATIC=1 # kvx-uclibc defaults to building shared libraries but fails with relocation errors
-	# kvx-gcc is based on gcc-9.4, so use that to build it
-	HOST_GCC_VSN=9.4.0
+	# kvx-gcc is based on gcc-9.x, so use that to build it
+	HOST_GCC_VSN=9.5.0
 	;;
     "lm32")
 	TARGET_TRIPLE="${TARGET_ARCH}-uclinux-uclibc"
