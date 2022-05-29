@@ -499,9 +499,10 @@ case "${TARGET_ARCH}" in
 	SKIP_HOST_TOOLS=1 # PATH must point to a suitable old gcc
 	;;
     "sh4")
-	# gcc-12.1.0 ICEs building glibc-2.35
 	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=103722
-	GCC_VSN=11.3.0
+	# gcc-12.1.0 ICEs building glibc-2.35, this backports the fix from master/gcc-13
+	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;gcc-12-sh4;HEAD;mikpe"
+	HOST_GCC_VSN=12.1.0
 	;;
     "tilegx")
 	BINUTILS_VSN=2.28.1 # later versions cannot build glibc
