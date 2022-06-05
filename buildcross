@@ -164,7 +164,7 @@ BINUTILS_VSN=2.38
 GCC_VSN=12.1.0
 GLIBC_VSN=2.35
 GMP_VSN=6.2.1
-LINUX_VSN=5.17
+LINUX_VSN=5.18
 MINGW64_VSN=9.0.0
 MPC_VSN=1.2.1
 MPFR_VSN=4.1.0
@@ -301,6 +301,7 @@ case "${TARGET_ARCH}" in
 	BINUTILS_WANTS_DISABLE_WERROR=1
 	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;gcc-4.6.1-sourceryg++-2012.03-140;HEAD;mikpe"
 	GLIBC_VSN="git;https://github.com/mikpe/eglibc.git;-;glibc-2.15-sourceryg++-2012.03-140;HEAD;mikpe"
+	LINUX_VSN=5.17 # linux-5.18 can't build its headers with hexagon's ancient gcc
 	# set PATH to select gcc-4.x (4.2.4 is known to work)
 	# if on x86_64, gcc must support -m32
 	SKIP_HOST_TOOLS=1
@@ -458,6 +459,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="nds32le-unknown-linux-gnu"
 	GLIBC_VSN="git;https://github.com/andestech/glibc.git;-;nds32-glibc-2.27-v0;HEAD;andestech"
 	GLIBC_WANTS_DISABLE_WERROR=1
+	LINUX_VSN=5.17 # nds32 was removed in linux-5.18
 	;;
     "ns32k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-netbsd"
