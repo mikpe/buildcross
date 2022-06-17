@@ -88,6 +88,7 @@
 # vax		vax-unknown-linux (no libc or kernel headers)
 # visium	visium-unknown-elf
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
+# xc16x		xc16x-unknown-elf
 # xstormy16	xstormy16-unknown-elf
 # xtensa	xtensa-unknown-linux-uclibc
 #
@@ -548,6 +549,17 @@ case "${TARGET_ARCH}" in
 	;;
     "visium")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	;;
+    "xc16x")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	BINUTILS_VSN=2.35.2 # xc16x was removed in binutils-2.36
+	BINUTILS_WANTS_ENABLE_OBSOLETE=1
+	NEWLIB_VSN=2.2.0.20150824 # later ones cannot be built by the 4.2-based xc16x-gcc
+	NEWLIB_WANTS_DISABLE_MULTILIB=1 # xc16xl triggers gas errors
+	# GCC port salvaged from https://gcc.gnu.org/pipermail/gcc-patches/2006-July/197934.html
+	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;gcc-4.2.4-xc16x;HEAD;mikpe"
+	# set PATH to select gcc-4.x (4.0.4 to 4.9.4 are known to work)
+	SKIP_HOST_TOOLS=1
 	;;
     "xstormy16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
