@@ -55,6 +55,7 @@
 # m68hc11	m68hc11-unknown-elf
 # m68k		m68k-unknown-linux-gnu
 # m88k		m88k-unknown-openbsd (elf, no libc)
+# maxq		maxq-unknown-coff (no libc)
 # mcore		mcore-unknown-elf
 # mep		mep-unknown-elf (no libc)
 # microblaze	microblaze-unknown-linux-gnu
@@ -406,6 +407,17 @@ case "${TARGET_ARCH}" in
 	# - if PATH selects gcc < 4.0, set BUILD_TRIPLE because gcc -v < 4.0 doesn't list Target:
 	SKIP_HOST_TOOLS=1
 	;;
+    "maxq")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
+	BINUTILS_VSN=2.18 # later versions fail to build, maxq was removed in binutils-2.21
+	BINUTILS_WANTS_DISABLE_WERROR=1
+	BINUTILS_WANTS_ENABLE_OBSOLETE=1
+	NEWLIB_VSN= # maxq is not supported in newlib at all
+	# GCC port salvaged from https://gcc.gnu.org/pipermail/gcc-patches/2005-January/159504.html
+	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;gcc-4.0.4-maxq;HEAD;mikpe"
+	# set PATH to select gcc-4.x (4.0.4 to 4.9.4 are known to work)
+	SKIP_HOST_TOOLS=1
+	;;
     "mcore")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	;;
@@ -618,6 +630,7 @@ case "${TARGET_TRIPLE}" in
     i860-stardent-sysv4 | \
     m88k-unknown-coff | \
     m88k-unknown-openbsd | \
+    maxq-unknown-coff | \
     mmix-knuth-mmixware | \
     ns32k-unknown-netbsd | \
     pdp11-unknown-aout | \
@@ -1001,6 +1014,12 @@ build_cross_gcc() {
 	    echo "#define FLT_MANT_DIG 24"  > "${CROSS_DIR}/usr/include/float.h"
 	    echo "#define DBL_MANT_DIG 53" >> "${CROSS_DIR}/usr/include/float.h"
 	    echo "extern void abort(void);" > "${CROSS_DIR}/usr/include/stddef.h"
+	    ;;
+	"maxq")
+	    # fixincludes requires /usr/include/ to exist, even if empty
+	    mkdir -p "${CROSS_DIR}/usr/include"
+	    # the compiler ICEs when building the mq10 multilib
+	    MULTILIB_CONFIG="--disable-multilib"
 	    ;;
 	"mep")
 	    mkdir -p "${CROSS_DIR}/usr/include/sys"
