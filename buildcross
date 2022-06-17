@@ -192,6 +192,9 @@ UCLIBC_WANTS_LITTLE_ENDIAN=
 UCLIBC_WANTS_BIG_ENDIAN=
 UCLIBC_WANTS_STATIC=
 
+# newlib configuration options
+NEWLIB_WANTS_DISABLE_MULTILIB=
+
 # target-specfic overrides
 case "${TARGET_ARCH}" in
     "a29k")
@@ -1413,12 +1416,17 @@ build_target_mingw64crt() {
 
 build_target_newlib() {
     local SOURCE_PATH
+    local DISABLE_MULTILIB
     log "building newlib ${NEWLIB_VSN} for ${TARGET_TRIPLE}"
     SOURCE_PATH=`unpack_source "newlib-" "${NEWLIB_VSN}"`
+    DISABLE_MULTILIB=
+    if [ -n "${NEWLIB_WANTS_DISABLE_MULTILIB}" ]; then
+	DISABLE_MULTILIB="--disable-multilib"
+    fi
     rm -rf objdir-newlib
     mkdir objdir-newlib
     cd objdir-newlib
-    ${SOURCE_PATH}/configure \
+    ${SOURCE_PATH}/configure ${DISABLE_MULTILIB} \
 		--target="${TARGET_TRIPLE}" \
 		--build="${BUILD_TRIPLE}" \
 		--prefix=/
