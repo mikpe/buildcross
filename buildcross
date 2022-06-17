@@ -617,9 +617,9 @@ case "${TARGET_TRIPLE}" in
     bpf-unknown-none | \
     i860-stardent-sysv4 | \
     m88k-unknown-coff | \
-    ns32k-unknown-netbsd | \
-    mmix-knuth-mmixware | \
     m88k-unknown-openbsd | \
+    mmix-knuth-mmixware | \
+    ns32k-unknown-netbsd | \
     pdp11-unknown-aout | \
     vax-unknown-linux)
 	GLIBC_VSN=
