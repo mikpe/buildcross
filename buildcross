@@ -1460,9 +1460,9 @@ build_target_newlib() {
     ${SOURCE_PATH}/configure ${DISABLE_MULTILIB} \
 		--target="${TARGET_TRIPLE}" \
 		--build="${BUILD_TRIPLE}" \
-		--prefix=/
+		--prefix="${CROSS_DIR}"
     make ${DASHJ}
-    make DESTDIR="${CROSS_DIR}" install
+    make install
     cd ..
     rm -rf objdir-newlib
 }
