@@ -34,6 +34,7 @@
 # cris		crisv32-unknown-linux-uclibc
 # crx		crx-unknown-elf (no libc)
 # csky		csky-unknown-linux-gnu (only little-endian)
+# d10v		d10v-unknown-elf
 # d30v		d30v-unknown-elf (no libc)
 # epiphany	epiphany-unknown-elf
 # fr30		fr30-unknown-elf
@@ -93,6 +94,7 @@
 # xc16x		xc16x-unknown-elf
 # xstormy16	xstormy16-unknown-elf
 # xtensa	xtensa-unknown-linux-uclibc
+# z8k		z8k-unknown-coff
 #
 # Pending:
 #
@@ -115,8 +117,6 @@
 # amdgcn	not in binutils, though apparently in llvm's assembler and linker
 # clipper	not in binutils, removed in gcc-3.3
 # convex	not in binutils, removed in gcc-3.3
-# d10v		see https://github.com/mikpe/ecosSWtools for sources and instructions for building
-#		a d10v-elf toolchain
 # dsp16xx	not in binutils, removed in gcc-4.0
 # elxsi		not in binutils, removed in gcc-3.3
 # fx80		not in binutils, removed in gcc-3.0
@@ -132,13 +132,11 @@
 # tahoe		incomplete in binutils (no ld), removed in binutils-2.17 (gas) and 2.31 (rest) and gcc-3.0
 # unicore32	not in any upstream toolchain components, removed in linux-5.9
 # we32k		incomplete in binutils (no gas or ld), removed in binutils-2.31 and gcc-3.3
-# z8k		see https://github.com/mikpe/ecosSWtools for sources and instructions for building
-#		a z8k-coff toolchain
 # zpu		the toolchain in https://github.com/zylin/zpugcc doesn't build
 
 set -e
 
-VERSION="6.15.0"
+VERSION="6.16.0"
 
 case "$1" in
     -j*)
@@ -267,6 +265,18 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=4.5.4 # 4.6 ICEs, removed in 4.7
 	NEWLIB_VSN= # gcc ICEs building newlib
+	SKIP_HOST_TOOLS=1
+	;;
+    "d10v")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	GCC_VSN="git;https://github.com/mikpe/ecosSWtools.git;src;main;HEAD;mikpe"
+	# the above repo is set up for an all-in-one build
+	NEWLIB_VSN=
+	# set PATH to select gcc-2.95.3
+	# if on x86_64:
+	# - you must have support for building and running 32-bit executables
+	# - set BUILD_TRIPLE=i686-pc-linux-gnu
+	# - run this with setarch i686
 	SKIP_HOST_TOOLS=1
 	;;
     "d30v")
@@ -593,6 +603,18 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_SSP=y
 	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
 	;;
+    "z8k")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
+	GCC_VSN="git;https://github.com/mikpe/ecosSWtools.git;src;main;HEAD;mikpe"
+	# the above repo is set up for an all-in-one build
+	NEWLIB_VSN=
+	# set PATH to select gcc-2.95.3
+	# if on x86_64:
+	# - you must have support for building and running 32-bit executables
+	# - set BUILD_TRIPLE=i686-pc-linux-gnu
+	# - run this with setarch i686
+	SKIP_HOST_TOOLS=1
+	;;
 esac
 
 if [ -z "${TARGET_TRIPLE}" ]; then
@@ -645,7 +667,8 @@ case "${TARGET_TRIPLE}" in
     mmix-knuth-mmixware | \
     ns32k-unknown-netbsd | \
     pdp11-unknown-aout | \
-    vax-unknown-linux)
+    vax-unknown-linux | \
+    z8k-unknown-coff)
 	GLIBC_VSN=
 	UCLIBC_VSN=
 	MUSL_VSN=
@@ -945,6 +968,7 @@ build_cross_gcc() {
     local ENABLE_INITFINI_ARRAY
     local DISABLE_GCOV
     local SOURCE_PATH
+    local LANGUAGES
     if [ -f "${CROSS_DIR}/.stage-gcc-${STAGE}" ]; then
 	return
     fi
@@ -1162,8 +1186,23 @@ build_cross_gcc() {
 		--enable-languages=c \
 		${MULTILIB_CONFIG} \
 		${LIBC_CONFIGS} ${LIBSSP_CONFIG} ${ENABLE_INITFINI_ARRAY} ${DISABLE_GCOV}
-    make ${DASHJ} MAKEINFO=/bin/true ${MAKE_TARGET}
-    make ${INSTALL_TARGET}
+    LANGUAGES=
+    case "${TARGET_ARCH}" in
+	d10v | z8k)
+	    # ecosSWtools: remove unneeded or unbuildable components
+	    rm -rf dejagnu diff expect gdb make mmalloc patch readline sim tcl texinfo tk utils
+	    # gcc-2.x needs LANGUAGES=c when building instead of --enable-languages=c when configuring
+	    LANGUAGES="LANGUAGES=c"
+	    ;;
+    esac
+    make ${DASHJ} MAKEINFO=/bin/true ${LANGUAGES} ${MAKE_TARGET}
+    case "${TARGET_ARCH}" in
+	d10v | z8k)
+	    # ecosSWtools: remove build-time tools we don't want to install
+	    rm -rf bison byacc flex
+	    ;;
+    esac
+    make ${LANGUAGES} ${INSTALL_TARGET}
     touch "${CROSS_DIR}/.stage-gcc-${STAGE}"
     cd ..
     rm -rf objdir-gcc
@@ -1205,6 +1244,10 @@ build_cross_binutils() {
     ENABLE_TARGETS=
     CFLAGS=
     case "${TARGET_ARCH}" in
+	d10v | z8k)
+	    # it's an all-in-one build in build_cross_gcc()
+	    return
+	    ;;
 	"hexagon")
 	    # hexagon binutils are broken when built in 64-bit mode
 	    CFLAGS="-O2 -m32"
