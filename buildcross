@@ -259,7 +259,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
 	LINUX_VSN=4.16 # cris was removed in linux-4.17
 	GCC_WANTS_ENABLE_OBSOLETE=1 # gcc-10 marks cris as obsolete
-	GCC_VSN=10.3.0 # gcc-11.1.0 dropped support for this target triple
+	GCC_VSN=10.4.0 # gcc-11.1.0 dropped support for this target triple
 	;;
     "crx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -309,7 +309,7 @@ case "${TARGET_ARCH}" in
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101697
-	GCC_VSN=10.3.0 # gcc-11.x/12.x ICE building uClibc-ng
+	GCC_VSN=10.4.0 # gcc-11.x/12.x ICE building uClibc-ng
 	;;
     "hexagon")
 	# toolchain salvaged from sourceryg++-2012.03-140-hexagon-linux.src.tar
