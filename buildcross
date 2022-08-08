@@ -389,8 +389,6 @@ case "${TARGET_ARCH}" in
     "loongarch64")
 	# gcc-12.1.0 requires binutils master (future 2.39) or the head of the 2.38 branch.
 	BINUTILS_VSN="git;https://github.com/mikpe/binutils-gdb.git;-;binutils-2_38-branch;HEAD;mikpe"
-	GLIBC_VSN="git;https://github.com/loongson/glibc.git;-;loongarch_2_34_for_upstream;HEAD;loongson"
-	GLIBC_WANTS_DISABLE_WERROR=1
 	;;
     "m32c")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
