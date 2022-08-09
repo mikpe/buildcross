@@ -494,6 +494,7 @@ case "${TARGET_ARCH}" in
 	GCC_VSN=4.0.4
 	GCC_WANTS_ENABLE_OBSOLETE=1 # obsoleted in 4.0, removed in 4.1
 	BINUTILS_WANTS_ENABLE_OBSOLETE=1 # marked obsolete in 2.38
+	BINUTILS_VSN=2.38 # removed in 2.39
 	# you need to:
 	# - adjust PATH to select gcc in range [4.3, 4.9]
 	#   binutils-2.38 requires gcc-4.3 or newer, otherwise 3.3.6 or 3.4.6 would work
