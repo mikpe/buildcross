@@ -446,9 +446,6 @@ case "${TARGET_ARCH}" in
 	;;
     "mingw64")
 	TARGET_TRIPLE="x86_64-w64-mingw32"
-	# 2.38 broke dlltool, fixed for 2.39 and on the branch
-	# see https://sourceware.org/bugzilla/show_bug.cgi?id=28885
-	BINUTILS_VSN="git;https://github.com/mikpe/binutils-gdb.git;-;binutils-2_38-branch;HEAD;mikpe"
 	;;
     "mmix")
 	TARGET_TRIPLE="${TARGET_ARCH}-knuth-mmixware"
