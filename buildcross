@@ -271,6 +271,8 @@ case "${TARGET_ARCH}" in
     "d10v")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN="git;https://github.com/mikpe/ecosSWtools.git;src;main;HEAD;mikpe"
+	# the above repo doesn't like make -jN
+	DASHJ=
 	# the above repo is set up for an all-in-one build
 	NEWLIB_VSN=
 	# set PATH to select gcc-2.95.3
@@ -605,6 +607,8 @@ case "${TARGET_ARCH}" in
     "z8k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
 	GCC_VSN="git;https://github.com/mikpe/ecosSWtools.git;src;main;HEAD;mikpe"
+	# the above repo doesn't like make -jN
+	DASHJ=
 	# the above repo is set up for an all-in-one build
 	NEWLIB_VSN=
 	# set PATH to select gcc-2.95.3
