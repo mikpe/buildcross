@@ -388,10 +388,6 @@ case "${TARGET_ARCH}" in
 	# gcc-12.1.0 fails to build gcov due to missing __INTPTR_TYPE__
 	GCC_WANTS_DISABLE_GCOV=1
 	;;
-    "loongarch64")
-	# gcc-12.1.0 requires binutils master (future 2.39) or the head of the 2.38 branch.
-	BINUTILS_VSN="git;https://github.com/mikpe/binutils-gdb.git;-;binutils-2_38-branch;HEAD;mikpe"
-	;;
     "m32c")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=4.7.4 # later ones fail in various ways
