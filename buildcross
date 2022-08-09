@@ -564,7 +564,6 @@ case "${TARGET_ARCH}" in
 	;;
     "v850")
 	TARGET_TRIPLE="${TARGET_ARCH}e-uclinux-uclibc"
-	# for binutils < 2.38 you'll want to backport PR 28292 fix
 	LINUX_VSN=2.6.26 # v850 was removed in linux-2.6.27
 	# v850 was removed in uClibc-ng-1.0.11, this is an unofficial forward-port from 1.0.10
 	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.41-v850;HEAD;mikpe"
