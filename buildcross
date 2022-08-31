@@ -573,8 +573,9 @@ case "${TARGET_ARCH}" in
 	NEWLIB_VSN= # not in any supported libc
 	# gcc-12.1.0 fails to build gcov due to missing __INTPTR_TYPE__
 	GCC_WANTS_DISABLE_GCOV=1
-	# binutils-2.39 throws errors on gcc-12.1's output
-	BINUTILS_VSN=2.38
+	# vax needs to stay on binutils-2.38 or use the HEAD of binutils-2_39-branch due to
+	# https://sourceware.org/bugzilla/show_bug.cgi?id=29466
+	BINUTILS_VSN="git;https://sourceware.org/git/binutils-gdb.git;-;binutils-2_39-branch;HEAD;"
 	;;
     "visium")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
