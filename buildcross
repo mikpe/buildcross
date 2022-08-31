@@ -163,7 +163,7 @@ CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
 
 # default component versions
 BINUTILS_VSN=2.39
-GCC_VSN=12.1.0
+GCC_VSN=12.2.0
 GLIBC_VSN=2.36
 GMP_VSN=6.2.1
 LINUX_VSN=5.19
