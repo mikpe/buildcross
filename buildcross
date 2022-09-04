@@ -1131,7 +1131,9 @@ build_cross_gcc() {
 			"${SOURCE_PATH}/symlink-tree" \
 			"${SOURCE_PATH}/ylwrap"
 	    # the git repo contains unwanted stuff
-	    rm -rf "${SOURCE_PATH}"/{gmp,mpfr,mpc}
+	    for f in gmp mpfr mpc ; do
+		rm -rf "${SOURCE_PATH}/${f}"
+	    done
 	    # abuse ENABLE_OBSOLETE to pass in a vendor-specific option
 	    ENABLE_OBSOLETE="--without-licenser"
 	    # libgcc needs <stdint.h>
@@ -1398,7 +1400,9 @@ build_linux_headers() {
 	    ;;
 	"v850")
 	    # install additional headers needed by uClibc-ng
-	    cp include/asm-v850/{clinkage,macrology,asm}.h "${CROSS_DIR}/usr/include/asm/"
+	    for f in clinkage macrology asm ; do
+		cp "include/asm-v850/${f}.h" "${CROSS_DIR}/usr/include/asm/"
+	    done
 	    ;;
     esac
     make mrproper
