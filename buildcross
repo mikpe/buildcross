@@ -96,6 +96,7 @@
 # xstormy16	xstormy16-unknown-elf
 # xtensa	xtensa-unknown-linux-uclibc
 # z8k		z8k-unknown-coff
+# zpu		zpu-unknown-elf
 #
 # Pending:
 #
@@ -133,7 +134,6 @@
 # tahoe		incomplete in binutils (no ld), removed in binutils-2.17 (gas) and 2.31 (rest) and gcc-3.0
 # unicore32	not in any upstream toolchain components, removed in linux-5.9
 # we32k		incomplete in binutils (no gas or ld), removed in binutils-2.31 and gcc-3.3
-# zpu		the toolchain in https://github.com/zylin/zpugcc doesn't build
 
 set -e
 
@@ -607,6 +607,17 @@ case "${TARGET_ARCH}" in
 	# - you must have support for building and running 32-bit executables
 	# - set BUILD_TRIPLE=i686-pc-linux-gnu
 	# - run this with setarch i686
+	SKIP_HOST_TOOLS=1
+	;;
+    "zpu")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	# zpu-binutils is based on binutils-2.15
+	BINUTILS_VSN="git;https://github.com/zylin/zpugcc.git;toolchain/binutils;master;HEAD;-"
+	# zpu-gcc is based on gcc-3.4.2
+	GCC_VSN="git;https://github.com/zylin/zpugcc.git;toolchain/gcc;master;HEAD;-"
+	GCC_WANTS_NO_ENABLE_CHECKING=1
+	NEWLIB_VSN= # included in zpu-gcc
+	# set PATH to select gcc-4.x (4.0.4 and 4.9.4 are known to work)
 	SKIP_HOST_TOOLS=1
 	;;
 esac
@@ -1133,6 +1144,23 @@ build_cross_gcc() {
 	    ;;
 	"x86_64")
 	    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=m64,m32,mx32"
+	    ;;
+	"zpu")
+	    MULTILIB_CONFIG="--enable-sjlj-exceptions --with-gnu-as --with-gnu-ld"
+	    # The repo incorrectly requires a number of newlib headers to be pre-installed
+	    # before libgcc can be built. It also force-builds newlib and libgloss, and
+	    # those too require pre-installed newlib headers.
+	    mkdir -p "${CROSS_DIR}/usr/include/machine"
+	    mkdir -p "${CROSS_DIR}/usr/include/sys"
+	    for f in _ansi errno newlib stdio stdlib string time unistd ; do
+		cp "${SOURCE_PATH}/newlib/libc/include/${f}.h" "${CROSS_DIR}/usr/include/"
+	    done
+	    for f in ieeefp stdlib time types ; do
+		cp "${SOURCE_PATH}/newlib/libc/include/machine/${f}.h" "${CROSS_DIR}/usr/include/machine/"
+	    done
+	    for f in _types config errno reent stat stdio types unistd ; do
+		cp "${SOURCE_PATH}/newlib/libc/include/sys/${f}.h" "${CROSS_DIR}/usr/include/sys/"
+	    done
 	    ;;
     esac
     MAKE_TARGET=
