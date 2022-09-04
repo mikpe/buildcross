@@ -1292,7 +1292,7 @@ build_cross_binutils() {
     rm -rf objdir-binutils
     mkdir objdir-binutils
     cd objdir-binutils
-    ${SOURCE_PATH}/configure CFLAGS="${CFLAGS}" \
+    CFLAGS="${CFLAGS}" ${SOURCE_PATH}/configure \
 		--target="${TARGET_TRIPLE}" ${ENABLE_TARGETS} ${ENABLE_OBSOLETE} ${DISABLE_WERROR} \
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
