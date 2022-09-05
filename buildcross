@@ -74,6 +74,7 @@
 # or1k		or1k-unknown-linux-gnu
 # or1k-musl	or1k-unknown-linux-musl
 # pdp11		pdp11-unknown-aout (no libc)
+# pj		pjl-unknown-elf (no libc)
 # ppc64		ppc64-unknown-linux-gnu with -m64 and -m32 support
 # ppc64le	ppc64le-unknown-linux-gnu (no -m32 support)
 # pru		pru-unknown-elf
@@ -126,7 +127,6 @@
 # m6809		https://gitlab.com/dfffffff has ports of gcc and newlib, but the assembler and linker
 #		are custom, there is no disassembler, and the build procedures are non-standard
 # picochip	not in binutils, removed in gcc-5
-# pj		binutils rejects gcc's output and command-line options, did vanilla sources ever work?
 # nvptx		not in binutils, requires the nvptx-tools package
 # pyr		not in binutils, removed in gcc-3.0
 # romp		not in binutils, removed in gcc-3.4
@@ -137,7 +137,7 @@
 
 set -e
 
-VERSION="6.21.0"
+VERSION="6.22.0"
 
 case "$1" in
     -j*)
@@ -506,6 +506,28 @@ case "${TARGET_ARCH}" in
     "pdp11")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-aout"
 	NEWLIB_VSN= # not supported in newlib at all
+	;;
+    "pj")
+	TARGET_TRIPLE="pjl-unknown-elf"
+	# upstream, plus a major pj update that was posted to the mailing list but
+	# never applied, plus a few fixups
+	BINUTILS_VSN="git;https://github.com/mikpe/binutils-gdb.git;-;binutils-2_10_1-pj;HEAD;mikpe"
+	# upstream plus a few fixups
+	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;gcc-3.1.1-pj;HEAD;mikpe"
+	GCC_WANTS_ENABLE_OBSOLETE=1 # obsoleted in gcc-3.1, removed in gcc-3.2
+	GCC_WANTS_NO_ENABLE_CHECKING=1
+	# The original gcc pj patch submission mentioned linux, glibc, and newlib
+	# support, but I can't find any trace of those.
+	NEWLIB_VSN=
+	# you need to:
+	# - set PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
+	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
+	# - if on x86_64:
+	#   + you must have support for building and running 32-bit executables
+	#   + set CC to a wrapper script that enforces -m32
+	#   + set BUILD_TRIPLE=i686-pc-linux-gnu
+	#   + use setarch i686
+	SKIP_HOST_TOOLS=1
 	;;
     "pru")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -1220,6 +1242,14 @@ build_cross_gcc() {
 	    rm -rf dejagnu diff expect gdb make mmalloc patch readline sim tcl texinfo tk utils
 	    # gcc-2.x needs LANGUAGES=c when building instead of --enable-languages=c when configuring
 	    LANGUAGES="LANGUAGES=c"
+	    ;;
+	pj)
+	    # gcc-3.1.1 pretends to understand --enable-languages=c but it still tries
+	    # to build additional languages, and fails. Similarly it tries to build e.g.
+	    # libstdc++-v3 for the target, and fails.
+	    LANGUAGES="LANGUAGES=c"
+	    MAKE_TARGET="TARGET_CONFIGDIRS="
+	    INSTALL_TARGET="TARGET_CONFIGDIRS= install"
 	    ;;
     esac
     make ${DASHJ} MAKEINFO=/bin/true ${LANGUAGES} ${MAKE_TARGET}
