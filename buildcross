@@ -227,7 +227,7 @@ case "${TARGET_ARCH}" in
 	BINUTILS_VSN="git;https://github.com/embecosm/avr32-binutils-gdb.git;-;avr32-binutils-2.23;HEAD;-"
 	GCC_VSN="git;https://github.com/embecosm/avr32-gcc.git;-;avr32-gcc-4.4;HEAD;-"
 	LINUX_VSN=4.11 # avr32 was removed in linux-4.12
-	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
+	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	# set PATH to select gcc-4.x (4.4.7 is known to work)
 	SKIP_HOST_TOOLS=1
 	;;
@@ -235,7 +235,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	UCLIBC_WANTS_LINUXTHREADS=y
 	UCLIBC_WANTS_SSP=y
-	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
+	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	LINUX_VSN=4.16 # blackfin was removed in linux-4.17
 	GCC_VSN=9.5.0 # gcc-10.x/11.x/12.x give linkage errors in uClibc-ng
 	;;
@@ -248,7 +248,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_LINUXTHREADS=y
 	UCLIBC_WANTS_SSP=y
 	UCLIBC_WANTS_BIG_ENDIAN=y
-	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
+	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	LINUX_VSN=5.11 # c6x was removed in linux-5.12
 	;;
     "cr16")
@@ -259,7 +259,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="crisv32-unknown-linux-uclibc"
 	UCLIBC_WANTS_LINUXTHREADS=y
 	UCLIBC_WANTS_SSP=y
-	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
+	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	LINUX_VSN=4.16 # cris was removed in linux-4.17
 	GCC_WANTS_ENABLE_OBSOLETE=1 # gcc-10 marks cris as obsolete
 	GCC_VSN=10.4.0 # gcc-11.1.0 dropped support for this target triple
@@ -442,7 +442,7 @@ case "${TARGET_ARCH}" in
 	BINUTILS_VSN="git;https://github.com/mikpe/binutils-gdb.git;-;binutils-2_23_2-metag;HEAD;mikpe"
 	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;gcc-4.2.4-metag;HEAD;mikpe"
 	LINUX_VSN=4.16 # metag was removed in linux-4.17
-	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
+	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	# set PATH to select gcc-4.x (4.2.4 is known to work)
 	SKIP_HOST_TOOLS=1
 	;;
@@ -616,7 +616,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	UCLIBC_WANTS_NPTL=y
 	UCLIBC_WANTS_SSP=y
-	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
+	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	;;
     "z8k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
