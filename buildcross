@@ -305,7 +305,8 @@ case "${TARGET_ARCH}" in
     "frv")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	UCLIBC_WANTS_SSP=y
-	UCLIBC_VSN=1.0.38 # >= 1.0.39 fail to build
+	UCLIBC_WANTS_RESOLVER_SUPPORT=y
+	UCLIBC_VSN=1.0.39 # >= 1.0.40 fail to build
 	LINUX_VSN=4.16 # frv was removed in linux-4.17
 	;;
     "ft32")
