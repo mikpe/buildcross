@@ -137,7 +137,7 @@
 
 set -e
 
-VERSION="6.23.0"
+VERSION="6.24.0"
 
 case "$1" in
     -j*)
@@ -306,7 +306,8 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	UCLIBC_WANTS_SSP=y
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
-	UCLIBC_VSN=1.0.39 # >= 1.0.40 fail to build
+	# fix for build breakage introduced in 1.0.40
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.42-frv;HEAD;mikpe"
 	LINUX_VSN=4.16 # frv was removed in linux-4.17
 	;;
     "ft32")
