@@ -316,7 +316,9 @@ case "${TARGET_ARCH}" in
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101697
-	GCC_VSN=10.4.0 # gcc-11.x/12.x ICE building uClibc-ng
+	#GCC_VSN=10.4.0 # gcc-11.x/12.x ICE building uClibc-ng
+	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;master;4374c424a60777a7658050f0aeb1dcc9af915647;mikpe"
+	HOST_GCC_VSN=12.2.0
 	LINUX_VSN=5.18 # h8300 was removed in linux-5.19
 	;;
     "hexagon")
