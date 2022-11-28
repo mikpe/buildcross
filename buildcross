@@ -396,7 +396,11 @@ case "${TARGET_ARCH}" in
 	;;
     "m32c")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	GCC_VSN=4.7.4 # later ones fail in various ways
+	# gcc-4.7.4 is good
+	# gcc-4.8.5 through 6.5.0 require --disable-multilib
+	# gcc-7.5.0 has a spill failure in libgcc
+	# gcc-8 and up fail due to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83670
+	GCC_VSN=6.5.0
 	SKIP_HOST_TOOLS=1
 	;;
     "m32r")
@@ -1074,6 +1078,9 @@ build_cross_gcc() {
 	    mkdir -p "${CROSS_DIR}/usr/include"
 	    ;;
 	"loongarch64")
+	    MULTILIB_CONFIG="--disable-multilib"
+	    ;;
+	"m32c")
 	    MULTILIB_CONFIG="--disable-multilib"
 	    ;;
 	"m88k")
