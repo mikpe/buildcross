@@ -162,7 +162,7 @@ SOURCES_DIR=`realpath ./sources`
 CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
 
 # default component versions
-BINUTILS_VSN=2.39
+BINUTILS_VSN=2.40
 GCC_VSN=12.2.0
 GLIBC_VSN=2.36
 GMP_VSN=6.2.1
