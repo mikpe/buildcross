@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # buildcross - a tool for building GCC cross toolchains
-# Copyright (C) 2019-2022  Mikael Pettersson
+# Copyright (C) 2019-2023  Mikael Pettersson
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@
 
 set -e
 
-VERSION="6.26.0"
+VERSION="6.27.0"
 
 case "$1" in
     -j*)
