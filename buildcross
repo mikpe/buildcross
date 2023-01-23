@@ -298,9 +298,11 @@ case "${TARGET_ARCH}" in
 	;;
     "epiphany")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN=4.2.0.20211231 # fails to build newlib-4.3.0
 	;;
     "fr30")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN=4.2.0.20211231 # fails to build newlib-4.3.0
 	;;
     "frv")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
@@ -616,6 +618,7 @@ case "${TARGET_ARCH}" in
 	;;
     "xstormy16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN=4.2.0.20211231 # fails to build newlib-4.3.0
 	;;
     "xtensa")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
