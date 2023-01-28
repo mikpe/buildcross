@@ -130,8 +130,12 @@
 # nvptx		not in binutils, requires the nvptx-tools package
 # pyr		not in binutils, removed in gcc-3.0
 # romp		not in binutils, removed in gcc-3.4
+# SHARC		there is an ancient GCC port with custom assembler/linker/etc (not GNU binutils) in
+#		https://github.com/sergev/g21k, but it's apparently not 64-bit clean
 # spur		not in binutils, removed in gcc-3.0
 # tahoe		incomplete in binutils (no ld), removed in binutils-2.17 (gas) and 2.31 (rest) and gcc-3.0
+# transputer	there is an ancient GCC port with custom assembler/linker/etc (not GNU binutils) in
+#		https://github.com/devzendo/transputer-toolchain, but it's apparently not 64-bit clean
 # unicore32	not in any upstream toolchain components, removed in linux-5.9
 # we32k		incomplete in binutils (no gas or ld), removed in binutils-2.31 and gcc-3.3
 
