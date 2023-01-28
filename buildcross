@@ -385,14 +385,13 @@ case "${TARGET_ARCH}" in
 	;;
     "kvx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
-	# from https://github.com/kalray/build-scripts.git
-	BINUTILS_VSN="git;https://github.com/kalray/gdb-binutils.git;-;-;3f4b2cce66a12f7c0d2be188d281586ad84ff454;kalray"
-	GCC_VSN="git;https://github.com/kalray/gcc.git;-;coolidge;eba44d60cef1ea122daa16fc65725a843adfd719;kalray"
-	LINUX_VSN="git;https://github.com/kalray/linux_coolidge.git;-;coolidge;b02c139d3608c8ae87f5398a3a29854f6df7a041;kalray"
-	UCLIBC_VSN="git;https://github.com/kalray/uclibc-ng.git;-;coolidge;5ec7fd3865e43efbdafe3440c37ae5cff8188f20;kalray"
-	UCLIBC_WANTS_STATIC=1 # kvx-uclibc defaults to building shared libraries but fails with relocation errors
-	# kvx-gcc is based on gcc-9.x, so use that to build it
-	HOST_GCC_VSN=9.5.0
+	# from https://github.com/kalray/build-scripts.git v4.11.0
+	BINUTILS_VSN="git;https://github.com/kalray/gdb-binutils.git;-;-;7bd179a518f56ced5d92782d0127abe252b9bcb8;kalray"
+	GCC_VSN="git;https://github.com/kalray/gcc.git;-;coolidge;d14bf083461f590c036e84782d12630007df2876;kalray"
+	LINUX_VSN="git;https://github.com/kalray/linux_coolidge.git;-;coolidge;8dd54208564389c589c9acb0546c317d3039576e;kalray"
+	UCLIBC_VSN="git;https://github.com/kalray/uclibc-ng.git;-;coolidge;43b3ed960a5f4ce8490a23f41a1d1e7a0a3b5952;kalray"
+	# kvx-gcc is based on gcc-10.x, so use that to build it
+	HOST_GCC_VSN=10.4.0
 	;;
     "lm32")
 	TARGET_TRIPLE="${TARGET_ARCH}-uclinux-uclibc"
@@ -1453,7 +1452,14 @@ build_linux_headers() {
 	    done
 	    ;;
     esac
-    make mrproper
+    case "${TARGET_ARCH}" in
+	"kvx")
+	    # drivers/soc/Makefile references directories not in the tree
+	    make CONFIG_SOC_KENDRYTE=n CONFIG_ARCH_ZX=n mrproper
+	    ;;
+        *)
+	    make mrproper
+    esac
     cd -
 }
 
