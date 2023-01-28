@@ -494,7 +494,7 @@ case "${TARGET_ARCH}" in
 	;;
     "nds32")
 	TARGET_TRIPLE="nds32le-unknown-linux-gnu"
-	GLIBC_VSN="git;https://github.com/andestech/glibc.git;-;nds32-glibc-2.27-v0;HEAD;andestech"
+	GLIBC_VSN="git;https://github.com/andestech/glibc.git;-;nds32-glibc-2.29-v6;HEAD;andestech"
 	GLIBC_WANTS_DISABLE_WERROR=1
 	LINUX_VSN=5.17 # nds32 was removed in linux-5.18
 	;;
