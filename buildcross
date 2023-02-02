@@ -55,6 +55,7 @@
 # m32r		m32r-unknown-elf
 # m68hc11	m68hc11-unknown-elf
 # m68k		m68k-unknown-linux-gnu
+# m68k-uclinux	m68k-unknown-uclinux-uclibc
 # m88k		m88k-unknown-openbsd (elf, no libc)
 # maxq		maxq-unknown-coff (no libc)
 # mcore		mcore-unknown-elf
@@ -418,6 +419,11 @@ case "${TARGET_ARCH}" in
 	NEWLIB_VSN=2.2.0-1 # later versions cannot be built by the 4.2-based m68hc11-gcc
 	# PATH must select an older gcc suitable for building the above (4.2 is known to work)
 	SKIP_HOST_TOOLS=1
+	;;
+    "m68k-uclinux")
+	TARGET_ARCH="m68k"
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-uclinux-uclibc"
+	UCLIBC_WANTS_STATIC=1
 	;;
     "m88k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-openbsd"
