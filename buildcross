@@ -897,6 +897,10 @@ build_host_gmp() {
     if [ -d "${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}" ]; then
 	return
     fi
+    if [ -n "${SUFFIX}" -a -d "${HOST_TOOLS_DIR}/gmp-${GMP_VSN}" ]; then
+	ln -s "gmp-${GMP_VSN}" "${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}"
+	return
+    fi
     log "building host gmp-${GMP_VSN}${SUFFIX}"
     unpack_tarball "gmp-${GMP_VSN}"
     rm -rf objdir-gmp
@@ -919,6 +923,10 @@ build_host_mpfr() {
     if [ -d "${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}" ]; then
 	return
     fi
+    if [ -n "${SUFFIX}" -a -d "${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}" ]; then
+	ln -s "mpfr-${MPFR_VSN}" "${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}${SUFFIX}"
+	return
+    fi
     log "building host mpfr-${MPFR_VSN}${SUFFIX}"
     unpack_tarball "mpfr-${MPFR_VSN}"
     rm -rf objdir-mpfr
@@ -937,6 +945,10 @@ build_host_mpfr() {
 build_host_mpc() {
     local SUFFIX="$1"
     if [ -d "${HOST_TOOLS_DIR}/mpc-${MPC_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}" ]; then
+	return
+    fi
+    if [ -n "${SUFFIX}" -a -d "${HOST_TOOLS_DIR}/mpc-${MPC_VSN}" ]; then
+	ln -s "mpc-${MPC_VSN}" "${HOST_TOOLS_DIR}/mpc-${MPC_VSN}${SUFFIX}"
 	return
     fi
     log "building host mpc-${MPC_VSN}${SUFFIX}"
