@@ -51,6 +51,7 @@
 # kvx		kvx-unknown-uclibc
 # lm32		lm32-uclinux-uclibc
 # loongarch64	loongarch64-unknown-linux-gnu
+# m1750		m1750-coff (custom libc)
 # m32c		m32c-unknown-elf
 # m32r		m32r-unknown-elf
 # m68hc11	m68hc11-unknown-elf
@@ -115,9 +116,6 @@
 #
 # Specific unsupported targets:
 #
-# 1750a/m1750	see https://github.com/mikpe/m1750-tools for sources and instructions for building
-#		an m1750-coff toolchain (the alternative 1750a target required a non-standard
-#		assembler/linker and was removed in gcc-3.3, it's not supported)
 # amdgcn	not in binutils, though apparently in llvm's assembler and linker
 # clipper	not in binutils, removed in gcc-3.3
 # convex	not in binutils, removed in gcc-3.3
@@ -400,6 +398,19 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN="git;https://github.com/m-labs/linux-milkymist.git;-;master;1f446f97a4362092dab13d996193a9dc7b0be8e9"
 	# gcc-12.1.0 fails to build gcov due to missing __INTPTR_TYPE__
 	GCC_WANTS_DISABLE_GCOV=1
+	;;
+    "m1750")
+	TARGET_TRIPLE="${TARGET_ARCH}-coff"
+	BINUTILS_VSN="git;https://github.com/mikpe/m1750-tools.git;w1750/src/binutils-2.7;main;HEAD;mikpe"
+	BINUTILS_WANTS_HOST_NOT_BUILD=1
+	GCC_VSN="git;https://github.com/mikpe/m1750-tools.git;w1750/src/gcc-2.7.2;main;HEAD;mikpe"
+	NEWLIB_VSN= # m1750 is not supported in newlib, but comes with its own custom libc
+	DASHJ= # I don't trust -jN in these ancient sources
+	# You must have support for building and running 32-bit executables:
+	# - adjust PATH to select gcc-2.95.3
+	# - set BUILD_TRIPLE=i386-linux
+	SKIP_HOST_TOOLS=1
+	# See https://github.com/mikpe/m1750-tools for instructions on building sim1750 and gdb for this target.
 	;;
     "m32c")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -1099,6 +1110,11 @@ build_cross_gcc() {
 	"loongarch64")
 	    MULTILIB_CONFIG="--disable-multilib"
 	    ;;
+	"m1750")
+	    # gcc build requires libc and libm include files
+	    tar -C "${SOURCE_PATH}/../libc" -cf - include | tar -C "${CROSS_DIR}/${TARGET_TRIPLE}" -xv
+	    tar -C "${SOURCE_PATH}/../libm" -cf - include | tar -C "${CROSS_DIR}/${TARGET_TRIPLE}" -xv
+	    ;;
 	"m32c")
 	    MULTILIB_CONFIG="--disable-multilib"
 	    ;;
@@ -1273,6 +1289,11 @@ build_cross_gcc() {
 	    rm -rf dejagnu diff expect gdb make mmalloc patch readline sim tcl texinfo tk utils
 	    # gcc-2.x needs LANGUAGES=c when building instead of --enable-languages=c when configuring
 	    LANGUAGES="LANGUAGES=c"
+	    ;;
+	m1750)
+	    # gcc-2.x needs LANGUAGES=c when building instead of --enable-languages=c when configuring
+	    # we also have to force it to use gcc not cc
+	    LANGUAGES="LANGUAGES=c CC=gcc"
 	    ;;
 	pj)
 	    # gcc-3.1.1 pretends to understand --enable-languages=c but it still tries
@@ -1724,6 +1745,24 @@ build_target_newlib() {
     rm -rf objdir-newlib
 }
 
+build_target_m1750_libc() {
+    local SOURCE_PATH
+    log "building m1750 libc for ${TARGET_TRIPLE}"
+    # libc sources in the same repo as the gcc sources
+    SOURCE_PATH=`unpack_source "gcc-" "${GCC_VSN}"`
+    # builds must be done in the source directories
+    cd "${SOURCE_PATH}/.."
+    git clean -ffdx
+    make -C libc prefix="${CROSS_DIR}"
+    make -C libc prefix="${CROSS_DIR}" install
+    make -C libm prefix="${CROSS_DIR}"
+    make -C libm prefix="${CROSS_DIR}" install
+    make -C libpthread prefix="${CROSS_DIR}"
+    make -C libpthread prefix="${CROSS_DIR}" install
+    git clean -ffdx
+    cd -
+}
+
 build_target_libc() {
     if [ -n "${GLIBC_VSN}" ]; then
 	build_target_glibc
@@ -1735,6 +1774,8 @@ build_target_libc() {
 	build_target_mingw64crt
     elif [ -n "${NEWLIB_VSN}" ]; then
 	build_target_newlib
+    elif [ "${TARGET_ARCH}" = "m1750" ]; then
+	build_target_m1750_libc
     fi
 }
 
