@@ -182,6 +182,7 @@ UCLIBC_VSN=1.0.42
 # binutils configuration options
 BINUTILS_WANTS_DISABLE_WERROR=
 BINUTILS_WANTS_ENABLE_OBSOLETE=
+BINUTILS_WANTS_HOST_NOT_BUILD=
 
 # gcc configuration options
 GCC_WANTS_DISABLE_GCOV=
@@ -1321,6 +1322,7 @@ build_cross_binutils() {
     local ENABLE_TARGETS
     local ENABLE_OBSOLETE
     local DISABLE_WERROR
+    local BUILD_OR_HOST
     local SOURCE_PATH
     local CFLAGS
     if [ -x "${CROSS_DIR}/bin/${TARGET_TRIPLE}-as" ]; then
@@ -1383,12 +1385,16 @@ build_cross_binutils() {
     if [ -n "${BINUTILS_WANTS_DISABLE_WERROR}" ]; then
 	DISABLE_WERROR="--disable-werror"
     fi
+    BUILD_OR_HOST="build"
+    if [ -n "${BINUTILS_WANTS_HOST_NOT_BUILD}" ]; then
+	BUILD_OR_HOST="host"
+    fi
     rm -rf objdir-binutils
     mkdir objdir-binutils
     cd objdir-binutils
     CFLAGS="${CFLAGS}" ${SOURCE_PATH}/configure \
 		--target="${TARGET_TRIPLE}" ${ENABLE_TARGETS} ${ENABLE_OBSOLETE} ${DISABLE_WERROR} \
-		--build="${BUILD_TRIPLE}" \
+		--${BUILD_OR_HOST}="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
 		--with-sysroot="${CROSS_DIR}" \
 		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}" \
