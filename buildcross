@@ -703,17 +703,14 @@ case "${TARGET_TRIPLE}" in
 	NEWLIB_VSN=
 	;;
     *-elf | \
-    a29k-unknown-coff | \
+    *-coff | \
     bpf-unknown-none | \
     i860-stardent-sysv4 | \
-    m88k-unknown-coff | \
     m88k-unknown-openbsd | \
-    maxq-unknown-coff | \
     mmix-knuth-mmixware | \
     ns32k-unknown-netbsd | \
     pdp11-unknown-aout | \
-    vax-unknown-linux | \
-    z8k-unknown-coff)
+    vax-unknown-linux)
 	GLIBC_VSN=
 	UCLIBC_VSN=
 	MUSL_VSN=
