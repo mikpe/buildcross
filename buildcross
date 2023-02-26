@@ -1005,7 +1005,7 @@ build_host_gcc() {
 		--enable-threads=posix \
 		${DISABLE_BOOTSTRAP}
     make ${DASHJ} MAKEINFO=/bin/true ${MAKE_TARGET}
-    make install
+    make MAKEINFO=/bin/true install
     cd ..
     rm -rf objdir-gcc
 }
@@ -1289,7 +1289,7 @@ build_cross_gcc() {
 	    rm -rf bison byacc flex
 	    ;;
     esac
-    make ${LANGUAGES} ${INSTALL_TARGET}
+    make MAKEINFO=/bin/true ${LANGUAGES} ${INSTALL_TARGET}
     touch "${CROSS_DIR}/.stage-gcc-${STAGE}"
     cd ..
     rm -rf objdir-gcc
