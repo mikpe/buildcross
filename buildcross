@@ -44,7 +44,7 @@
 # hexagon	hexagon-unknown-linux-gnu
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
 # i860		i860-stardent-sysv4 (no libc)
-# i960		i960-unknown-elf
+# i960		i960-unknown-elf with uclinux and uclibc
 # ia64		ia64-unknown-linux-gnu
 # ip2k		ip2k-unknown-elf (no libc)
 # iq2000	iq2000-unknown-elf
@@ -356,15 +356,18 @@ case "${TARGET_ARCH}" in
 	# - if on x86_64, set CC to a wrapper script that enforces -m32
 	;;
     "i960")
-	# There is a port based on uclinux-2.0.x and uclibc-0.9.27,
-	# but it's buried in pre-2013 releases of uClinux-dist on
-	# SourceForge, and it requires major patching to build.
+	# this is a uclinux/uclibc toolchain using a kernel from uClinux-dist-20121024
+	# gcc and binutils only accept certain i960 triplets, so we keep the generic one
+	# you could instead build newlib-2.2.0-1 for a non-uclinux/uclibc toolchain
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	LINUX_VSN="git;https://github.com/mikpe/linux-2.0.39.uc2.git;linux-2.0.x;main;HEAD;mikpe"
+	LINUX_HEADERS_WANTS_MANUAL_INSTALL=1
+	UCLIBC_VSN="git;https://github.com/mikpe/uClibc.git;-;0_9_29-i960;HEAD;mikpe"
+	UCLIBC_WANTS_OLDCONFIG=1
 	GCC_VSN=3.4.6 # obsoleted in 3.4, removed in 4.0
 	GCC_WANTS_ENABLE_OBSOLETE=1
 	BINUTILS_VSN=2.30 # obsoleted in 2.28, removed in 2.31
 	BINUTILS_WANTS_ENABLE_OBSOLETE=1
-	NEWLIB_VSN=2.2.0-1 # later ones cannot be built by the 3.x-based i960-gcc
 	# you need to:
 	# - adjust PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
 	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
@@ -699,7 +702,7 @@ case "${TARGET_TRIPLE}" in
 	# c.f. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100896
 	GCC_WANTS_ENABLE_INITFINI_ARRAY=1
 	;;
-    *linux-uclibc* | *uclinux*)
+    *linux-uclibc* | *uclinux* | i960-unknown-elf)
 	GLIBC_VSN=
 	MUSL_VSN=
 	MINGW64_VSN=
