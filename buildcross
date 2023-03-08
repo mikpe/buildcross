@@ -199,6 +199,7 @@ UCLIBC_WANTS_BIG_ENDIAN=
 UCLIBC_WANTS_LINUXTHREADS=
 UCLIBC_WANTS_LITTLE_ENDIAN=
 UCLIBC_WANTS_NPTL=
+UCLIBC_WANTS_OLDCONFIG=
 UCLIBC_WANTS_RESOLVER_SUPPORT=
 UCLIBC_WANTS_SSP=
 UCLIBC_WANTS_STATIC=
@@ -612,6 +613,7 @@ case "${TARGET_ARCH}" in
 	GCC_VSN="git;https://source.codeaurora.org/external/ubicom/ubicom32-toolchain;src/gcc;IP8K;236bff6653554ce3360dd94cc5291f54c8a550d0"
 	LINUX_VSN="git;https://source.codeaurora.org/external/ubicom/ubicom32-android;-;-;f67b0c971d4aee1825c6288c65f213c298db6062"
 	UCLIBC_VSN="git;https://source.codeaurora.org/external/ubicom/ubicom32-uclibc;-;-;e043cec698ee5fa4057eb68b50c3e1f993586a46"
+	UCLIBC_WANTS_OLDCONFIG=1
 	SKIP_HOST_TOOLS=1 # ubicom32-gcc is based on gcc-4.4.1, you'll need something compatible in PATH
 	;;
     "v850")
@@ -1605,7 +1607,7 @@ build_target_glibc() {
 build_target_uclibc() {
     local CROSS_COMPILE="${TARGET_TRIPLE}-"
     local SOURCE_PATH
-    local OLDDEFCONFIG="olddefconfig"
+    local OLDDEFCONFIG
     log "building uClibc ${UCLIBC_VSN} for ${TARGET_TRIPLE}"
     SOURCE_PATH=`unpack_source "uClibc-ng-" "${UCLIBC_VSN}"`
     cd "${SOURCE_PATH}"
@@ -1639,8 +1641,6 @@ build_target_uclibc() {
 	    echo 'FORCE_SHAREABLE_TEXT_SEGMENTS=y' >> .config
 	    # needed to avoid undefined reference to scalb when linking libm.so
 	    echo 'UCLIBC_SUSV3_LEGACY=y' >> .config
-	    # ubicom32's old uclibc doesn't understand "olddefconfig", which newer ones _require_
-	    OLDDEFCONFIG="oldconfig"
 	    ;;
     esac
     if [ -n "${UCLIBC_WANTS_NPTL}" ]; then
@@ -1663,6 +1663,11 @@ build_target_uclibc() {
     fi
     if [ -n "${UCLIBC_WANTS_RESOLVER_SUPPORT}" ]; then
 	echo 'UCLIBC_HAS_RESOLVER_SUPPORT=y' >> .config
+    fi
+    OLDDEFCONFIG="olddefconfig"
+    if [ -n "${UCLIBC_WANTS_OLDCONFIG}" ]; then
+       # old versions of uclibc don't understand olddefconfig, which newer ones require
+       OLDDEFCONFIG="oldconfig"
     fi
     make ARCH="${TARGET_ARCH}" TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" ${OLDDEFCONFIG}
     make ${DASHJ}
