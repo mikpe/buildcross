@@ -1623,47 +1623,54 @@ build_target_uclibc() {
 	echo "TARGET_${TARGET_ARCH}=y" > "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig"
     fi
     make ARCH="${TARGET_ARCH}" TARGET_ARCH="${TARGET_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" defconfig
-    echo "KERNEL_HEADERS=\"${CROSS_DIR}/usr/include\"" >> .config
-    echo "RUNTIME_PREFIX=\"/\"" >> .config
-    echo "DEVEL_PREFIX=\"/usr\"" >> .config
-    echo "CROSS_COMPILER_PREFIX=\"${CROSS_COMPILE}\"" >> .config
+    # Override uclibc defaults. For newer versions the last definition takes precedence,
+    # so it would be enough to >> .config. Unfortunately older version only honour the
+    # first definition. Therefore we collect the overrides in a separate file, and
+    # concatenate OVERRIDES; DEFCONFIG; OVERRIDES to form the new .config.
+    echo "KERNEL_HEADERS=\"${CROSS_DIR}/usr/include\"" >> .config.override
+    echo "RUNTIME_PREFIX=\"/\"" >> .config.override
+    echo "DEVEL_PREFIX=\"/usr\"" >> .config.override
+    echo "CROSS_COMPILER_PREFIX=\"${CROSS_COMPILE}\"" >> .config.override
     case "${TARGET_ARCH}" in
 	"cris")
-	    echo 'CONFIG_CRISV32=y' >> .config
+	    echo 'CONFIG_CRISV32=y' >> .config.override
 	    ;;
 	"ubicom32")
 	    # switch from the default V3 to the MMU-capable V5
-	    echo 'CONFIG_UC_UBICOM32_V3=n' >> .config
-	    echo 'CONFIG_UC_UBICOM32_V5=y' >> .config
+	    echo 'CONFIG_UC_UBICOM32_V3=n' >> .config.override
+	    echo 'CONFIG_UC_UBICOM32_V5=y' >> .config.override
 	    # needed to avoid '#error "Unknown Ubicom32 Processor"' in syscalls.h
-	    echo 'UCLIBC_EXTRA_CFLAGS="-march=ubicom32v5 -DUBICOM32_ARCH_VERSION=5"' >> .config
+	    echo 'UCLIBC_EXTRA_CFLAGS="-march=ubicom32v5 -DUBICOM32_ARCH_VERSION=5"' >> .config.override
 	    # needed to avoid compile error in ldso.c
-	    echo 'FORCE_SHAREABLE_TEXT_SEGMENTS=y' >> .config
+	    echo 'FORCE_SHAREABLE_TEXT_SEGMENTS=y' >> .config.override
 	    # needed to avoid undefined reference to scalb when linking libm.so
-	    echo 'UCLIBC_SUSV3_LEGACY=y' >> .config
+	    echo 'UCLIBC_SUSV3_LEGACY=y' >> .config.override
 	    ;;
     esac
     if [ -n "${UCLIBC_WANTS_NPTL}" ]; then
-	echo 'UCLIBC_HAS_THREADS_NATIVE=y' >> .config
+	echo 'UCLIBC_HAS_THREADS_NATIVE=y' >> .config.override
     elif [ -n "${UCLIBC_WANTS_LINUXTHREADS}" ]; then
-	echo 'UCLIBC_HAS_LINUXTHREADS=y' >> .config
+	echo 'UCLIBC_HAS_LINUXTHREADS=y' >> .config.override
     fi
     if [ -n "${UCLIBC_WANTS_SSP}" ]; then
-	echo 'UCLIBC_HAS_SSP=y' >> .config
+	echo 'UCLIBC_HAS_SSP=y' >> .config.override
     fi
     if [ -n "${UCLIBC_WANTS_LITTLE_ENDIAN}" ]; then
-	echo 'ARCH_WANTS_BIG_ENDIAN=n' >> .config
-	echo 'ARCH_WANTS_LITTLE_ENDIAN=y' >> .config
+	echo 'ARCH_WANTS_BIG_ENDIAN=n' >> .config.override
+	echo 'ARCH_WANTS_LITTLE_ENDIAN=y' >> .config.override
     elif [ -n "${UCLIBC_WANTS_BIG_ENDIAN}" ]; then
-	echo 'ARCH_WANTS_LITTLE_ENDIAN=n' >> .config
-	echo 'ARCH_WANTS_BIG_ENDIAN=y' >> .config
+	echo 'ARCH_WANTS_LITTLE_ENDIAN=n' >> .config.override
+	echo 'ARCH_WANTS_BIG_ENDIAN=y' >> .config.override
     fi
     if [ -n "${UCLIBC_WANTS_STATIC}" ]; then
-	echo 'HAVE_SHARED=n' >> .config
+	echo 'HAVE_SHARED=n' >> .config.override
     fi
     if [ -n "${UCLIBC_WANTS_RESOLVER_SUPPORT}" ]; then
-	echo 'UCLIBC_HAS_RESOLVER_SUPPORT=y' >> .config
+	echo 'UCLIBC_HAS_RESOLVER_SUPPORT=y' >> .config.override
     fi
+    cat .config.override .config .config.override > .config.new
+    mv -f .config.new .config
+    rm .config.override
     OLDDEFCONFIG="olddefconfig"
     if [ -n "${UCLIBC_WANTS_OLDCONFIG}" ]; then
        # old versions of uclibc don't understand olddefconfig, which newer ones require
