@@ -191,6 +191,9 @@ GCC_WANTS_NO_ENABLE_CHECKING=
 # glibc configuration options
 GLIBC_WANTS_DISABLE_WERROR=
 
+# linux headers options
+LINUX_HEADERS_WANTS_MANUAL_INSTALL=
+
 # uClibc-ng configuration options
 UCLIBC_WANTS_BIG_ENDIAN=
 UCLIBC_WANTS_LINUXTHREADS=
@@ -1481,7 +1484,18 @@ build_linux_headers() {
 	    ;;
     esac
     cd "${SOURCE_PATH}"
-    make ARCH="${KERNEL_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" INSTALL_HDR_PATH="${CROSS_DIR}/usr" headers_install
+    if [ -n "${LINUX_HEADERS_WANTS_MANUAL_INSTALL}" ]; then
+       # ancient kernel that predates 'make headers_install'
+       touch .config
+       make ARCH="${KERNEL_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" CONFIG_UCLINUX=1 include/linux/version.h
+       mkdir -p "${CROSS_DIR}/usr/include"
+       tar -C include -cf - linux "asm-${KERNEL_ARCH}" | tar -C "${CROSS_DIR}/usr/include/" -xf -
+       touch "${CROSS_DIR}/usr/include/linux/autoconf.h"
+       rm -f "${CROSS_DIR}/usr/include/asm"
+       ln -s "asm-${KERNEL_ARCH}" "${CROSS_DIR}/usr/include/asm"
+    else
+	make ARCH="${KERNEL_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" INSTALL_HDR_PATH="${CROSS_DIR}/usr" headers_install
+    fi
     case "${TARGET_ARCH}" in
 	"hexagon")
 	    # fix broken __aligned(8) directive
