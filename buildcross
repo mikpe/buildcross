@@ -1614,7 +1614,9 @@ build_target_uclibc() {
     if [ "${TARGET_ARCH}" = "lm32" -a -f "extra/Configs/defconfigs/lm32" ]; then
 	rm "extra/Configs/defconfigs/lm32"
     fi
-    if [ \( ! -f "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig" \) -a \( "${TARGET_ARCH}" != "ubicom32" \) ]; then
+    if [ \( ! -f "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig" \) -a \
+         \( ! -f "extra/Configs/defconfigs/${TARGET_ARCH}" \) -a \
+         \( "${TARGET_ARCH}" != "ubicom32" \) ]; then
 	mkdir -p "extra/Configs/defconfigs/${TARGET_ARCH}"
 	echo "TARGET_${TARGET_ARCH}=y" > "extra/Configs/defconfigs/${TARGET_ARCH}/defconfig"
     fi
