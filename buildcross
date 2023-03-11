@@ -109,7 +109,7 @@
 # Unsupported:
 #
 # - targets not supported by publicly available sources (obvious)
-# - Linux targets using another libc than glibc, uclibc-ng, or musl
+# - Linux targets using another libc than glibc, uclibc{,-ng}, or musl
 #   (for now, may change time permitting)
 # - non-Linux targets except mingw-w64, plain ELF with newlib,
 #   or plain targets without newlib
