@@ -695,32 +695,32 @@ fi
 # disable the components we don't want
 case "${TARGET_TRIPLE}" in
     *linux-gnu*)
-	UCLIBC_VSN=
-	MUSL_VSN=
 	MINGW64_VSN=
+	MUSL_VSN=
 	NEWLIB_VSN=
+	UCLIBC_VSN=
 	# c.f. https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100896
 	GCC_WANTS_ENABLE_INITFINI_ARRAY=1
 	;;
     *linux-uclibc* | *uclinux* | i960-unknown-elf)
 	GLIBC_VSN=
-	MUSL_VSN=
 	MINGW64_VSN=
+	MUSL_VSN=
 	NEWLIB_VSN=
 	;;
     *linux-musl*)
 	GLIBC_VSN=
-	UCLIBC_VSN=
 	LINUX_VSN=
 	MINGW64_VSN=
 	NEWLIB_VSN=
+	UCLIBC_VSN=
 	;;
     x86_64-w64-mingw32)
 	GLIBC_VSN=
-	UCLIBC_VSN=
-	MUSL_VSN=
 	LINUX_VSN=
+	MUSL_VSN=
 	NEWLIB_VSN=
+	UCLIBC_VSN=
 	;;
     *-elf | \
     *-coff | \
@@ -732,10 +732,10 @@ case "${TARGET_TRIPLE}" in
     pdp11-unknown-aout | \
     vax-unknown-linux)
 	GLIBC_VSN=
-	UCLIBC_VSN=
-	MUSL_VSN=
-	MINGW64_VSN=
 	LINUX_VSN=
+	MINGW64_VSN=
+	MUSL_VSN=
+	UCLIBC_VSN=
 	;;
 esac
 
