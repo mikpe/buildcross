@@ -54,6 +54,7 @@
 # m1750		m1750-coff (custom libc)
 # m32c		m32c-unknown-elf
 # m32r		m32r-unknown-elf
+# m6809		m6809-unknown-none with newlib
 # m68hc11	m68hc11-unknown-elf
 # m68k		m68k-unknown-linux-gnu
 # m68k-uclinux	m68k-unknown-uclinux-uclibc
@@ -124,8 +125,6 @@
 # elxsi		not in binutils, removed in gcc-3.3
 # fx80		not in binutils, removed in gcc-3.0
 # gmicro	not in binutils, removed in gcc-3.0
-# m6809		https://gitlab.com/dfffffff has ports of gcc and newlib, but the assembler and linker
-#		are custom, there is no disassembler, and the build procedures are non-standard
 # picochip	not in binutils, removed in gcc-5
 # pyr		not in binutils, removed in gcc-3.0
 # romp		not in binutils, removed in gcc-3.4
@@ -140,7 +139,7 @@
 
 set -e
 
-VERSION="6.32.0"
+VERSION="6.33.0"
 
 case "$1" in
     -j*)
@@ -431,6 +430,19 @@ case "${TARGET_ARCH}" in
 	;;
     "m32r")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	;;
+    "m6809")
+	# This toolchain uses the 6809 port to gcc-4.3.6 with ASxxxx and newlib.
+	# There is also a port to gcc-4.6.4 with LWTOOLS (www.lwtools.ca), which is recommended by Fuzix,
+	# unfortunately it ICEs with reload failure when building newlib.
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-none"
+	BINUTILS_VSN= # ASxxxx included in GCC sources
+	GCC_VSN="git;https://gitlab.com/dfffffff/gcc6809.git;-;dftools;HEAD;dfffffff"
+	NEWLIB_VSN="git;https://gitlab.com/dfffffff/newlib-6809.git;-;dev-1.15;HEAD;dfffffff"
+	# the above newlib repo seems to malfunction with -jN
+	DASHJ=
+	# GCC is based on 4.3.6
+	SKIP_HOST_TOOLS=1
 	;;
     "m68hc11")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -744,6 +756,7 @@ case "${TARGET_TRIPLE}" in
     i860-stardent-sysv4 | \
     m88k-unknown-openbsd | \
     mmix-knuth-mmixware | \
+    m6809-unknown-none | \
     ns32k-unknown-netbsd | \
     pdp11-unknown-aout | \
     vax-unknown-linux)
@@ -1144,6 +1157,13 @@ build_cross_gcc() {
 	"m32c")
 	    MULTILIB_CONFIG="--disable-multilib"
 	    ;;
+	"m6809")
+	    MULTILIB_CONFIG="--enable-sjlj-exceptions"
+	    # the --with-as= and --with-ld= are critical, otherwise m6809-gcc will
+	    # use the _host_ assembler when building newlib, causing the build to fail
+	    MULTILIB_CONFIG="${MULTILIB_CONFIG} --with-as=${CROSS_DIR}/bin/${TARGET_TRIPLE}-as"
+	    MULTILIB_CONFIG="${MULTILIB_CONFIG} --with-ld=${CROSS_DIR}/bin/${TARGET_TRIPLE}-ld"
+	    ;;
 	"m88k")
 	    ENABLE_CHECKING=
 	    mkdir -p "${CROSS_DIR}/usr/include/sys"
@@ -1494,11 +1514,44 @@ build_nvptx_tools() {
     rm -rf objdir-nvptx-tools
 }
 
+build_m6809_tools() {
+    local SOURCE_PATH
+    local AS_HOST=linux
+    local AS_VERSION=5.1.1
+    local AS_TARGETS="as6809 aslink aslib"
+    local prog
+    if [ -x "${CROSS_DIR}/bin/${TARGET_TRIPLE}-as" ]; then
+	return
+    fi
+    log "building ASxxxx ${AS_VERSION} for ${TARGET_ARCH}"
+    # binary tools in the same repo as the gcc sources
+    SOURCE_PATH=`unpack_source "gcc-" "${GCC_VSN}"`
+    # builds are done in the source directories
+    cd "${SOURCE_PATH}"
+    make -C "${SOURCE_PATH}/as-${AS_VERSION}/asxmak/${AS_HOST}/build" ${AS_TARGETS} EXTRA_ASXXXX_CFLAGS="-I${SOURCE_PATH}/binutils"
+    mkdir -p "${CROSS_DIR}/${TARGET_TRIPLE}/bin"
+    for prog in ${AS_TARGETS}; do
+	cp "${SOURCE_PATH}/as-${AS_VERSION}/asxmak/${AS_HOST}/exe/${prog}" "${CROSS_DIR}/${TARGET_TRIPLE}/bin/${prog}"
+    done
+    log "building binutils wrappers for ${TARGET_TRIPLE}"
+    make -C "${SOURCE_PATH}/binutils"
+    mkdir -p "${CROSS_DIR}/bin"
+    cp "${SOURCE_PATH}/binutils/ranlib" "${CROSS_DIR}/bin/${TARGET_TRIPLE}-ranlib"
+    for prog in ar as ld; do
+	sed -e "s,@AS_PREFIX@,${CROSS_DIR}/${TARGET_TRIPLE},g" < "${SOURCE_PATH}/binutils/${prog}" > "${CROSS_DIR}/bin/${TARGET_TRIPLE}-${prog}"
+	chmod +x "${CROSS_DIR}/bin/${TARGET_TRIPLE}-${prog}"
+    done
+    git clean -ffdx
+    cd -
+}
+
 build_cross_binary_tools() {
     if [ -n "${BINUTILS_VSN}" ]; then
 	build_cross_binutils
     elif [ -n "${NVPTXTOOLS_VSN}" ]; then
 	build_nvptx_tools
+    elif [ "${TARGET_ARCH}" = "m6809" ]; then
+	build_m6809_tools
     fi
 }
 
