@@ -1617,7 +1617,7 @@ build_linux_headers() {
 	    make CONFIG_SOC_KENDRYTE=n CONFIG_ARCH_ZX=n mrproper
 	    ;;
         *)
-	    make ARCH="${TARGET_ARCH}" mrproper
+	    make ARCH="${KERNEL_ARCH}" mrproper
     esac
     cd -
 }
