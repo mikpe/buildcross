@@ -402,6 +402,7 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN="git;https://github.com/m-labs/linux-milkymist.git;-;master;1f446f97a4362092dab13d996193a9dc7b0be8e9"
 	# gcc-12.1.0 fails to build gcov due to missing __INTPTR_TYPE__
 	GCC_WANTS_DISABLE_GCOV=1
+	GCC_VSN=12.2.0 # gcc-13.1.0-RC2 fails to build
 	;;
     "m1750")
 	TARGET_TRIPLE="${TARGET_ARCH}-coff"
@@ -530,6 +531,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="nds32le-unknown-linux-gnu"
 	GLIBC_VSN="git;https://github.com/andestech/glibc.git;-;nds32-glibc-2.29-v6;HEAD;andestech"
 	GLIBC_WANTS_DISABLE_WERROR=1
+	GCC_VSN=12.2.0 # gcc-13.1.0-RC2 triggers a linkage error in glibc
 	LINUX_VSN=5.17 # nds32 was removed in linux-5.18
 	;;
     "ns32k")
@@ -643,6 +645,7 @@ case "${TARGET_ARCH}" in
 	NEWLIB_VSN= # not in any supported libc
 	# gcc-12.1.0 fails to build gcov due to missing __INTPTR_TYPE__
 	GCC_WANTS_DISABLE_GCOV=1
+	GCC_VSN=12.2.0 # gcc-13.1.0-RC2 fails to build
 	;;
     "visium")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
