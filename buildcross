@@ -64,7 +64,7 @@
 # mep		mep-unknown-elf (no libc)
 # metag		metag-unknown-linux-uclibc
 # microblaze	microblaze-unknown-linux-gnu
-# mingw64	x86_64-w64-mingw32 with -m64 and -m32 support [BROKEN]
+# mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
 # mips64	mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support
 # mmix		mmix-knuth-mmixware (with newlib)
 # mn10300	mn10300-unknown-elf
@@ -139,7 +139,7 @@
 
 set -e
 
-VERSION="6.35.0"
+VERSION="6.36.0"
 
 case "$1" in
     -j*)
@@ -165,10 +165,10 @@ CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
 
 # default component versions
 BINUTILS_VSN=2.40
-GCC_VSN=13.1.0-RC2-20230419
+GCC_VSN=13.1.0
 GLIBC_VSN=2.37
 GMP_VSN=6.2.1
-LINUX_VSN=6.2
+LINUX_VSN=6.3
 MINGW64_VSN=10.0.0
 MPC_VSN=1.3.1
 MPFR_VSN=4.2.0
@@ -402,7 +402,7 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN="git;https://github.com/m-labs/linux-milkymist.git;-;master;1f446f97a4362092dab13d996193a9dc7b0be8e9"
 	# gcc-12.1.0 fails to build gcov due to missing __INTPTR_TYPE__
 	GCC_WANTS_DISABLE_GCOV=1
-	GCC_VSN=12.2.0 # gcc-13.1.0-RC2 fails to build
+	GCC_VSN=12.2.0 # gcc-13.1.0 fails to build
 	;;
     "m1750")
 	TARGET_TRIPLE="${TARGET_ARCH}-coff"
@@ -531,7 +531,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="nds32le-unknown-linux-gnu"
 	GLIBC_VSN="git;https://github.com/andestech/glibc.git;-;nds32-glibc-2.29-v6;HEAD;andestech"
 	GLIBC_WANTS_DISABLE_WERROR=1
-	GCC_VSN=12.2.0 # gcc-13.1.0-RC2 triggers a linkage error in glibc
+	GCC_VSN=12.2.0 # gcc-13.1.0 triggers a linkage error in glibc
 	LINUX_VSN=5.17 # nds32 was removed in linux-5.18
 	;;
     "ns32k")
@@ -645,7 +645,7 @@ case "${TARGET_ARCH}" in
 	NEWLIB_VSN= # not in any supported libc
 	# gcc-12.1.0 fails to build gcov due to missing __INTPTR_TYPE__
 	GCC_WANTS_DISABLE_GCOV=1
-	GCC_VSN=12.2.0 # gcc-13.1.0-RC2 fails to build
+	GCC_VSN=12.2.0 # gcc-13.1.0 fails to build
 	;;
     "visium")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
