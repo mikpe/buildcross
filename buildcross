@@ -183,7 +183,6 @@ BINUTILS_WANTS_ENABLE_OBSOLETE=
 BINUTILS_WANTS_HOST_NOT_BUILD=
 
 # gcc configuration options
-GCC_WANTS_DISABLE_GCOV=
 GCC_WANTS_ENABLE_OBSOLETE=
 GCC_WANTS_ENABLE_INITFINI_ARRAY=
 GCC_WANTS_NO_ENABLE_CHECKING=
@@ -1071,7 +1070,6 @@ build_cross_gcc() {
     local ENABLE_CHECKING
     local ENABLE_OBSOLETE
     local ENABLE_INITFINI_ARRAY
-    local DISABLE_GCOV
     local SOURCE_PATH
     local LANGUAGES
     if [ -f "${CROSS_DIR}/.stage-gcc-${STAGE}" ]; then
@@ -1099,10 +1097,6 @@ build_cross_gcc() {
     ENABLE_INITFINI_ARRAY=
     if [ -n "${GCC_WANTS_ENABLE_INITFINI_ARRAY}" ]; then
 	ENABLE_INITFINI_ARRAY="--enable-initfini-array"
-    fi
-    DISABLE_GCOV=
-    if [ -n "${GCC_WANTS_DISABLE_GCOV}" ]; then
-	DISABLE_GCOV="--disable-gcov"
     fi
     case "${TARGET_ARCH}" in
 	"aarch64")
@@ -1327,7 +1321,7 @@ build_cross_gcc() {
 	        ${ENABLE_CHECKING} \
 		--enable-languages=c \
 		${MULTILIB_CONFIG} \
-		${LIBC_CONFIGS} ${LIBSSP_CONFIG} ${ENABLE_INITFINI_ARRAY} ${DISABLE_GCOV}
+		${LIBC_CONFIGS} ${LIBSSP_CONFIG} ${ENABLE_INITFINI_ARRAY}
     LANGUAGES=
     case "${TARGET_ARCH}" in
 	d10v | z8k)
