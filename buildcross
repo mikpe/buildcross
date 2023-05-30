@@ -261,7 +261,7 @@ case "${TARGET_ARCH}" in
 	;;
     "cr16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	GCC_VSN=11.3.0 # marked obsolete in gcc-12.1.0, but also doesn't build there
+	GCC_VSN=11.4.0 # marked obsolete in gcc-12.1.0, but also doesn't build there
 	;;
     "cris")
 	TARGET_TRIPLE="crisv32-unknown-linux-uclibc"
