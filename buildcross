@@ -211,6 +211,7 @@ case "${TARGET_ARCH}" in
     "a29k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
 	GCC_VSN=2.95.3
+	GCC_WANTS_NO_ENABLE_CHECKING=1
 	BINUTILS_VSN=2.16.1
 	NEWLIB_VSN= # fails to build for a29k
 	# you need to:
@@ -296,6 +297,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=3.4.6
 	GCC_WANTS_ENABLE_OBSOLETE=1
+	GCC_WANTS_NO_ENABLE_CHECKING=1
 	BINUTILS_VSN=2.16.1
 	NEWLIB_VSN= # fails to build for d30v
 	# you need to:
@@ -342,6 +344,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-stardent-sysv4"
 	GCC_VSN=3.2.3
 	GCC_WANTS_ENABLE_OBSOLETE=1
+	GCC_WANTS_NO_ENABLE_CHECKING=1
 	BINUTILS_VSN=2.16.1
 	NEWLIB_VSN= # doesn't support i860
 	SKIP_HOST_GCC=1
@@ -362,6 +365,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_OLDCONFIG=1
 	GCC_VSN=3.4.6 # obsoleted in 3.4, removed in 4.0
 	GCC_WANTS_ENABLE_OBSOLETE=1
+	GCC_WANTS_NO_ENABLE_CHECKING=1
 	BINUTILS_VSN=2.30 # obsoleted in 2.28, removed in 2.31
 	BINUTILS_WANTS_ENABLE_OBSOLETE=1
 	# you need to:
@@ -374,6 +378,7 @@ case "${TARGET_ARCH}" in
     "ip2k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=3.3.6 # added in 3.3, ICEs in 3.4 and 4.0, removed in 4.1
+	GCC_WANTS_NO_ENABLE_CHECKING=1
 	NEWLIB_VSN= # doesn't support ip2k
 	# you need to:
 	# - adjust PATH to select gcc >= 4.3
@@ -1082,11 +1087,6 @@ build_cross_gcc() {
     MULTILIB_CONFIG="--enable-multilib"
     ENABLE_OBSOLETE=
     ENABLE_CHECKING="--enable-checking=release"
-    case "${GCC_VSN}" in
-	2.* | 3.*)
-	    ENABLE_CHECKING= # gcc prior to 4.0 doesn't understand --enable-checking=release
-	    ;;
-    esac
     if [ -n "${GCC_WANTS_NO_ENABLE_CHECKING}" ]; then
 	ENABLE_CHECKING= # gcc < 4.0 from git
     fi
