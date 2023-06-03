@@ -1314,6 +1314,7 @@ build_cross_gcc() {
 		--with-mpc="${HOST_TOOLS_DIR}/mpc-${MPC_VSN}" \
 		--without-cloog \
 		--without-isl \
+		--disable-gcov \
 		--disable-libatomic \
 		--disable-libgomp \
 		--disable-libitm \
