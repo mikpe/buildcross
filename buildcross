@@ -76,7 +76,6 @@
 # ns32k		ns32k-unknown-netbsd (no libc)
 # nvptx		nvptx-none with newlib
 # or1k		or1k-unknown-linux-gnu
-# or1k-musl	or1k-unknown-linux-musl
 # pdp11		pdp11-unknown-aout (no libc)
 # pj		pjl-unknown-elf (no libc)
 # ppc64		ppc64-unknown-linux-gnu with -m64 and -m32 support
@@ -97,6 +96,7 @@
 # vax		vax-unknown-linux (no libc or kernel headers)
 # visium	visium-unknown-elf
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
+# x86_64-musl	x86_64-unknown-linux-musl (no -m32/-mx32 support)
 # xc16x		xc16x-unknown-elf
 # xstormy16	xstormy16-unknown-elf
 # xtensa	xtensa-unknown-linux-uclibc
@@ -552,10 +552,6 @@ case "${TARGET_ARCH}" in
     "nvptx")
 	TARGET_TRIPLE="${TARGET_ARCH}-none"
 	;;
-    "or1k-musl")
-	TARGET_ARCH="or1k"
-	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-musl"
-	;;
     "pdp11")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-aout"
 	NEWLIB_VSN= # not supported in newlib at all
@@ -648,6 +644,10 @@ case "${TARGET_ARCH}" in
 	;;
     "visium")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	;;
+    "x86_64-musl")
+	TARGET_ARCH="x86_64"
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-musl"
 	;;
     "xc16x")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -1254,7 +1254,14 @@ build_cross_gcc() {
 	    rm -f "${SOURCE_PATH}/newlib"
 	    ;;
 	"x86_64")
-	    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=m64,m32,mx32"
+	    case "${STAGE}" in
+		"musl")
+		    MULTILIB_CONFIG="--disable-multilib"
+		    ;;
+		*)
+		    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=m64,m32,mx32"
+		    ;;
+	    esac
 	    ;;
 	"zpu")
 	    MULTILIB_CONFIG="--enable-sjlj-exceptions --with-gnu-as --with-gnu-ld"
