@@ -220,7 +220,7 @@ case "${TARGET_ARCH}" in
 	#   + set CC to a wrapper script that enforces -m32
 	#   + set BUILD_TRIPLE=i686-pc-linux-gnu
 	#   + use setarch i686
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "armv7l")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnueabi"
@@ -236,7 +236,7 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN=4.11 # avr32 was removed in linux-4.12
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	# set PATH to select gcc-4.x (4.4.7 is known to work)
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "bfin")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
@@ -276,7 +276,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=4.5.4 # 4.6 ICEs, removed in 4.7
 	NEWLIB_VSN= # gcc ICEs building newlib
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "d10v")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -290,7 +290,7 @@ case "${TARGET_ARCH}" in
 	# - you must have support for building and running 32-bit executables
 	# - set BUILD_TRIPLE=i686-pc-linux-gnu
 	# - run this with setarch i686
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "d30v")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -302,7 +302,7 @@ case "${TARGET_ARCH}" in
 	# - adjust PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
 	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
 	# - if on x86_64, set BUILD_TRIPLE=x86_64-unknown-linux-gnu NOT x86_64-pc-linux-gnu
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "epiphany")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -336,7 +336,7 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN=5.17 # linux-5.18 can't build its headers with hexagon's ancient gcc
 	# set PATH to select gcc-4.x (4.2.4 is known to work)
 	# if on x86_64, gcc must support -m32
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "i860")
 	TARGET_TRIPLE="${TARGET_ARCH}-stardent-sysv4"
@@ -344,7 +344,7 @@ case "${TARGET_ARCH}" in
 	GCC_WANTS_ENABLE_OBSOLETE=1
 	BINUTILS_VSN=2.16.1
 	NEWLIB_VSN= # doesn't support i860
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	# you need to:
 	# - adjust PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
 	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
@@ -369,7 +369,7 @@ case "${TARGET_ARCH}" in
 	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
 	# - if on x86_64, set BUILD_TRIPLE=x86_64-unknown-linux-gnu NOT x86_64-pc-linux-gnu
 	# - if on x86_64, set CC to a wrapper script that enforces -m32
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "ip2k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -381,7 +381,7 @@ case "${TARGET_ARCH}" in
 	# - set BUILD_TRIPLE
 	#   on x86_64-linux use x86_64-unknown-linux-gnu NOT x86_64-pc-linux-gnu
 	#   as that would cause the gcc-3.3.6 build to enter canadian cross mode
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "iq2000")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -413,7 +413,7 @@ case "${TARGET_ARCH}" in
 	# You must have support for building and running 32-bit executables:
 	# - adjust PATH to select gcc-2.95.3
 	# - set BUILD_TRIPLE=i386-linux
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	# See https://github.com/mikpe/m1750-tools for instructions on building sim1750 and gdb for this target.
 	;;
     "m32c")
@@ -423,7 +423,7 @@ case "${TARGET_ARCH}" in
 	# gcc-7.5.0 has a spill failure in libgcc
 	# gcc-8 and up fail due to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83670
 	GCC_VSN=6.5.0
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "m32r")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -439,7 +439,7 @@ case "${TARGET_ARCH}" in
 	# the above newlib repo seems to malfunction with -jN
 	DASHJ=
 	# GCC is based on 4.3.6
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "m68hc11")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -447,7 +447,7 @@ case "${TARGET_ARCH}" in
 	GCC_VSN=4.2.4 # later versions ICE, removed in 4.7
 	NEWLIB_VSN=2.2.0-1 # later versions cannot be built by the 4.2-based m68hc11-gcc
 	# PATH must select an older gcc suitable for building the above (4.2 is known to work)
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "m68k-uclinux")
 	TARGET_ARCH="m68k"
@@ -463,7 +463,7 @@ case "${TARGET_ARCH}" in
 	# you need to:
 	# - adjust PATH to select a gcc capable of building the above, 3.3.6 to 5.5.0 are known to work
 	# - if PATH selects gcc < 4.0, set BUILD_TRIPLE because gcc -v < 4.0 doesn't list Target:
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "maxq")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
@@ -474,7 +474,7 @@ case "${TARGET_ARCH}" in
 	# GCC port salvaged from https://gcc.gnu.org/pipermail/gcc-patches/2005-January/159504.html
 	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;gcc-4.0.4-maxq;HEAD;mikpe"
 	# set PATH to select gcc-4.x (4.0.4 to 4.9.4 are known to work)
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "mcore")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -483,7 +483,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=4.5.4 # later ones are broken, removed in gcc-7
 	NEWLIB_VSN= # fails to build for mep
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "metag")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
@@ -492,7 +492,7 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN=4.16 # metag was removed in linux-4.17
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	# set PATH to select gcc-4.x (4.2.4 is known to work)
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "mingw64")
 	TARGET_TRIPLE="x86_64-w64-mingw32"
@@ -524,7 +524,7 @@ case "${TARGET_ARCH}" in
 	# on x86_64 you must set CC to a wrapper script that enforces -m32
 	# PATH must select a older gcc suitable for building gcc-4.2.4 and
 	# binutils-2.20.1 (gcc-4.1 and 4.2 are known to work)
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "nds32")
 	TARGET_TRIPLE="nds32le-unknown-linux-gnu"
@@ -546,7 +546,7 @@ case "${TARGET_ARCH}" in
 	# - set BUILD_TRIPLE
 	#   on x86_64-linux use x86_64-unknown-linux-gnu NOT x86_64-pc-linux-gnu
 	#   as that would cause the gcc-4.0.4 build to enter canadian cross mode
-	SKIP_HOST_TOOLS=1 # PATH must point to a suitable old gcc
+	SKIP_HOST_GCC=1 # PATH must point to a suitable old gcc
 	# we can't build libc, but netbsd-1.5.3's can be popped in
 	;;
     "nvptx")
@@ -576,7 +576,7 @@ case "${TARGET_ARCH}" in
 	#   + set CC to a wrapper script that enforces -m32
 	#   + set BUILD_TRIPLE=i686-pc-linux-gnu
 	#   + use setarch i686
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "pru")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -592,7 +592,7 @@ case "${TARGET_ARCH}" in
 	GCC_VSN=4.9.4 # removed in gcc-5.0
 	GCC_WANTS_ENABLE_OBSOLETE=1
 	NEWLIB_VSN= # doesn't support score
-	SKIP_HOST_TOOLS=1 # PATH must point to a suitable old gcc
+	SKIP_HOST_GCC=1 # PATH must point to a suitable old gcc
 	;;
     "tilegx")
 	BINUTILS_VSN=2.28.1 # later versions cannot build glibc
@@ -606,7 +606,7 @@ case "${TARGET_ARCH}" in
 	BINUTILS_WANTS_DISABLE_WERROR=1
 	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;gcc-4.4.0-tms9900;HEAD;mikpe"
 	NEWLIB_VSN= # newlib doesn't support tms9900, but insomnia and tursi have published custom ti99 libcs
-	SKIP_HOST_TOOLS=1 # PATH must point to gcc-9 or older
+	SKIP_HOST_GCC=1 # PATH must point to gcc-9 or older
 	# TODO: extend sim990 to run tms9900 ELF executables
 	;;
     "tricore")
@@ -617,7 +617,7 @@ case "${TARGET_ARCH}" in
 	GCC_VSN="git;https://github.com/volumit/package_494.git;gcc;main;HEAD;volumit"
 	GCC_WANTS_DISABLE_WERROR=1
 	NEWLIB_VSN="git;https://github.com/volumit/package_494.git;newlib;main;HEAD;volumit"
-	SKIP_HOST_TOOLS=1 # set PATH to select gcc-4.x (4.9.4 is known to work)
+	SKIP_HOST_GCC=1 # set PATH to select gcc-4.x (4.9.4 is known to work)
 	;;
     "ubicom32")
 	TARGET_TRIPLE="${TARGET_ARCH}-linux-uclibc"
@@ -627,7 +627,7 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN="git;https://git.codelinaro.org/clo/external-ubicom/ubicom32-android.git;-;-;f67b0c971d4aee1825c6288c65f213c298db6062"
 	UCLIBC_VSN="git;https://git.codelinaro.org/clo/external-ubicom/ubicom32-uclibc.git;-;-;e043cec698ee5fa4057eb68b50c3e1f993586a46"
 	UCLIBC_WANTS_OLDCONFIG=1
-	SKIP_HOST_TOOLS=1 # ubicom32-gcc is based on gcc-4.4.1, you'll need something compatible in PATH
+	SKIP_HOST_GCC=1 # ubicom32-gcc is based on gcc-4.4.1, you'll need something compatible in PATH
 	;;
     "v850")
 	TARGET_TRIPLE="${TARGET_ARCH}e-uclinux-uclibc"
@@ -658,7 +658,7 @@ case "${TARGET_ARCH}" in
 	# GCC port salvaged from https://gcc.gnu.org/pipermail/gcc-patches/2006-July/197934.html
 	GCC_VSN="git;https://github.com/mikpe/gcc.git;-;gcc-4.2.4-xc16x;HEAD;mikpe"
 	# set PATH to select gcc-4.x (4.0.4 to 4.9.4 are known to work)
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "xstormy16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -682,7 +682,7 @@ case "${TARGET_ARCH}" in
 	# - you must have support for building and running 32-bit executables
 	# - set BUILD_TRIPLE=i686-pc-linux-gnu
 	# - run this with setarch i686
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
     "zpu")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -693,7 +693,7 @@ case "${TARGET_ARCH}" in
 	GCC_WANTS_NO_ENABLE_CHECKING=1
 	NEWLIB_VSN= # included in zpu-gcc
 	# set PATH to select gcc-4.x (4.0.4 and 4.9.4 are known to work)
-	SKIP_HOST_TOOLS=1
+	SKIP_HOST_GCC=1
 	;;
 esac
 
@@ -703,7 +703,7 @@ fi
 
 # Host GCC version is normally the same as the cross GCC version,
 # except when building the cross GCC from non-upstream git.
-if [ -z "${HOST_GCC_VSN}" -a -z "${SKIP_HOST_TOOLS}" ]; then
+if [ -z "${HOST_GCC_VSN}" -a -z "${SKIP_HOST_GCC}" ]; then
     HOST_GCC_VSN="${GCC_VSN}"
 fi
 
@@ -1928,12 +1928,12 @@ get_sources
 cd ${BUILD_DIR}
 
 #
-# Build Host GCC
+# Build host libraries and GCC
 #
 
 ORIG_PATH="${PATH}"
 
-if [ -z "${SKIP_HOST_TOOLS}" ]; then
+if [ -z "${SKIP_HOST_GCC}" ]; then
 
 # build preliminary host libraries and gcc using system cc
 build_host_gmp "-cc"
@@ -1944,10 +1944,16 @@ build_host_gcc "-cc"
 # update PATH to pick up our preliminary host gcc
 export PATH="${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}-cc/bin:${ORIG_PATH}"
 
-# build final host libraries and gcc using preliminary host gcc
+fi # SKIP_HOST_GCC
+
+# build final host libraries
 build_host_gmp
 build_host_mpfr
 build_host_mpc
+
+if [ -z "${SKIP_HOST_GCC}" ]; then
+
+# build final host gcc using preliminary host gcc
 build_host_gcc
 
 # remove preliminary host libraries and gcc
@@ -1959,7 +1965,7 @@ rm -rf ${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}-cc
 # update PATH to pick up our final host gcc
 export PATH="${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}/bin:${ORIG_PATH}"
 
-fi # SKIP_HOST_TOOLS
+fi # SKIP_HOST_GCC
 
 # determine BUILD_TRIPLE, ensure it differs from TARGET_TRIPLE
 if [ -z "${BUILD_TRIPLE}" ]; then
