@@ -827,6 +827,14 @@ vsntoref_glibc() {
     echo "glibc-$1"
 }
 
+gitify_vsn_linux() {
+    gitify_vsn "$1" "git;https://github.com/torvalds/linux.git;-;master;-;torvalds" vsntoref_linux
+}
+
+vsntoref_linux() {
+    echo "v$1"
+}
+
 gitify_vsn_newlib() {
     gitify_vsn "$1" "git;https://github.com/bminor/newlib.git;-;master;-;bminor" vsntoref_newlib
 }
@@ -972,6 +980,11 @@ get_source_glibc() {
     get_source "dummy" "${GIT}"
 }
 
+get_source_linux() {
+    local GIT=`gitify_vsn_linux "$1"`
+    get_source "dummy" "${GIT}"
+}
+
 get_source_newlib() {
     local GIT=`gitify_vsn_newlib "$1"`
     get_source "dummy" "${GIT}"
@@ -990,7 +1003,7 @@ get_sources() {
     [ -n "${NEWLIB_VSN}" ] && get_source_newlib "${NEWLIB_VSN}"
     [ -n "${NVPTXTOOLS_VSN}" ] && get_source "nvptx-tools-" "${NVPTXTOOLS_VSN}"
     get_tarball "gmp-${GMP_VSN}"
-    [ -n "${LINUX_VSN}" ] && get_source "linux-" "${LINUX_VSN}"
+    [ -n "${LINUX_VSN}" ] && get_source_linux "${LINUX_VSN}"
     get_tarball "mpfr-${MPFR_VSN}"
     get_tarball "mpc-${MPC_VSN}" "gz"
     cd -
@@ -1671,6 +1684,7 @@ build_cross_binary_tools() {
 
 build_linux_headers() {
     local KERNEL_ARCH
+    local GIT
     local SOURCE_PATH
     local CROSS_COMPILE="${TARGET_TRIPLE}-"
     if [ -f "${CROSS_DIR}/usr/include/linux/version.h" ]; then
@@ -1693,7 +1707,8 @@ build_linux_headers() {
 	"x86_64") KERNEL_ARCH="x86";;
 	*) KERNEL_ARCH="${TARGET_ARCH}"
     esac
-    SOURCE_PATH=`unpack_source "linux-" "${LINUX_VSN}"`
+    GIT=`gitify_vsn_linux "${LINUX_VSN}"`
+    SOURCE_PATH=`unpack_source "linux-" "${GIT}"`
     case "${TARGET_ARCH}" in
 	"v850")
 	    # fix glibc conflict in 2.6.26, upstream d15bd1067b1fcb2b7250d22bc0c7c7fea0b759f7
