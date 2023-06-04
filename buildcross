@@ -819,6 +819,14 @@ vsntoref_gcc() {
     echo "releases/gcc-$1"
 }
 
+gitify_vsn_glibc() {
+    gitify_vsn "$1" "git;https://github.com/bminor/glibc.git;-;master;-;bminor" vsntoref_glibc
+}
+
+vsntoref_glibc() {
+    echo "glibc-$1"
+}
+
 gitify_vsn_newlib() {
     gitify_vsn "$1" "git;https://github.com/bminor/newlib.git;-;master;-;bminor" vsntoref_newlib
 }
@@ -959,6 +967,11 @@ get_source_gcc() {
     get_source "dummy" "${GIT}"
 }
 
+get_source_glibc() {
+    local GIT=`gitify_vsn_glibc "$1"`
+    get_source "dummy" "${GIT}"
+}
+
 get_source_newlib() {
     local GIT=`gitify_vsn_newlib "$1"`
     get_source "dummy" "${GIT}"
@@ -970,7 +983,7 @@ get_sources() {
     [ -n "${BINUTILS_VSN}" ] && get_source_binutils "${BINUTILS_VSN}"
     get_source_gcc "${GCC_VSN}"
     [ -n "${HOST_GCC_VSN}" ] && get_source_gcc "${HOST_GCC_VSN}"
-    [ -n "${GLIBC_VSN}" ] && get_source "glibc-" "${GLIBC_VSN}"
+    [ -n "${GLIBC_VSN}" ] && get_source_glibc "${GLIBC_VSN}"
     [ -n "${UCLIBC_VSN}" ] && get_source "uClibc-ng-" "${UCLIBC_VSN}" "xz" "https://downloads.uclibc-ng.org/releases/${UCLIBC_VSN}"
     [ -n "${MUSL_VSN}" ] && get_tarball "musl-${MUSL_VSN}" "gz"
     [ -n "${MINGW64_VSN}" ] && get_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
@@ -1770,8 +1783,10 @@ build_glibc() {
 
 build_target_glibc() {
     local TARGET_CC
+    local GIT
     local SOURCE_PATH
-    SOURCE_PATH=`unpack_source "glibc-" "${GLIBC_VSN}"`
+    GIT=`gitify_vsn_glibc "${GLIBC_VSN}"`
+    SOURCE_PATH=`unpack_source "glibc-" "${GIT}"`
     rm -rf objdir-glibc
     mkdir objdir-glibc
     cd objdir-glibc
