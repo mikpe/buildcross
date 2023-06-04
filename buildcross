@@ -795,6 +795,22 @@ gitify_vsn() {
     esac
 }
 
+gitify_vsn_binutils() {
+    gitify_vsn "$1" "git;https://github.com/bminor/binutils-gdb.git;-;master;-;bminor" vsntoref_binutils
+}
+
+vsntoref_binutils() {
+    case "$1" in
+	"2.28.1")
+	    # This is the sha matching the 2.28.1 tarball. It has no tag.
+	    echo "71729203ae7b857b6468524e56a593254413eddc"
+	    ;;
+	*)
+	    echo "binutils-`echo "$1" | tr '.' '_'`"
+	    ;;
+    esac
+}
+
 gitify_vsn_gcc() {
     gitify_vsn "$1" "git;https://github.com/gcc-mirror/gcc.git;-;master;-;gcc-mirror" vsntoref_gcc
 }
@@ -906,6 +922,11 @@ get_source() {
     esac
 }
 
+get_source_binutils() {
+    local GIT=`gitify_vsn_binutils "$1"`
+    get_source "dummy" "${GIT}"
+}
+
 get_source_gcc() {
     local GIT=`gitify_vsn_gcc "$1"`
     get_source "dummy" "${GIT}"
@@ -914,7 +935,7 @@ get_source_gcc() {
 get_sources() {
     log "getting sources"
     cd "${DOWNLOADS_DIR}"
-    [ -n "${BINUTILS_VSN}" ] && get_source "binutils-" "${BINUTILS_VSN}"
+    [ -n "${BINUTILS_VSN}" ] && get_source_binutils "${BINUTILS_VSN}"
     get_source_gcc "${GCC_VSN}"
     [ -n "${HOST_GCC_VSN}" ] && get_source_gcc "${HOST_GCC_VSN}"
     [ -n "${GLIBC_VSN}" ] && get_source "glibc-" "${GLIBC_VSN}"
@@ -1432,13 +1453,15 @@ build_cross_binutils() {
     local ENABLE_OBSOLETE
     local DISABLE_WERROR
     local BUILD_OR_HOST
+    local GIT
     local SOURCE_PATH
     local CFLAGS
     if [ -x "${CROSS_DIR}/bin/${TARGET_TRIPLE}-as" ]; then
 	return
     fi
     log "building cross-binutils ${BINUTILS_VSN}"
-    SOURCE_PATH=`unpack_source "binutils-" "${BINUTILS_VSN}"`
+    GIT=`gitify_vsn_binutils "${BINUTILS_VSN}"`
+    SOURCE_PATH=`unpack_source "binutils-" "${GIT}"`
     ENABLE_TARGETS=
     CFLAGS=
     case "${TARGET_ARCH}" in
@@ -1531,6 +1554,10 @@ build_cross_binutils() {
 		--disable-tk \
 		--disable-utils \
 		--disable-winsup
+    # Work around a bug in binutils-2.40 where a build from a tarball
+    # works but a build from git fails. Related to but different from
+    # <https://sourceware.org/bugzilla/show_bug.cgi?id=28909>.
+    mkdir -p gas/doc
     make ${DASHJ} MAKEINFO=/bin/true
     make MAKEINFO=/bin/true install
     cd ..
