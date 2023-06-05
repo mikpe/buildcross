@@ -835,6 +835,14 @@ vsntoref_linux() {
     echo "v$1"
 }
 
+gitify_vsn_musl() {
+    gitify_vsn "$1" "git;https://github.com/bminor/musl.git;-;master;-;bminor" vsntoref_musl
+}
+
+vsntoref_musl() {
+    echo "v$1"
+}
+
 gitify_vsn_newlib() {
     gitify_vsn "$1" "git;https://github.com/bminor/newlib.git;-;master;-;bminor" vsntoref_newlib
 }
@@ -994,6 +1002,11 @@ get_source_linux() {
     get_source "dummy" "${GIT}"
 }
 
+get_source_musl() {
+    local GIT=`gitify_vsn_musl "$1"`
+    get_source "dummy" "${GIT}"
+}
+
 get_source_newlib() {
     local GIT=`gitify_vsn_newlib "$1"`
     get_source "dummy" "${GIT}"
@@ -1012,7 +1025,7 @@ get_sources() {
     [ -n "${HOST_GCC_VSN}" ] && get_source_gcc "${HOST_GCC_VSN}"
     [ -n "${GLIBC_VSN}" ] && get_source_glibc "${GLIBC_VSN}"
     [ -n "${UCLIBC_VSN}" ] && get_source_uclibc "${UCLIBC_VSN}"
-    [ -n "${MUSL_VSN}" ] && get_tarball "musl-${MUSL_VSN}" "gz"
+    [ -n "${MUSL_VSN}" ] && get_source_musl "${MUSL_VSN}"
     [ -n "${MINGW64_VSN}" ] && get_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
     [ -n "${NEWLIB_VSN}" ] && get_source_newlib "${NEWLIB_VSN}"
     [ -n "${NVPTXTOOLS_VSN}" ] && get_source "nvptx-tools-" "${NVPTXTOOLS_VSN}"
@@ -1933,12 +1946,15 @@ build_target_uclibc() {
 }
 
 build_target_musl() {
+    local GIT
+    local SOURCE_PATH
     log "building musl-${MUSL_VSN} for ${TARGET_TRIPLE}"
-    unpack_tarball "musl-${MUSL_VSN}"
+    GIT=`gitify_vsn_musl "${MUSL_VSN}"`
+    SOURCE_PATH=`unpack_source "musl-" "${GIT}"`
     rm -rf objdir-musl
     mkdir objdir-musl
     cd objdir-musl
-    ${SOURCES_DIR}/musl-${MUSL_VSN}/configure \
+    ${SOURCE_PATH}/configure \
 		--host="${TARGET_TRIPLE}" \
 		--build="${BUILD_TRIPLE}" \
 		--prefix=/usr \
