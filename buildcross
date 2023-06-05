@@ -862,6 +862,15 @@ vsntoref_newlib() {
     esac
 }
 
+gitify_vsn_uclibc() {
+    # The developer has a mirror on GH, but it's broken (missing tags).
+    gitify_vsn "$1" "git;https://git.uclibc-ng.org/git/uclibc-ng.git;-;master;-;" vsntoref_uclibc
+}
+
+vsntoref_uclibc() {
+    echo "v$1"
+}
+
 log() {
     echo
     echo "@ $1"
@@ -990,6 +999,11 @@ get_source_newlib() {
     get_source "dummy" "${GIT}"
 }
 
+get_source_uclibc() {
+    local GIT=`gitify_vsn_uclibc "$1"`
+    get_source "dummy" "${GIT}"
+}
+
 get_sources() {
     log "getting sources"
     cd "${DOWNLOADS_DIR}"
@@ -997,7 +1011,7 @@ get_sources() {
     get_source_gcc "${GCC_VSN}"
     [ -n "${HOST_GCC_VSN}" ] && get_source_gcc "${HOST_GCC_VSN}"
     [ -n "${GLIBC_VSN}" ] && get_source_glibc "${GLIBC_VSN}"
-    [ -n "${UCLIBC_VSN}" ] && get_source "uClibc-ng-" "${UCLIBC_VSN}" "xz" "https://downloads.uclibc-ng.org/releases/${UCLIBC_VSN}"
+    [ -n "${UCLIBC_VSN}" ] && get_source_uclibc "${UCLIBC_VSN}"
     [ -n "${MUSL_VSN}" ] && get_tarball "musl-${MUSL_VSN}" "gz"
     [ -n "${MINGW64_VSN}" ] && get_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
     [ -n "${NEWLIB_VSN}" ] && get_source_newlib "${NEWLIB_VSN}"
@@ -1838,10 +1852,12 @@ build_target_glibc() {
 
 build_target_uclibc() {
     local CROSS_COMPILE="${TARGET_TRIPLE}-"
+    local GIT
     local SOURCE_PATH
     local OLDDEFCONFIG
     log "building uClibc ${UCLIBC_VSN} for ${TARGET_TRIPLE}"
-    SOURCE_PATH=`unpack_source "uClibc-ng-" "${UCLIBC_VSN}"`
+    GIT=`gitify_vsn_uclibc "${UCLIBC_VSN}"`
+    SOURCE_PATH=`unpack_source "uClibc-ng-" "${GIT}"`
     cd "${SOURCE_PATH}"
     make clean
     # the lm32 defconfig is misplaced
