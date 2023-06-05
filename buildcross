@@ -141,27 +141,87 @@ set -e
 
 VERSION="6.38.0"
 
-case "$1" in
-    -j*)
-	DASHJ="$1"
-	shift
-	;;
-    *)
-	DASHJ=
-esac
+CROSS_DIR=
+DASHJ=
+DOWNLOADS_DIR=
+HOST_TOOLS_DIR=
+SOURCES_DIR=
+TARGET_ARCH=
 
-TARGET_ARCH="$1"
+while [ $# -gt 0 ]; do
+    case "$1" in
+	--cross-dir=*)
+	    CROSS_DIR=`echo "x$1" | sed 's,x--cross-dir=,,'`
+	    ;;
+	-c)
+	    shift
+	    CROSS_DIR="$1"
+	    ;;
+	--downloads-dir=*)
+	    DOWNLOADS_DIR=`echo "x$1" | sed 's,x--downloads-dir=,,'`
+	    ;;
+	-d)
+	    shift
+	    DOWNLOADS_DIR="$1"
+	    ;;
+	--host-tools-dir=*)
+	    HOST_TOOLS_DIR=`echo "x$1" | sed 's,x--host-tools-dir=,,'`
+	    ;;
+	-h)
+	    shift
+	    HOST_TOOLS_DIR="$1"
+	    ;;
+	-j*)
+	    DASHJ="$1"
+	    ;;
+	--sources-dir=*)
+	    SOURCES_DIR=`echo "x$1" | sed 's,x--sources-dir=,,'`
+	    ;;
+	-s)
+	    shift
+	    SOURCES_DIR="$1"
+	    ;;
+	--target=*)
+	    TARGET_ARCH=`echo "x$1" | sed 's,x--target=,,'`
+	    ;;
+	-t)
+	    shift
+	    TARGET_ARCH="$1"
+	    ;;
+	-*)
+	    echo "unknown option: $1"
+	    exit 1
+	    ;;
+	*)
+	    break
+	    ;;
+    esac
+    shift
+done
+
+if [ -z "${TARGET_ARCH}" ]; then
+    TARGET_ARCH="$1"
+    shift
+fi
 if [ -z "${TARGET_ARCH}" ]; then
     echo no target arch provided
     exit 1
 fi
 
 BUILD_DIR=`realpath .`
-DOWNLOADS_DIR=`realpath ./downloads`
-HOST_TOOLS_DIR=`realpath ./host-tools`
-SOURCES_DIR=`realpath ./sources`
 
-CROSS_DIR=${2:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
+if [ -z "${DOWNLOADS_DIR}" ]; then
+    DOWNLOADS_DIR=`realpath ./downloads`
+fi
+if [ -z "${HOST_TOOLS_DIR}" ]; then
+    HOST_TOOLS_DIR=`realpath ./host-tools`
+fi
+if [ -z "${SOURCES_DIR}" ]; then
+    SOURCES_DIR=`realpath ./sources`
+fi
+if [ -z "${CROSS_DIR}" ]; then
+    CROSS_DIR=${1:-"${BUILD_DIR}/cross-${TARGET_ARCH}"}
+fi
 
 # default component versions
 BINUTILS_VSN=2.40
@@ -2075,6 +2135,9 @@ if [ ! -d "${DOWNLOADS_DIR}" ]; then
 fi
 if [ ! -d "${SOURCES_DIR}" ]; then
     mkdir -p "${SOURCES_DIR}"
+fi
+if [ ! -d "${HOST_TOOLS_DIR}" ]; then
+    mkdir -p "${HOST_TOOLS_DIR}"
 fi
 
 get_sources
