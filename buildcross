@@ -835,6 +835,15 @@ vsntoref_linux() {
     echo "v$1"
 }
 
+gitify_vsn_mingw64() {
+    # Upstream is https://git.code.sf.net/p/mingw-w64/mingw-w64.git but this mirror is faster.
+    gitify_vsn "$1" "git;https://github.com/mingw-w64/mingw-w64.git;-;master;-;" vsntoref_mingw64
+}
+
+vsntoref_mingw64() {
+    echo "v$1"
+}
+
 gitify_vsn_musl() {
     gitify_vsn "$1" "git;https://github.com/bminor/musl.git;-;master;-;bminor" vsntoref_musl
 }
@@ -1002,6 +1011,11 @@ get_source_linux() {
     get_source "dummy" "${GIT}"
 }
 
+get_source_mingw64() {
+    local GIT=`gitify_vsn_mingw64 "$1"`
+    get_source "dummy" "${GIT}"
+}
+
 get_source_musl() {
     local GIT=`gitify_vsn_musl "$1"`
     get_source "dummy" "${GIT}"
@@ -1026,7 +1040,7 @@ get_sources() {
     [ -n "${GLIBC_VSN}" ] && get_source_glibc "${GLIBC_VSN}"
     [ -n "${UCLIBC_VSN}" ] && get_source_uclibc "${UCLIBC_VSN}"
     [ -n "${MUSL_VSN}" ] && get_source_musl "${MUSL_VSN}"
-    [ -n "${MINGW64_VSN}" ] && get_tarball "mingw-w64-v${MINGW64_VSN}" "bz2"
+    [ -n "${MINGW64_VSN}" ] && get_source_mingw64 "${MINGW64_VSN}"
     [ -n "${NEWLIB_VSN}" ] && get_source_newlib "${NEWLIB_VSN}"
     [ -n "${NVPTXTOOLS_VSN}" ] && get_source "nvptx-tools-" "${NVPTXTOOLS_VSN}"
     get_tarball "gmp-${GMP_VSN}"
@@ -1779,15 +1793,18 @@ build_linux_headers() {
 }
 
 build_mingw64_headers() {
+    local GIT
+    local SOURCE_PATH
     if [ -f "${CROSS_DIR}/${TARGET_TRIPLE}/include/windows.h" ]; then
 	return
     fi
     log "building mingw-w64-headers ${MINGW64_VSN}"
-    unpack_tarball "mingw-w64-v${MINGW64_VSN}"
+    GIT=`gitify_vsn_mingw64 "${MINGW64_VSN}"`
+    SOURCE_PATH=`unpack_source "musl-" "${GIT}"`
     rm -rf objdir-headers
     mkdir objdir-headers
     cd objdir-headers
-    ${SOURCES_DIR}/mingw-w64-v${MINGW64_VSN}/mingw-w64-headers/configure \
+    ${SOURCE_PATH}/mingw-w64-headers/configure \
 		--prefix="${CROSS_DIR}/${TARGET_TRIPLE}" \
 		--host="${TARGET_TRIPLE}"
     ln -sf "${TARGET_TRIPLE}" "${CROSS_DIR}/mingw"
@@ -1968,12 +1985,15 @@ build_target_musl() {
 }
 
 build_target_mingw64crt() {
+    local GIT
+    local SOURCE_PATH
     log "building mingw-w64-crt ${MINGW64_VSN}"
-    unpack_tarball "mingw-w64-v${MINGW64_VSN}"
+    GIT=`gitify_vsn_mingw64 "${MINGW64_VSN}"`
+    SOURCE_PATH=`unpack_source "musl-" "${GIT}"`
     rm -rf objdir-crt
     mkdir objdir-crt
     cd objdir-crt
-    ${SOURCES_DIR}/mingw-w64-v${MINGW64_VSN}/mingw-w64-crt/configure \
+    ${SOURCE_PATH}/mingw-w64-crt/configure \
 		--prefix="${CROSS_DIR}/${TARGET_TRIPLE}" \
 		--enable-lib32 \
 		--enable-lib64 \
