@@ -912,25 +912,6 @@ get_tarball() {
     fi
 }
 
-# Gentoo's distfiles doesn't contain all kernel versions,
-# so as fallback try to get them directly from upstream.
-get_linux_tarball() {
-    local LINUX_VSN="$1"
-    local KERNEL_DIR=
-    case "${LINUX_VSN}" in
-	5\.*)
-	    KERNEL_DIR=v5.x
-	    ;;
-	4\.*)
-	    KERNEL_DIR=v4.x
-	    ;;
-	2\.6\.*)
-	    KERNEL_DIR=v2.6
-	    ;;
-    esac
-    get_tarball "linux-${LINUX_VSN}" "xz" "${DISTFILES}" "https://www.kernel.org/pub/linux/kernel/${KERNEL_DIR}"
-}
-
 get_git() {
     local REPO="$1"
     # $2 is SUBDIR which is unused here
