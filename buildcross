@@ -1035,8 +1035,7 @@ unpack_tarball() {
 }
 
 unpack_source() {
-    local PREFIX="$1"
-    local VSN="$2"
+    local VSN="$1"
     local REPO
     local SUBDIR
     local VENDOR
@@ -1065,8 +1064,8 @@ unpack_source() {
 	    echo "${DOWNLOADS_DIR}/${VENDOR}`basename ${REPO}`${SUBDIR}"
 	    ;;
 	*)
-	    unpack_tarball "${PREFIX}${VSN}"
-	    echo "${SOURCES_DIR}/${PREFIX}${VSN}"
+	    echo "invalid vsn: ${VSN}"
+	    exit 1
 	    ;;
     esac
 }
@@ -1164,7 +1163,7 @@ build_host_gcc() {
 	MAKE_TARGET=
     fi
     GIT=`gitify_vsn_gcc "${HOST_GCC_VSN}"`
-    SOURCE_PATH=`unpack_source "gcc-" "${GIT}"`
+    SOURCE_PATH=`unpack_source "${GIT}"`
     rm -rf objdir-gcc
     mkdir objdir-gcc
     cd objdir-gcc
@@ -1213,7 +1212,7 @@ build_cross_gcc() {
     fi
     log "building cross-gcc ${GCC_VSN} ${STAGE}"
     GIT=`gitify_vsn_gcc "${GCC_VSN}"`
-    SOURCE_PATH=`unpack_source "gcc-" "${GIT}"`
+    SOURCE_PATH=`unpack_source "${GIT}"`
     LIBC_CONFIGS="--enable-threads=posix"
     LIBSSP_CONFIG="--enable-libssp"
     MULTILIB_CONFIG="--enable-multilib"
@@ -1532,7 +1531,7 @@ build_cross_binutils() {
     fi
     log "building cross-binutils ${BINUTILS_VSN}"
     GIT=`gitify_vsn_binutils "${BINUTILS_VSN}"`
-    SOURCE_PATH=`unpack_source "binutils-" "${GIT}"`
+    SOURCE_PATH=`unpack_source "${GIT}"`
     ENABLE_TARGETS=
     CFLAGS=
     case "${TARGET_ARCH}" in
@@ -1641,7 +1640,7 @@ build_nvptx_tools() {
 	return
     fi
     log "building nvptx-tools ${NVPTXTOOLS_VSN}"
-    SOURCE_PATH=`unpack_source "nvptx-tools-" "${NVPTXTOOLS_VSN}"`
+    SOURCE_PATH=`unpack_source "${NVPTXTOOLS_VSN}"`
     mkdir objdir-nvptx-tools
     cd objdir-nvptx-tools
     ${SOURCE_PATH}/configure \
@@ -1665,7 +1664,7 @@ build_m6809_tools() {
     fi
     log "building ASxxxx ${AS_VERSION} for ${TARGET_ARCH}"
     # binary tools in the same repo as the gcc sources
-    SOURCE_PATH=`unpack_source "gcc-" "${GCC_VSN}"`
+    SOURCE_PATH=`unpack_source "${GCC_VSN}"`
     # builds are done in the source directories
     cd "${SOURCE_PATH}"
     make -C "${SOURCE_PATH}/as-${AS_VERSION}/asxmak/${AS_HOST}/build" ${AS_TARGETS} EXTRA_ASXXXX_CFLAGS="-I${SOURCE_PATH}/binutils"
@@ -1721,7 +1720,7 @@ build_linux_headers() {
 	*) KERNEL_ARCH="${TARGET_ARCH}"
     esac
     GIT=`gitify_vsn_linux "${LINUX_VSN}"`
-    SOURCE_PATH=`unpack_source "linux-" "${GIT}"`
+    SOURCE_PATH=`unpack_source "${GIT}"`
     case "${TARGET_ARCH}" in
 	"v850")
 	    # fix glibc conflict in 2.6.26, upstream d15bd1067b1fcb2b7250d22bc0c7c7fea0b759f7
@@ -1772,7 +1771,7 @@ build_mingw64_headers() {
     fi
     log "building mingw-w64-headers ${MINGW64_VSN}"
     GIT=`gitify_vsn_mingw64 "${MINGW64_VSN}"`
-    SOURCE_PATH=`unpack_source "musl-" "${GIT}"`
+    SOURCE_PATH=`unpack_source "${GIT}"`
     rm -rf objdir-headers
     mkdir objdir-headers
     cd objdir-headers
@@ -1817,7 +1816,7 @@ build_target_glibc() {
     local GIT
     local SOURCE_PATH
     GIT=`gitify_vsn_glibc "${GLIBC_VSN}"`
-    SOURCE_PATH=`unpack_source "glibc-" "${GIT}"`
+    SOURCE_PATH=`unpack_source "${GIT}"`
     rm -rf objdir-glibc
     mkdir objdir-glibc
     cd objdir-glibc
@@ -1859,7 +1858,7 @@ build_target_uclibc() {
     local OLDDEFCONFIG
     log "building uClibc ${UCLIBC_VSN} for ${TARGET_TRIPLE}"
     GIT=`gitify_vsn_uclibc "${UCLIBC_VSN}"`
-    SOURCE_PATH=`unpack_source "uClibc-ng-" "${GIT}"`
+    SOURCE_PATH=`unpack_source "${GIT}"`
     cd "${SOURCE_PATH}"
     make clean
     # the lm32 defconfig is misplaced
@@ -1939,7 +1938,7 @@ build_target_musl() {
     local SOURCE_PATH
     log "building musl-${MUSL_VSN} for ${TARGET_TRIPLE}"
     GIT=`gitify_vsn_musl "${MUSL_VSN}"`
-    SOURCE_PATH=`unpack_source "musl-" "${GIT}"`
+    SOURCE_PATH=`unpack_source "${GIT}"`
     rm -rf objdir-musl
     mkdir objdir-musl
     cd objdir-musl
@@ -1961,7 +1960,7 @@ build_target_mingw64crt() {
     local SOURCE_PATH
     log "building mingw-w64-crt ${MINGW64_VSN}"
     GIT=`gitify_vsn_mingw64 "${MINGW64_VSN}"`
-    SOURCE_PATH=`unpack_source "musl-" "${GIT}"`
+    SOURCE_PATH=`unpack_source "${GIT}"`
     rm -rf objdir-crt
     mkdir objdir-crt
     cd objdir-crt
@@ -1982,7 +1981,7 @@ build_target_newlib() {
     local DISABLE_MULTILIB
     log "building newlib ${NEWLIB_VSN} for ${TARGET_TRIPLE}"
     GIT=`gitify_vsn_newlib "${NEWLIB_VSN}"`
-    SOURCE_PATH=`unpack_source "newlib-" "${GIT}"`
+    SOURCE_PATH=`unpack_source "${GIT}"`
     case "${TARGET_ARCH}" in
 	"tricore")
 	    # the git repo lost all executable flags
@@ -2035,7 +2034,7 @@ build_target_m1750_libc() {
     local SOURCE_PATH
     log "building m1750 libc for ${TARGET_TRIPLE}"
     # libc sources in the same repo as the gcc sources
-    SOURCE_PATH=`unpack_source "gcc-" "${GCC_VSN}"`
+    SOURCE_PATH=`unpack_source "${GCC_VSN}"`
     # builds must be done in the source directories
     cd "${SOURCE_PATH}/.."
     git clean -ffdx
