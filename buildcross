@@ -967,11 +967,7 @@ get_git() {
 }
 
 get_source() {
-    local PREFIX="$1"
-    local VSN="$2"
-    local EXT="$3"
-    local URL="$4"
-    local ALTURL="$5"
+    local VSN="$1"
     case "${VSN}" in
 	git\;*)
 	    # git;REPO;SUBDIR;BRANCH;REF;VENDOR
@@ -980,55 +976,50 @@ get_source() {
 	    get_git "$1" "$2" "$3" "$4" "$5"
 	    ;;
 	*)
-	    case "${PREFIX}" in
-		"linux-")
-		    get_linux_tarball "${VSN}"
-		    ;;
-		*)
-		    get_tarball "${PREFIX}${VSN}" "${EXT}" "${URL}" "${ALTURL}"
-	    esac
+	    echo "invalid vsn: ${VSN}"
+	    exit 1
 	    ;;
     esac
 }
 
 get_source_binutils() {
     local GIT=`gitify_vsn_binutils "$1"`
-    get_source "dummy" "${GIT}"
+    get_source "${GIT}"
 }
 
 get_source_gcc() {
     local GIT=`gitify_vsn_gcc "$1"`
-    get_source "dummy" "${GIT}"
+    get_source "${GIT}"
 }
 
 get_source_glibc() {
     local GIT=`gitify_vsn_glibc "$1"`
-    get_source "dummy" "${GIT}"
+    get_source "${GIT}"
 }
 
 get_source_linux() {
     local GIT=`gitify_vsn_linux "$1"`
-    get_source "dummy" "${GIT}"
+    get_source "${GIT}"
 }
 
 get_source_mingw64() {
     local GIT=`gitify_vsn_mingw64 "$1"`
-    get_source "dummy" "${GIT}"
+    get_source "${GIT}"
 }
 
 get_source_musl() {
     local GIT=`gitify_vsn_musl "$1"`
-    get_source "dummy" "${GIT}"
+    get_source "${GIT}"
 }
 
 get_source_newlib() {
     local GIT=`gitify_vsn_newlib "$1"`
-    get_source "dummy" "${GIT}"
+    get_source "${GIT}"
 }
 
 get_source_uclibc() {
     local GIT=`gitify_vsn_uclibc "$1"`
-    get_source "dummy" "${GIT}"
+    get_source "${GIT}"
 }
 
 get_sources() {
@@ -1042,7 +1033,7 @@ get_sources() {
     [ -n "${MUSL_VSN}" ] && get_source_musl "${MUSL_VSN}"
     [ -n "${MINGW64_VSN}" ] && get_source_mingw64 "${MINGW64_VSN}"
     [ -n "${NEWLIB_VSN}" ] && get_source_newlib "${NEWLIB_VSN}"
-    [ -n "${NVPTXTOOLS_VSN}" ] && get_source "nvptx-tools-" "${NVPTXTOOLS_VSN}"
+    [ -n "${NVPTXTOOLS_VSN}" ] && get_source "${NVPTXTOOLS_VSN}"
     get_tarball "gmp-${GMP_VSN}"
     [ -n "${LINUX_VSN}" ] && get_source_linux "${LINUX_VSN}"
     get_tarball "mpfr-${MPFR_VSN}"
