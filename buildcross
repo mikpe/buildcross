@@ -226,6 +226,7 @@ fi
 # default component versions
 BINUTILS_VSN=2.40
 GCC_VSN=13.1.0
+GCC_GENERATED_FILES_VSN="git;https://github.com/mikpe/gcc-generated-files.git;-;master;HEAD;mikpe"
 GLIBC_VSN=2.37
 GMP_VSN=6.2.1
 LINUX_VSN=6.3
@@ -245,6 +246,7 @@ BINUTILS_WANTS_HOST_NOT_BUILD=
 # gcc configuration options
 GCC_WANTS_ENABLE_OBSOLETE=
 GCC_WANTS_ENABLE_INITFINI_ARRAY=
+GCC_WANTS_GENERATED_FILES=
 GCC_WANTS_NO_ENABLE_CHECKING=
 
 # glibc configuration options
@@ -357,6 +359,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=3.4.6
 	GCC_WANTS_ENABLE_OBSOLETE=1
+	GCC_WANTS_GENERATED_FILES=3.4.6
 	GCC_WANTS_NO_ENABLE_CHECKING=1
 	BINUTILS_VSN=2.16.1
 	NEWLIB_VSN= # fails to build for d30v
@@ -404,6 +407,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-stardent-sysv4"
 	GCC_VSN=3.2.3
 	GCC_WANTS_ENABLE_OBSOLETE=1
+	GCC_WANTS_GENERATED_FILES=3.2.3
 	GCC_WANTS_NO_ENABLE_CHECKING=1
 	BINUTILS_VSN=2.16.1
 	NEWLIB_VSN= # doesn't support i860
@@ -425,6 +429,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_OLDCONFIG=1
 	GCC_VSN=3.4.6 # obsoleted in 3.4, removed in 4.0
 	GCC_WANTS_ENABLE_OBSOLETE=1
+	GCC_WANTS_GENERATED_FILES=3.4.6
 	GCC_WANTS_NO_ENABLE_CHECKING=1
 	BINUTILS_VSN=2.30 # obsoleted in 2.28, removed in 2.31
 	BINUTILS_WANTS_ENABLE_OBSOLETE=1
@@ -438,6 +443,7 @@ case "${TARGET_ARCH}" in
     "ip2k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	GCC_VSN=3.3.6 # added in 3.3, ICEs in 3.4 and 4.0, removed in 4.1
+	GCC_WANTS_GENERATED_FILES=3.3.6
 	GCC_WANTS_NO_ENABLE_CHECKING=1
 	NEWLIB_VSN= # doesn't support ip2k
 	# you need to:
@@ -602,6 +608,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-netbsd"
 	GCC_VSN=4.0.4
 	GCC_WANTS_ENABLE_OBSOLETE=1 # obsoleted in 4.0, removed in 4.1
+	GCC_WANTS_GENERATED_FILES=4.0.4
 	BINUTILS_WANTS_ENABLE_OBSOLETE=1 # marked obsolete in 2.38
 	BINUTILS_VSN=2.38 # removed in 2.39
 	# you need to:
@@ -1069,6 +1076,7 @@ get_sources() {
     cd "${DOWNLOADS_DIR}"
     [ -n "${BINUTILS_VSN}" ] && get_source_binutils "${BINUTILS_VSN}"
     get_source_gcc "${GCC_VSN}"
+    [ -n "${GCC_WANTS_GENERATED_FILES}" ] && get_source "${GCC_GENERATED_FILES_VSN}"
     [ -n "${HOST_GCC_VSN}" ] && get_source_gcc "${HOST_GCC_VSN}"
     [ -n "${GLIBC_VSN}" ] && get_source_glibc "${GLIBC_VSN}"
     [ -n "${UCLIBC_VSN}" ] && get_source_uclibc "${UCLIBC_VSN}"
@@ -1290,6 +1298,22 @@ build_cross_gcc() {
     if [ -n "${GCC_WANTS_ENABLE_INITFINI_ARRAY}" ]; then
 	ENABLE_INITFINI_ARRAY="--enable-initfini-array"
     fi
+    # when building older gcc versions from git we want to add generated files from
+    # the corresponding release tarballs, as regenerating them can be problematic
+    if [ -n "${GCC_WANTS_GENERATED_FILES}" ]; then
+	local GENERATED_FILES_PATH=`unpack_source "${GCC_GENERATED_FILES_VSN}"`
+	for f in c-parse.y c-parse.c tradcif.c ; do
+	    if [ -f "${GENERATED_FILES_PATH}/${GCC_WANTS_GENERATED_FILES}/gcc/$f" ]; then
+		cp "${GENERATED_FILES_PATH}/${GCC_WANTS_GENERATED_FILES}/gcc/$f" "${SOURCE_PATH}/gcc/$f"
+	    fi
+	done
+    fi
+    # ensure generated files are newer than their sources
+    for f in c-parse.y c-parse.c tradcif.c c-gperf.h ; do
+	if [ -f "${SOURCE_PATH}/gcc/$f" ]; then
+	    touch "${SOURCE_PATH}/gcc/$f"
+	fi
+    done
     case "${TARGET_ARCH}" in
 	"aarch64")
 	    LIBSSP_CONFIG="--disable-libssp"
