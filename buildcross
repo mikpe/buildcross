@@ -1548,6 +1548,13 @@ build_cross_gcc() {
 		${LIBC_CONFIGS} ${LIBSSP_CONFIG} ${ENABLE_INITFINI_ARRAY}
     LANGUAGES=
     case "${TARGET_ARCH}" in
+	a29k)
+	    # gcc-2.95.3 needs LANGUAGES=c when building instead of --enable-languages=c when configuring.
+	    # Additionally it tries to build and install things it cannot.
+	    LANGUAGES="LANGUAGES=c"
+	    MAKE_TARGET="all-gcc"
+	    INSTALL_TARGET="install-gcc"
+	    ;;
 	d10v | z8k)
 	    # ecosSWtools: remove unneeded or unbuildable components
 	    rm -rf dejagnu diff expect gdb make mmalloc patch readline sim tcl texinfo tk utils
@@ -1570,12 +1577,22 @@ build_cross_gcc() {
     esac
     make ${DASHJ} MAKEINFO=/bin/true ${LANGUAGES} ${MAKE_TARGET}
     case "${TARGET_ARCH}" in
+	a29k)
+	    # gcc-2.95.3 tries to install info files it did not build
+	    touch gcc/gcc.info
+	    ;;
 	d10v | z8k)
 	    # ecosSWtools: remove build-time tools we don't want to install
 	    rm -rf bison byacc flex
 	    ;;
     esac
     make MAKEINFO=/bin/true ${LANGUAGES} ${INSTALL_TARGET}
+    case "${TARGET_ARCH}" in
+	a29k)
+	    # gcc-2.95.3 forgets the target prefix when installing cpp
+	    mv "${CROSS_DIR}/bin/cpp" "${CROSS_DIR}/bin/a29k-unknown-coff-cpp"
+	    ;;
+    esac
     touch "${CROSS_DIR}/.stage-gcc-${STAGE}"
     cd ..
     rm -rf objdir-gcc
