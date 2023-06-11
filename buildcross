@@ -588,7 +588,7 @@ case "${TARGET_ARCH}" in
 	NEWLIB_VSN=2.2.0-1
 	# on x86_64 you must set CC to a wrapper script that enforces -m32
 	# PATH must select a older gcc suitable for building gcc-4.2.4 and
-	# binutils-2.20.1 (gcc-4.1 and 4.2 are known to work)
+	# binutils-2.20.1 (gcc-4.1 to 4.5 are known to work)
 	SKIP_HOST_GCC=1
 	;;
     "nds32")
