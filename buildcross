@@ -139,7 +139,7 @@
 
 set -e
 
-VERSION="6.38.0"
+VERSION="7.0.0"
 
 CROSS_DIR=
 DASHJ=
