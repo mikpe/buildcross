@@ -991,6 +991,7 @@ get_git() {
     DIR="${VENDOR}`basename ${REPO}`"
     if [ -d "${DIR}" ]; then
 	cd "${DIR}"
+	git clean -ffdx
 	git fetch
 	if [ -n "${BRANCH}" ]; then
 	    git checkout "${BRANCH}"
