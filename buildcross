@@ -139,7 +139,7 @@
 
 set -e
 
-VERSION="7.0.0"
+VERSION="7.0.1"
 
 CROSS_DIR=
 DASHJ=
@@ -682,14 +682,13 @@ case "${TARGET_ARCH}" in
 	# TODO: extend sim990 to run tms9900 ELF executables
 	;;
     "tricore")
-	# based on binutils-2.20, gcc-4.9.4, and newlib-1.18 + vendor modifications
+	# based on gcc-9.4.0, binutils-2.20, and newlib-1.18
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	BINUTILS_VSN="git;https://github.com/volumit/package_494.git;binutils;main;HEAD;volumit"
+	BINUTILS_VSN="git;https://github.com/volumit/package_940.git;binutils;main;HEAD;volumit"
 	BINUTILS_WANTS_DISABLE_WERROR=1
-	GCC_VSN="git;https://github.com/volumit/package_494.git;gcc;main;HEAD;volumit"
-	GCC_WANTS_DISABLE_WERROR=1
-	NEWLIB_VSN="git;https://github.com/volumit/package_494.git;newlib;main;HEAD;volumit"
-	SKIP_HOST_GCC=1 # set PATH to select gcc-4.x (4.9.4 is known to work)
+	GCC_VSN="git;https://github.com/volumit/package_940.git;gcc;main;HEAD;volumit"
+	NEWLIB_VSN="git;https://github.com/volumit/package_940.git;newlib;main;HEAD;volumit"
+	HOST_GCC_VSN=9.5.0
 	;;
     "ubicom32")
 	TARGET_TRIPLE="${TARGET_ARCH}-linux-uclibc"
@@ -1455,12 +1454,6 @@ build_cross_gcc() {
 			"${SOURCE_PATH}/move-if-change" \
 			"${SOURCE_PATH}/symlink-tree" \
 			"${SOURCE_PATH}/ylwrap"
-	    # the git repo contains unwanted stuff
-	    for f in gmp mpfr mpc ; do
-		rm -rf "${SOURCE_PATH}/${f}"
-	    done
-	    # abuse ENABLE_OBSOLETE to pass in a vendor-specific option
-	    ENABLE_OBSOLETE="--without-licenser"
 	    # libgcc needs <stdint.h>
 	    mkdir -p "${CROSS_DIR}/${TARGET_TRIPLE}/include"
 	    cp "${SOURCE_PATH}/gcc/ginclude/stdint-gcc.h" "${CROSS_DIR}/${TARGET_TRIPLE}/include/stdint.h"
