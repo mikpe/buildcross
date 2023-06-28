@@ -20,6 +20,7 @@
 #
 # Supported targets and resulting toolchains:
 #
+# 6502		6502 (binutils from cc65, libtinyc)
 # a29k		a29k-unknown-coff (no libc)
 # aarch64	aarch64-unknown-linux-gnu
 # alpha		alpha-unknown-linux-gnu
@@ -139,7 +140,7 @@
 
 set -e
 
-VERSION="7.0.2"
+VERSION="7.1.0"
 
 CROSS_DIR=
 DASHJ=
@@ -225,6 +226,8 @@ fi
 
 # default component versions
 BINUTILS_VSN=2.40
+CC65_VSN=
+GCC_6502_BITS_VSN=
 GCC_VSN=13.1.0
 GCC_GENERATED_FILES_VSN="git;https://github.com/mikpe/gcc-generated-files.git;-;master;HEAD;mikpe"
 GLIBC_VSN=2.37
@@ -270,6 +273,25 @@ NEWLIB_WANTS_DISABLE_MULTILIB=
 
 # target-specfic overrides
 case "${TARGET_ARCH}" in
+    "6502")
+	TARGET_TRIPLE="${TARGET_ARCH}"
+	# uses CC65_VSN for binutils
+	CC65_VSN="git;https://github.com/cc65/cc65.git;-;master;HEAD;-"
+	HOST_GCC_VSN="${GCC_VSN}"
+	# 6502 gcc based on gcc-8.4.1
+	GCC_VSN="git;https://github.com/itszor/gcc-6502.git;-;m65x-gcc8-new-mirror;HEAD;-"
+	# 6502 libtinyc
+	GCC_6502_BITS_VSN="git;https://github.com/itszor/gcc-6502-bits.git;-;master;HEAD;-"
+	# disable the components we don't want
+	BINUTILS_VSN=
+	GLIBC_VSN=
+	LINUX_VSN=
+	MINGW64_VSN=
+	MUSL_VSN=
+	NEWLIB_VSN=
+	NVPTXTOOLS_VSN=
+	UCLIBC_VSN=
+	;;
     "a29k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
 	GCC_VSN=2.95.3
@@ -1083,6 +1105,8 @@ get_sources() {
     [ -n "${MINGW64_VSN}" ] && get_source_mingw64 "${MINGW64_VSN}"
     [ -n "${NEWLIB_VSN}" ] && get_source_newlib "${NEWLIB_VSN}"
     [ -n "${NVPTXTOOLS_VSN}" ] && get_source "${NVPTXTOOLS_VSN}"
+    [ -n "${CC65_VSN}" ] && get_source "${CC65_VSN}"
+    [ -n "${GCC_6502_BITS_VSN}" ] && get_source "${GCC_6502_BITS_VSN}"
     get_tarball "gmp-${GMP_VSN}"
     [ -n "${LINUX_VSN}" ] && get_source_linux "${LINUX_VSN}"
     get_tarball "mpfr-${MPFR_VSN}"
@@ -1315,6 +1339,16 @@ build_cross_gcc() {
 	fi
     done
     case "${TARGET_ARCH}" in
+	"6502")
+	    # 6502 libtinyc wants to install libc in this subdir
+	    SYSROOT="${CROSS_DIR}/6502"
+	    MULTILIB_CONFIG="${MULTILIB_CONFIG} --with-build-sysroot=${CROSS_DIR}/6502"
+	    # we have to hard-code the paths to as and ld
+	    MULTILIB_CONFIG="${MULTILIB_CONFIG} --with-as=${CROSS_DIR}/cc65/bin/ca65 --with-ld=${CROSS_DIR}/cc65/bin/ld65"
+	    # can't build these
+	    LIBC_CONFIGS="--disable-threads"
+	    LIBSSP_CONFIG="--disable-libssp"
+	    ;;
 	"aarch64")
 	    LIBSSP_CONFIG="--disable-libssp"
 	    MULTILIB_CONFIG="--disable-multilib"
@@ -1609,6 +1643,8 @@ build_cross_gcc_with_libc() {
 	build_cross_gcc "musl"
     elif [ -n "${MINGW64_VSN}" ]; then
 	 build_cross_gcc "mingw64-full"
+    elif [ -n "${GCC_6502_BITS_VSN}" ]; then
+	build_cross_gcc "libtinyc"
     elif [ -n "${NEWLIB_VSN}" ]; then
 	: nothing to do
     fi
@@ -1749,6 +1785,48 @@ build_nvptx_tools() {
     rm -rf objdir-nvptx-tools
 }
 
+build_cc65_tools() {
+    local SOURCE_PATH
+    local CC65_PATH="${CROSS_DIR}/cc65"
+    if [ -x "${CC65_PATH}/bin/ca65" ]; then
+	return
+    fi
+    log "building cc65 ${CC65_VSN}"
+    SOURCE_PATH=`unpack_source "${CC65_VSN}"`
+    # builds are done in the source directories
+    cd "${SOURCE_PATH}"
+    make PREFIX="${CC65_PATH}"
+    make PREFIX="${CC65_PATH}" install
+    log "installing binutils wrappers for ${TARGET_TRIPLE}"
+    # based on what gcc-6502-bits.git does but tweaked to avoid
+    # adding special-cases to the gcc configure and build
+    mkdir -p "${CROSS_DIR}/bin"
+    ln -s "${CC65_PATH}/bin/ca65" "${CROSS_DIR}/bin/${TARGET_TRIPLE}-as"
+    ln -s "${CC65_PATH}/bin/ld65" "${CROSS_DIR}/bin/${TARGET_TRIPLE}-ld"
+    cat > "${CROSS_DIR}/bin/${TARGET_TRIPLE}-ar" <<'EOF'
+#!/bin/sh
+ARG="$1"
+case "${ARG}" in
+  "rc" | "cr")
+    ARG="a"
+    ;;
+  *)
+    ;;
+esac
+shift
+exec @CC65_PATH@/bin/ar65 ${ARG} $@
+EOF
+    sed -i -e "s,@CC65_PATH@,${CC65_PATH},g" "${CROSS_DIR}/bin/${TARGET_TRIPLE}-ar"
+    chmod +x "${CROSS_DIR}/bin/${TARGET_TRIPLE}-ar"
+    cat > "${CROSS_DIR}/bin/${TARGET_TRIPLE}-ranlib" <<'EOF'
+#!/bin/sh
+exit 0
+EOF
+    chmod +x "${CROSS_DIR}/bin/${TARGET_TRIPLE}-ranlib"
+    git clean -ffdx
+    cd -
+}
+
 build_m6809_tools() {
     local SOURCE_PATH
     local AS_HOST=linux
@@ -1785,6 +1863,8 @@ build_cross_binary_tools() {
 	build_cross_binutils
     elif [ -n "${NVPTXTOOLS_VSN}" ]; then
 	build_nvptx_tools
+    elif [ -n "${CC65_VSN}" ]; then
+	build_cc65_tools
     elif [ "${TARGET_ARCH}" = "m6809" ]; then
 	build_m6809_tools
     fi
@@ -2126,6 +2206,26 @@ build_target_newlib() {
     rm -rf objdir-newlib
 }
 
+build_target_6502_bits() {
+    local SOURCE_PATH
+    local CC65_PATH="${CROSS_DIR}/cc65/bin"
+    log "building libtinyc for ${TARGET_TRIPLE}"
+    SOURCE_PATH=`unpack_source "${GCC_6502_BITS_VSN}"`
+    # builds are done in the source directories
+    cd "${SOURCE_PATH}"
+    CC65_PATH="${CC65_PATH}" PREFIX="${CROSS_DIR}" libtinyc/compile.sh
+    mkdir -p "${CROSS_DIR}/6502/lib/cc65/cfg"
+    install ldscripts/semi65x.cfg "${CROSS_DIR}/6502/lib/cc65/cfg"
+    mkdir -p "${CROSS_DIR}/6502/bbcb/lib/cc65/cfg"
+    install ldscripts/bbcb.cfg "${CROSS_DIR}/6502/bbcb/lib/cc65/cfg"
+    mkdir -p "${CROSS_DIR}/6502/bbcm/lib/cc65/cfg"
+    install ldscripts/bbcmaster.cfg "${CROSS_DIR}/6502/bbcm/lib/cc65/cfg"
+    mkdir -p "${CROSS_DIR}/6502/c64/lib/cc65/cfg"
+    install ldscripts/c64.cfg "${CROSS_DIR}/6502/c64/lib/cc65/cfg"
+    git clean -ffdx
+    cd -
+}
+
 build_target_m1750_libc() {
     local SOURCE_PATH
     log "building m1750 libc for ${TARGET_TRIPLE}"
@@ -2155,6 +2255,8 @@ build_target_libc() {
 	build_target_mingw64crt
     elif [ -n "${NEWLIB_VSN}" ]; then
 	build_target_newlib
+    elif [ -n "${GCC_6502_BITS_VSN}" ]; then
+	build_target_6502_bits
     elif [ "${TARGET_ARCH}" = "m1750" ]; then
 	build_target_m1750_libc
     fi
