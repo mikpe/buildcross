@@ -1275,6 +1275,7 @@ build_cross_gcc() {
     local GIT
     local SOURCE_PATH
     local LANGUAGES
+    local SYSROOT="${CROSS_DIR}"
     if [ -f "${CROSS_DIR}/.stage-gcc-${STAGE}" ]; then
 	return
     fi
@@ -1517,7 +1518,7 @@ build_cross_gcc() {
 		--target="${TARGET_TRIPLE}" ${ENABLE_OBSOLETE} \
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
-		--with-sysroot="${CROSS_DIR}" \
+		--with-sysroot="${SYSROOT}" \
 		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}" \
 		--with-mpfr="${HOST_TOOLS_DIR}/mpfr-${MPFR_VSN}" \
 		--with-mpc="${HOST_TOOLS_DIR}/mpc-${MPC_VSN}" \
