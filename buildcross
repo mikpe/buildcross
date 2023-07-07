@@ -140,7 +140,7 @@
 
 set -e
 
-VERSION="7.1.1"
+VERSION="7.1.2"
 
 CROSS_DIR=
 DASHJ=
@@ -355,7 +355,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	LINUX_VSN=4.16 # cris was removed in linux-4.17
 	GCC_WANTS_ENABLE_OBSOLETE=1 # gcc-10 marks cris as obsolete
-	GCC_VSN=10.4.0 # gcc-11.1.0 dropped support for this target triple
+	GCC_VSN=10.5.0 # gcc-11.1.0 dropped support for this target triple
 	;;
     "crx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
