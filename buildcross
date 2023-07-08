@@ -130,7 +130,8 @@
 # pyr		not in binutils, removed in gcc-3.0
 # romp		not in binutils, removed in gcc-3.4
 # SHARC		there is an ancient GCC port with custom assembler/linker/etc (not GNU binutils) in
-#		https://github.com/sergev/g21k, but it's apparently not 64-bit clean
+#		https://github.com/sergev/g21k, but it's apparently not 64-bit clean;
+#		based on gcc-2.3.3, it builds with bison-1.25, gperf-2.7.2, and gcc-2.95.3
 # spur		not in binutils, removed in gcc-3.0
 # tahoe		incomplete in binutils (no ld), removed in binutils-2.17 (gas) and 2.31 (rest) and gcc-3.0
 # transputer	there is an ancient GCC port with custom assembler/linker/etc (not GNU binutils) in
