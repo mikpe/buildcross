@@ -16,7 +16,31 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Usage: buildcross [-jN] <TARGET> [<CROSS_DIR>]
+# Usage: buildcross [options] [<TARGET>] [<CROSS_DIR>]
+# Options:
+#	--cross-dir=<CROSS_DIR> | -c <CROSS_DIR>
+#		Place resulting cross-compiler in <CROSS_DIR>.
+#		Default: <CWD>/cross-<TARGET>
+#
+#	--downloads-dir=<DOWNLOADS_DIR> | -d <DOWNLOADS_DIR>
+#		Place downloaded sources in <DOWNLOADS_DIR>.
+#		Default: <CWD>/downloads
+#
+#	--host-tools-dir=<HOST_TOOLS_DIR> | -h <HOST_TOOLS_DIR>
+#		Place built host tools in <HOST_TOOLS_DIR>.
+#		Default: <CWD>/host-tools
+#
+#	-j<N>
+#		Pass -j<N> to make. Default: empty
+#
+#	--sources-dir=<SOURCES_DIR> | -s <SOURCES_DIR>
+#		Place unpacked source archives in <SOURCES_DIR>.
+#		Default: <CWD>/sources
+#
+#	--target=<TARGET> | -t <TARGET>
+#		Build the indicated <TARGET>. If this option is
+#		not present then <TARGET> must be present as the
+#		first non-option parameter.
 #
 # Supported targets and resulting toolchains:
 #
