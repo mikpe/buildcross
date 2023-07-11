@@ -91,7 +91,7 @@
 # microblaze	microblaze-unknown-linux-gnu
 # mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
 # mips64	mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support
-# mmix		mmix-knuth-mmixware (with newlib)
+# mmix		mmix-knuth-mmixware with newlib
 # mn10300	mn10300-unknown-elf
 # moxie		moxie-unknown-elf
 # msp430	msp430-unknown-elf
@@ -125,7 +125,7 @@
 # xc16x		xc16x-unknown-elf (1)
 # xstormy16	xstormy16-unknown-elf
 # xtensa	xtensa-unknown-linux-uclibc
-# z8k		z8k-unknown-coff (3)
+# z8k		z8k-unknown-coff with newlib (3)
 # zpu		zpu-unknown-elf (1)
 #
 # Notes:
