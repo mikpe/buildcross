@@ -87,7 +87,7 @@ Supported targets and resulting toolchains:
 | moxie		| moxie-unknown-elf |
 | msp430	| msp430-unknown-elf |
 | mt		| mt-unknown-elf [^3] |
-| nds32		| nds32le-unknown-linux-gnu |
+| nds32		| nds32le-unknown-linux-gnu (BROKEN) |
 | nios2		| nios2-unknown-linux-gnu |
 | ns32k		| ns32k-unknown-netbsd (no libc) [^2] |
 | nvptx		| nvptx-none with newlib |
