@@ -916,7 +916,7 @@ gitify_vsn() {
 }
 
 gitify_vsn_binutils() {
-    gitify_vsn "$1" "git;https://github.com/bminor/binutils-gdb.git;-;master;-;bminor" vsntoref_binutils
+    gitify_vsn "$1" "git;https://github.com/mikpe/binutils-gdb.git;-;master;-;mikpe" vsntoref_binutils
 }
 
 vsntoref_binutils() {
@@ -940,7 +940,7 @@ vsntoref_gcc() {
 }
 
 gitify_vsn_glibc() {
-    gitify_vsn "$1" "git;https://github.com/bminor/glibc.git;-;master;-;bminor" vsntoref_glibc
+    gitify_vsn "$1" "git;https://github.com/mikpe/glibc.git;-;master;-;mikpe" vsntoref_glibc
 }
 
 vsntoref_glibc() {
