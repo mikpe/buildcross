@@ -365,6 +365,8 @@ case "${TARGET_ARCH}" in
     "bpf")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-none"
 	NEWLIB_VSN= # not supported in newlib at all
+	# binutils-2.41 does not build from git due to bpf-desc.h missing
+	BINUTILS_VSN=2.40
 	;;
     "c6x")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-uclinux"
