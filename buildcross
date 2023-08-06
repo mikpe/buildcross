@@ -654,10 +654,11 @@ case "${TARGET_ARCH}" in
 	;;
     "nds32")
 	TARGET_TRIPLE="nds32le-unknown-linux-gnu"
-	# this glibc triggers errors and/or infinite loops with make-4.4
+	# FIXME: Building this glibc fails miserably with make-4.4, but works with make-4.3.
+	# Warning: Do not use the ast-v5 branches since v5 is RISC-V not nds32.
 	GLIBC_VSN="git;https://github.com/andestech/glibc.git;-;nds32-glibc-2.29-v6;HEAD;andestech"
 	GLIBC_WANTS_DISABLE_WERROR=1
-	GCC_VSN=12.3.0 # gcc-13.1.0 triggers a linkage error in glibc
+	GCC_VSN=12.3.0 # gcc-13.x triggers a linkage error in glibc
 	LINUX_VSN=5.17 # nds32 was removed in linux-5.18
 	;;
     "ns32k")
