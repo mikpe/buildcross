@@ -374,7 +374,8 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_SSP=y
 	UCLIBC_WANTS_BIG_ENDIAN=y
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
-	UCLIBC_VSN=1.0.42 # uclibc-ng-1.0.{43,44} fail to build
+	# fix for build breakage introduced in 1.0.43
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.44-c6x;HEAD;mikpe"
 	LINUX_VSN=5.11 # c6x was removed in linux-5.12
 	;;
     "cr16")
