@@ -359,8 +359,8 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_LINUXTHREADS=y
 	UCLIBC_WANTS_SSP=y
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
+	UCLIBC_WANTS_STATIC=y
 	LINUX_VSN=4.16 # blackfin was removed in linux-4.17
-	GCC_VSN=9.5.0 # gcc-10.x/11.x/12.x/13.x give linkage errors in uClibc-ng
 	;;
     "bpf")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-none"
@@ -1973,7 +1973,7 @@ build_linux_headers() {
 	    make CONFIG_SOC_KENDRYTE=n CONFIG_ARCH_ZX=n mrproper
 	    ;;
         *)
-	    make ARCH="${KERNEL_ARCH}" mrproper
+	    make ARCH="${KERNEL_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" mrproper
     esac
     cd -
 }
