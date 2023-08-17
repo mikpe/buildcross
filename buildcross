@@ -264,6 +264,7 @@ GCC_GENERATED_FILES_VSN="git;https://github.com/mikpe/gcc-generated-files.git;-;
 GLIBC_VSN=2.38
 GMP_VSN=6.3.0
 LINUX_VSN=6.4
+MAKE_VSN=
 MINGW64_VSN=11.0.1
 MPC_VSN=1.3.1
 MPFR_VSN=4.2.0
@@ -1147,6 +1148,7 @@ get_sources() {
     [ -n "${NVPTXTOOLS_VSN}" ] && get_source "${NVPTXTOOLS_VSN}"
     [ -n "${CC65_VSN}" ] && get_source "${CC65_VSN}"
     [ -n "${GCC_6502_BITS_VSN}" ] && get_source "${GCC_6502_BITS_VSN}"
+    [ -n "${MAKE_VSN}" ] && get_tarball "make-${MAKE_VSN}" "gz" "https://ftpmirror.gnu.org/make"
     get_tarball "gmp-${GMP_VSN}"
     [ -n "${LINUX_VSN}" ] && get_source_linux "${LINUX_VSN}"
     get_tarball "mpfr-${MPFR_VSN}"
@@ -1200,6 +1202,23 @@ unpack_source() {
 	    exit 1
 	    ;;
     esac
+}
+
+build_host_make() {
+    if [ -x "${HOST_TOOLS_DIR}/make-${MAKE_VSN}/bin/make" ]; then
+	return
+    fi
+    log "building host make-${MAKE_VSN}"
+    unpack_tarball "make-${MAKE_VSN}"
+    rm -rf objdir-make
+    mkdir objdir-make
+    cd objdir-make
+    ${SOURCES_DIR}/make-${MAKE_VSN}/configure \
+		--prefix="${HOST_TOOLS_DIR}/make-${MAKE_VSN}"
+    make ${DASHJ}
+    make install
+    cd ..
+    rm -rf objdir-make
 }
 
 build_host_gmp() {
@@ -2375,6 +2394,11 @@ fi
 if [ "${BUILD_TRIPLE}" = "${TARGET_TRIPLE}" ]; then
     echo build triple "${BUILD_TRIPLE}" equals target triple
     exit 1
+fi
+
+if [ -n "${MAKE_VSN}" ]; then
+    build_host_make
+    export PATH="${HOST_TOOLS_DIR}/make-${MAKE_VSN}/bin:${PATH}"
 fi
 
 #
