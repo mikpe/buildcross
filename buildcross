@@ -2326,9 +2326,9 @@ cd ${BUILD_DIR}
 # Build host libraries and GCC
 #
 
-ORIG_PATH="${PATH}"
-
 if [ -z "${SKIP_HOST_GCC}" ]; then
+
+ORIG_PATH="${PATH}"
 
 # build preliminary host libraries and gcc using system cc
 build_host_gmp "-cc"
@@ -2385,7 +2385,7 @@ fi
 build_cross_binary_tools
 
 # update PATH to pick up our cross tools
-export PATH="${CROSS_DIR}/bin:${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}/bin:${ORIG_PATH}"
+export PATH="${CROSS_DIR}/bin:${PATH}"
 
 # mingw-w64 needs headers early on
 [ -n "${MINGW64_VSN}" ] && build_mingw64_headers
