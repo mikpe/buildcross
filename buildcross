@@ -96,7 +96,7 @@
 # moxie		moxie-unknown-elf
 # msp430	msp430-unknown-elf
 # mt		mt-unknown-elf (3)
-# nds32		nds32le-unknown-linux-gnu (BROKEN)
+# nds32		nds32le-unknown-linux-gnu
 # nios2		nios2-unknown-linux-gnu
 # ns32k		ns32k-unknown-netbsd (no libc) (2)
 # nvptx		nvptx-none with newlib
@@ -656,7 +656,8 @@ case "${TARGET_ARCH}" in
 	;;
     "nds32")
 	TARGET_TRIPLE="nds32le-unknown-linux-gnu"
-	# FIXME: Building this glibc fails miserably with make-4.4, but works with make-4.3.
+	# Building this glibc fails miserably with make-4.4, but works with make-4.3.
+	MAKE_VSN=4.3
 	# Warning: Do not use the ast-v5 branches since v5 is RISC-V not nds32.
 	GLIBC_VSN="git;https://github.com/andestech/glibc.git;-;nds32-glibc-2.29-v6;HEAD;andestech"
 	GLIBC_WANTS_DISABLE_WERROR=1
