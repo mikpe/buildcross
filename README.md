@@ -112,7 +112,8 @@ Supported targets and resulting toolchains:
 | vax		| vax-unknown-linux (no libc or kernel headers) |
 | visium	| visium-unknown-elf |
 | x86_64	| x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support |
-| x86_64-musl	| x86_64-unknown-linux-musl (no -m32/-mx32 support) |
+| x86_64-musl	| x86_64-unknown-linux-musl (only -m64) |
+| x86_64-uclibc	| x86_64-unknown-linux-uclibc (only -m64) |
 | xc16x		| xc16x-unknown-elf [^1] |
 | xstormy16	| xstormy16-unknown-elf |
 | xtensa	| xtensa-unknown-linux-uclibc |
