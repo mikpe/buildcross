@@ -73,6 +73,7 @@ Supported targets and resulting toolchains:
 | m6809		| m6809-unknown-none with newlib [^1] |
 | m68hc11	| m68hc11-unknown-elf [^1] |
 | m68k		| m68k-unknown-linux-gnu |
+| m68k-elf	| m68k-unknown-elf |
 | m68k-uclinux	| m68k-unknown-uclinux-uclibc |
 | m88k		| m88k-unknown-openbsd (elf, no libc) [^1] |
 | maxq		| maxq-unknown-coff (no libc) [^1] |
