@@ -173,7 +173,7 @@
 
 set -e
 
-VERSION="7.2.8"
+VERSION="7.3.0"
 
 CROSS_DIR=
 DASHJ=
@@ -265,7 +265,7 @@ GCC_VSN=13.2.0
 GCC_GENERATED_FILES_VSN="git;https://github.com/mikpe/gcc-generated-files.git;-;master;HEAD;mikpe"
 GLIBC_VSN=2.38
 GMP_VSN=6.3.0
-LINUX_VSN=6.6
+LINUX_VSN=6.7
 MAKE_VSN=
 MINGW64_VSN=11.0.1
 MPC_VSN=1.3.1
@@ -495,6 +495,9 @@ case "${TARGET_ARCH}" in
 	# - if on x86_64, set BUILD_TRIPLE=x86_64-unknown-linux-gnu NOT x86_64-pc-linux-gnu
 	# - if on x86_64, set CC to a wrapper script that enforces -m32
 	SKIP_HOST_GCC=1
+	;;
+    "ia64")
+	LINUX_VSN=6.6 # ia64 was removed in linux-6.7
 	;;
     "ip2k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
