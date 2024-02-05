@@ -498,6 +498,7 @@ case "${TARGET_ARCH}" in
 	;;
     "ia64")
 	LINUX_VSN=6.6 # ia64 was removed in linux-6.7
+	GLIBC_VSN=2.38 # ia64 was removed in glibc-2.39
 	;;
     "ip2k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
