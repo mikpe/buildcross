@@ -284,6 +284,7 @@ BINUTILS_WANTS_HOST_NOT_BUILD=
 GCC_WANTS_ENABLE_OBSOLETE=
 GCC_WANTS_ENABLE_INITFINI_ARRAY=
 GCC_WANTS_GENERATED_FILES=
+GCC_WANTS_HOST_NOT_BUILD=
 GCC_WANTS_NO_ENABLE_CHECKING=
 
 # glibc configuration options
@@ -1370,6 +1371,7 @@ build_cross_gcc() {
     local ENABLE_CHECKING
     local ENABLE_OBSOLETE
     local ENABLE_INITFINI_ARRAY
+    local BUILD_OR_HOST
     local GIT
     local SOURCE_PATH
     local LANGUAGES
@@ -1619,12 +1621,16 @@ build_cross_gcc() {
 	    fi
 	    ;;
     esac
+    BUILD_OR_HOST="build"
+    if [ -n "${GCC_WANTS_HOST_NOT_BUILD}" ]; then
+	BUILD_OR_HOST="host"
+    fi
     rm -rf objdir-gcc
     mkdir objdir-gcc
     cd objdir-gcc
     ${SOURCE_PATH}/configure \
 		--target="${TARGET_TRIPLE}" ${ENABLE_OBSOLETE} \
-		--build="${BUILD_TRIPLE}" \
+		--${BUILD_OR_HOST}="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}" \
 		--with-sysroot="${SYSROOT}" \
 		--with-gmp="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}" \
