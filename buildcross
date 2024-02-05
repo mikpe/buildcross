@@ -258,7 +258,7 @@ if [ -z "${CROSS_DIR}" ]; then
 fi
 
 # default component versions
-BINUTILS_VSN=2.41
+BINUTILS_VSN=2.42
 CC65_VSN=
 GCC_6502_BITS_VSN=
 GCC_VSN=13.2.0
