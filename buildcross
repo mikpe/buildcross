@@ -139,6 +139,8 @@
 # Pending:
 #
 # aarch64	waiting for glibc -mabi=ilp32 support
+# aarch64-w64-mingw32
+#		waiting for support in all upstream components
 # loongarch64	waiting for -m32 support (binutils breakage)
 #
 # Unsupported:
