@@ -367,6 +367,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	UCLIBC_WANTS_STATIC=y
 	LINUX_VSN=4.16 # blackfin was removed in linux-4.17
+	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile uclibc-ng-1.0.48
 	;;
     "bpf")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-none"
@@ -379,6 +380,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_BIG_ENDIAN=y
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	LINUX_VSN=5.11 # c6x was removed in linux-5.12
+	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile uclibc-ng-1.0.48
 	;;
     "cr16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -441,6 +443,7 @@ case "${TARGET_ARCH}" in
 	# fixes for build breakages in 1.0.46
 	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.48-frv;HEAD;mikpe"
 	LINUX_VSN=4.16 # frv was removed in linux-4.17
+	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile uclibc-ng-1.0.48
 	;;
     "ft32")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -448,6 +451,7 @@ case "${TARGET_ARCH}" in
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	LINUX_VSN=5.18 # h8300 was removed in linux-5.19
+	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile uclibc-ng-1.0.48
 	;;
     "hexagon")
 	# toolchain salvaged from sourceryg++-2012.03-140-hexagon-linux.src.tar
@@ -459,6 +463,9 @@ case "${TARGET_ARCH}" in
 	# set PATH to select gcc-4.x (4.2.4 is known to work)
 	# if on x86_64, gcc must support -m32
 	SKIP_HOST_GCC=1
+	;;
+    "hppa")
+	GCC_VSN=13.2.0 # gcc-14.1 fails to build glibc-2.39
 	;;
     "i860")
 	TARGET_TRIPLE="${TARGET_ARCH}-stardent-sysv4"
@@ -559,6 +566,7 @@ case "${TARGET_ARCH}" in
 	;;
     "m32r")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile newlib-4.4.0.20231231
 	;;
     "m6809")
 	# This toolchain uses the 6809 port to gcc-4.3.6 with ASxxxx and newlib.
@@ -585,6 +593,7 @@ case "${TARGET_ARCH}" in
 	TARGET_ARCH="m68k"
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	NEWLIB_VSN=4.3.0.20230120 # 4.4.0 fails to build
+	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile newlib-4.3.0.20230120
 	;;
     "m68k-uclibc")
 	TARGET_ARCH="m68k"
@@ -724,6 +733,7 @@ case "${TARGET_ARCH}" in
 	;;
     "rl78")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile newlib-4.4.0.20231231
 	;;
     "rx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -784,6 +794,7 @@ case "${TARGET_ARCH}" in
 	;;
     "visium")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile newlib-4.4.0.20231231
 	;;
     "x86_64-musl")
 	TARGET_ARCH="x86_64"
@@ -808,6 +819,7 @@ case "${TARGET_ARCH}" in
 	;;
     "xstormy16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile newlib-4.4.0.20231231
 	;;
     "xtensa")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
