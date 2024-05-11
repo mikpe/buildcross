@@ -590,8 +590,7 @@ case "${TARGET_ARCH}" in
     "m68k-elf")
 	TARGET_ARCH="m68k"
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN=4.3.0.20230120 # 4.4.0 fails to build
-	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile newlib-4.3.0.20230120
+	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.4.0-m68k;HEAD;mikpe"
 	;;
     "m68k-uclibc")
 	TARGET_ARCH="m68k"
