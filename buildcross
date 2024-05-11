@@ -564,7 +564,7 @@ case "${TARGET_ARCH}" in
 	;;
     "m32r")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile newlib-4.4.0.20231231
+	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.4.0-m32r;HEAD;mikpe"
 	;;
     "m6809")
 	# This toolchain uses the 6809 port to gcc-4.3.6 with ASxxxx and newlib.
@@ -734,7 +734,7 @@ case "${TARGET_ARCH}" in
 	;;
     "rl78")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile newlib-4.4.0.20231231
+	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.4.0-rl78;HEAD;mikpe"
 	;;
     "rx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -792,7 +792,7 @@ case "${TARGET_ARCH}" in
 	;;
     "visium")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile newlib-4.4.0.20231231
+	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.4.0-visium;HEAD;mikpe"
 	;;
     "x86_64-musl")
 	TARGET_ARCH="x86_64"
@@ -817,7 +817,7 @@ case "${TARGET_ARCH}" in
 	;;
     "xstormy16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile newlib-4.4.0.20231231
+	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.4.0-xstormy16;HEAD;mikpe"
 	;;
     "xtensa")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
