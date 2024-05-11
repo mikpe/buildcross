@@ -367,7 +367,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	UCLIBC_WANTS_STATIC=y
 	LINUX_VSN=4.16 # blackfin was removed in linux-4.17
-	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile uclibc-ng-1.0.48
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.48-bfin;HEAD;mikpe"
 	;;
     "bpf")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-none"
@@ -380,7 +380,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_BIG_ENDIAN=y
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	LINUX_VSN=5.11 # c6x was removed in linux-5.12
-	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile uclibc-ng-1.0.48
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.48-c6x;HEAD;mikpe"
 	;;
     "cr16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -443,7 +443,6 @@ case "${TARGET_ARCH}" in
 	# fixes for build breakages in 1.0.46
 	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.48-frv;HEAD;mikpe"
 	LINUX_VSN=4.16 # frv was removed in linux-4.17
-	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile uclibc-ng-1.0.48
 	;;
     "ft32")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -451,7 +450,7 @@ case "${TARGET_ARCH}" in
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	LINUX_VSN=5.18 # h8300 was removed in linux-5.19
-	GCC_VSN=13.2.0 # gcc-14.1.0 fails to compile uclibc-ng-1.0.48
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.48-h8300;HEAD;mikpe"
 	;;
     "hexagon")
 	# toolchain salvaged from sourceryg++-2012.03-140-hexagon-linux.src.tar
