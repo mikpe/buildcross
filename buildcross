@@ -175,7 +175,7 @@
 
 set -e
 
-VERSION="8.1.0"
+VERSION="8.1.1"
 
 CROSS_DIR=
 DASHJ=
@@ -529,13 +529,14 @@ case "${TARGET_ARCH}" in
 	;;
     "kvx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
-	# from https://github.com/kalray/build-scripts.git v4.13.0-rc5
-	BINUTILS_VSN="git;https://github.com/kalray/binutils.git;-;-;80a59a7d6f6f6d07412650551121649aba759a2f;kalray"
-	GCC_VSN="git;https://github.com/kalray/gcc.git;-;coolidge;2b772d878ea404f20ea94f43db8eceb0196d7fa7;kalray"
-	LINUX_VSN="git;https://github.com/kalray/linux_coolidge.git;-;coolidge;8bc0c72fba298aa9d0f03748ed99acad18dd1bbe;kalray"
-	UCLIBC_VSN="git;https://github.com/kalray/uclibc-ng.git;-;coolidge;d842c7a20e13c98bbf0cacedbab2f4e53a05de87;kalray"
-	# kvx' gcc is based on gcc-12.x but its binutils doesn't build with gcc-12.x, so use gcc-11.x as host compiler
-	HOST_GCC_VSN=11.4.0
+	# from https://github.com/kalray/build-scripts.git v5.0.0
+	# based on binutils-2.41.50, gcc-12.2.1, linux-6.1.63, and uclibc-ng-1.0.43
+	BINUTILS_VSN="git;https://github.com/kalray/binutils.git;-;-;36c6e9ec960aa92a8b41b97fe5facd9a9abbb039;kalray"
+	GCC_VSN="git;https://github.com/kalray/gcc.git;-;-;ff559b8c1afd7b42a727268f56f544b819f65e04;kalray"
+	LINUX_VSN="git;https://github.com/kalray/linux_coolidge.git;-;-;68f7b7a8532d7f42143017f414470f4f9303468b;kalray"
+	UCLIBC_VSN="git;https://github.com/kalray/uclibc-ng.git;-;-;7888351d92bb9fcdcde4c31359803f091c5b6258;kalray"
+	UCLIBC_WANTS_RESOLVER_SUPPORT=y
+	HOST_GCC_VSN=14.1.0
 	;;
     "lm32")
 	TARGET_TRIPLE="${TARGET_ARCH}-uclinux-uclibc"
