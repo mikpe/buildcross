@@ -450,7 +450,6 @@ case "${TARGET_ARCH}" in
     "h8300")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
 	LINUX_VSN=5.18 # h8300 was removed in linux-5.19
-	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.48-h8300;HEAD;mikpe"
 	;;
     "hexagon")
 	# toolchain salvaged from sourceryg++-2012.03-140-hexagon-linux.src.tar
