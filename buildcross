@@ -275,7 +275,7 @@ MPFR_VSN=4.2.1
 MUSL_VSN=1.2.5
 NEWLIB_VSN=4.4.0.20231231
 NVPTXTOOLS_VSN="git;https://github.com/MentorEmbedded/nvptx-tools.git;-;master;HEAD;-"
-UCLIBC_VSN=1.0.48
+UCLIBC_VSN=1.0.49
 
 # binutils configuration options
 BINUTILS_WANTS_DISABLE_WERROR=
@@ -785,7 +785,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}e-uclinux-uclibc"
 	LINUX_VSN=2.6.26 # v850 was removed in linux-2.6.27
 	# v850 was removed in uClibc-ng-1.0.11, this is an unofficial forward-port from 1.0.10
-	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.48-v850;HEAD;mikpe"
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.49-v850;HEAD;mikpe"
 	;;
     "vax")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux"
