@@ -678,7 +678,7 @@ case "${TARGET_ARCH}" in
 	# Warning: Do not use the ast-v5 branches since v5 is RISC-V not nds32.
 	GLIBC_VSN="git;https://github.com/andestech/glibc.git;-;nds32-glibc-2.29-v6;HEAD;andestech"
 	GLIBC_WANTS_DISABLE_WERROR=1
-	GCC_VSN=12.3.0 # gcc-13.x triggers a linkage error in glibc
+	GCC_VSN=12.4.0 # gcc-13.x triggers a linkage error in glibc
 	LINUX_VSN=5.17 # nds32 was removed in linux-5.18
 	;;
     "nios2")
