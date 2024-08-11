@@ -1754,16 +1754,18 @@ build_cross_binutils() {
     if [ -x "${CROSS_DIR}/bin/${TARGET_TRIPLE}-as" ]; then
 	return
     fi
+    case "${TARGET_ARCH}" in
+	d10v | z8k)
+	    # it's an all-in-one build in build_cross_gcc()
+	    return
+	    ;;
+    esac
     log "building cross-binutils ${BINUTILS_VSN}"
     GIT=`gitify_vsn_binutils "${BINUTILS_VSN}"`
     SOURCE_PATH=`unpack_source "${GIT}"`
     ENABLE_TARGETS=
     CFLAGS=
     case "${TARGET_ARCH}" in
-	d10v | z8k)
-	    # it's an all-in-one build in build_cross_gcc()
-	    return
-	    ;;
 	"hexagon")
 	    # hexagon binutils are broken when built in 64-bit mode
 	    CFLAGS="-O2 -m32"
