@@ -81,7 +81,6 @@ Supported targets and resulting toolchains:
 | mep		| mep-unknown-elf (no libc) [^1] |
 | metag		| metag-unknown-linux-uclibc [^1] |
 | microblaze	| microblaze-unknown-linux-gnu |
-| mingw64	| x86_64-w64-mingw32 with -m64 and -m32 support |
 | mips64	| mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support |
 | mmix		| mmix-knuth-mmixware with newlib |
 | mn10300	| mn10300-unknown-elf |
@@ -113,6 +112,7 @@ Supported targets and resulting toolchains:
 | vax		| vax-unknown-linux (no libc or kernel headers) |
 | visium	| visium-unknown-elf |
 | x86_64	| x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support |
+| x86_64-mingw64 | x86_64-w64-mingw32 with -m64 and -m32 support |
 | x86_64-musl	| x86_64-unknown-linux-musl (only -m64) |
 | x86_64-uclibc	| x86_64-unknown-linux-uclibc (only -m64) |
 | xc16x		| xc16x-unknown-elf [^1] |

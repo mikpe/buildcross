@@ -90,7 +90,6 @@
 # mep		mep-unknown-elf (no libc) (1)
 # metag		metag-unknown-linux-uclibc (1)
 # microblaze	microblaze-unknown-linux-gnu
-# mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
 # mips64	mips64-unknown-linux-gnu with -mabi=64, -mabi=n32, and -mabi=32 support
 # mmix		mmix-knuth-mmixware with newlib
 # mn10300	mn10300-unknown-elf
@@ -122,6 +121,7 @@
 # vax		vax-unknown-linux (no libc or kernel headers)
 # visium	visium-unknown-elf
 # x86_64	x86_64-unknown-linux-gnu with -m64, -mx32, and -m32 support
+# x86_64-mingw64	x86_64-w64-mingw32 with -m64 and -m32 support
 # x86_64-musl	x86_64-unknown-linux-musl (only -m64)
 # x86_64-uclibc	x86_64-unknown-linux-uclibc (only -m64)
 # xc16x		xc16x-unknown-elf (1)
@@ -637,9 +637,6 @@ case "${TARGET_ARCH}" in
 	# set PATH to select gcc-4.x (4.2.4 is known to work)
 	SKIP_HOST_GCC=1
 	;;
-    "mingw64")
-	TARGET_TRIPLE="x86_64-w64-mingw32"
-	;;
     "mmix")
 	TARGET_TRIPLE="${TARGET_ARCH}-knuth-mmixware"
 	;;
@@ -792,6 +789,10 @@ case "${TARGET_ARCH}" in
     "visium")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.4.0-visium;HEAD;mikpe"
+	;;
+    "x86_64-mingw64")
+	TARGET_ARCH="x86_64"
+	TARGET_TRIPLE="x86_64-w64-mingw32"
 	;;
     "x86_64-musl")
 	TARGET_ARCH="x86_64"
@@ -1524,10 +1525,6 @@ build_cross_gcc() {
 	"metag")
 	    MULTILIB_CONFIG="--disable-multilib --enable-meta-default"
 	    ;;
-	"mingw64")
-	    MULTILIB_CONFIG="--enable-multilib --enable-64bit --with-dwarf"
-	    LIBC_CONFIGS="--enable-threads=win32"
-	    ;;
 	"nds32")
 	    MULTILIB_CONFIG="--disable-multilib --with-arch=v3 --with-cpu=n13"
 	    ;;
@@ -1586,12 +1583,20 @@ build_cross_gcc() {
 	    rm -f "${SOURCE_PATH}/newlib"
 	    ;;
 	"x86_64")
-	    case "${STAGE}" in
-		"musl" | "uclibc")
-		    MULTILIB_CONFIG="--disable-multilib"
+	    case "${TARGET_TRIPLE}" in
+		"x86_64-w64-mingw32")
+		    MULTILIB_CONFIG="--enable-multilib --enable-64bit --with-dwarf"
+		    LIBC_CONFIGS="--enable-threads=win32"
 		    ;;
 		*)
-		    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=m64,m32,mx32"
+		    case "${STAGE}" in
+			"musl" | "uclibc")
+			    MULTILIB_CONFIG="--disable-multilib"
+			    ;;
+			*)
+			    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=m64,m32,mx32"
+			    ;;
+		    esac
 		    ;;
 	    esac
 	    ;;
@@ -1769,9 +1774,6 @@ build_cross_binutils() {
 	    # hexagon binutils are broken when built in 64-bit mode
 	    CFLAGS="-O2 -m32"
 	    ;;
-	"mingw64")
-	    ENABLE_TARGETS="--enable-targets=x86_64-w64-mingw32,i686-w64-mingw32"
-	    ;;
 	"tricore")
 	    # the git repo lost all executable flags
 	    chmod +x	"${SOURCE_PATH}/bfd/configure" \
@@ -1803,6 +1805,13 @@ build_cross_binutils() {
 	    ;;
 	"ubicom32")
 	    touch ${SOURCE_PATH}/gcc/DEV-PHASE
+	    ;;
+	"x86_64")
+	    case "${TARGET_TRIPLE}" in
+		"x86_64-w64-mingw32")
+		    ENABLE_TARGETS="--enable-targets=x86_64-w64-mingw32,i686-w64-mingw32"
+		    ;;
+	    esac
 	    ;;
     esac
     ENABLE_OBSOLETE=
