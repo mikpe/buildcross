@@ -730,7 +730,6 @@ case "${TARGET_ARCH}" in
 	;;
     "rl78")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.4.0-rl78;HEAD;mikpe"
 	;;
     "rx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
