@@ -564,7 +564,7 @@ case "${TARGET_ARCH}" in
 	;;
     "m32r")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.4.0-m32r;HEAD;mikpe"
+	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.5.0-m32r;HEAD;mikpe"
 	;;
     "m6809")
 	# This toolchain uses the 6809 port to gcc-4.3.6 with ASxxxx and newlib.
@@ -590,7 +590,7 @@ case "${TARGET_ARCH}" in
     "m68k-elf")
 	TARGET_ARCH="m68k"
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.4.0-m68k;HEAD;mikpe"
+	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.5.0-m68k;HEAD;mikpe"
 	;;
     "m68k-uclibc")
 	TARGET_ARCH="m68k"
@@ -787,7 +787,7 @@ case "${TARGET_ARCH}" in
 	;;
     "visium")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.4.0-visium;HEAD;mikpe"
+	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.5.0-visium;HEAD;mikpe"
 	;;
     "x86_64-mingw64")
 	TARGET_ARCH="x86_64"
@@ -816,7 +816,7 @@ case "${TARGET_ARCH}" in
 	;;
     "xstormy16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.4.0-xstormy16;HEAD;mikpe"
+	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.5.0-xstormy16;HEAD;mikpe"
 	;;
     "xtensa")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
