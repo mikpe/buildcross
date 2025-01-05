@@ -45,6 +45,7 @@ Supported targets and resulting toolchains:
 | avr32		| avr32-unknown-linux-uclibc [^1] |
 | bfin		| bfin-unknown-linux-uclibc |
 | bpf		| bpf-unknown-none (no libc) |
+| c4x		| c4x-unknown-coff (no libc) [^3] |
 | c6x		| c6x-unknown-uclinux |
 | cr16		| cr16-unknown-elf |
 | cris		| crisv32-unknown-linux-uclibc |

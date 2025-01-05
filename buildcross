@@ -54,6 +54,7 @@
 # avr32		avr32-unknown-linux-uclibc (1)
 # bfin		bfin-unknown-linux-uclibc
 # bpf		bpf-unknown-none (no libc)
+# c4x		c4x-unknown-coff (no libc) (3)
 # c6x		c6x-unknown-uclinux
 # cr16		cr16-unknown-elf
 # cris		crisv32-unknown-linux-uclibc
@@ -175,7 +176,7 @@
 
 set -e
 
-VERSION="8.3.0"
+VERSION="8.3.1"
 
 CROSS_DIR=
 DASHJ=
@@ -372,6 +373,19 @@ case "${TARGET_ARCH}" in
     "bpf")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-none"
 	NEWLIB_VSN= # not supported in newlib at all
+	;;
+    "c4x")
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-coff"
+	GCC_VSN=3.2.3
+	GCC_WANTS_NO_ENABLE_CHECKING=1
+	GCC_WANTS_GENERATED_FILES=3.2.3
+	NEWLIB_VSN=
+	SKIP_HOST_GCC=1
+	# you need to:
+	# - adjust PATH to select gcc-3.x (3.3.6 and 3.4.6 are known to work)
+	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
+	# - if on x86_64, set BUILD_TRIPLE=x86_64-unknown-linux-gnu NOT x86_64-pc-linux-gnu
+	# - if on x86_64, set CC to a wrapper script that enforces -m32
 	;;
     "c6x")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-uclinux"
