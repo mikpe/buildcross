@@ -176,7 +176,7 @@
 
 set -e
 
-VERSION="8.3.1"
+VERSION="8.3.2"
 
 CROSS_DIR=
 DASHJ=
@@ -277,6 +277,12 @@ MUSL_VSN=1.2.5
 NEWLIB_VSN=4.5.0.20241231
 NVPTXTOOLS_VSN="git;https://github.com/MentorEmbedded/nvptx-tools.git;-;master;HEAD;-"
 UCLIBC_VSN=1.0.50
+
+# URLs for component tarballs
+GMP_URL="https://ftpmirror.gnu.org/gmp"
+MPC_URL="https://ftpmirror.gnu.org/mpc"
+MPFR_URL="https://ftpmirror.gnu.org/mpfr"
+MAKE_URL="https://ftpmirror.gnu.org/make"
 
 # binutils configuration options
 BINUTILS_WANTS_DISABLE_WERROR=
@@ -1068,20 +1074,14 @@ log() {
     echo
 }
 
-DISTFILES="https://mirrors.kernel.org/gentoo/distfiles"
-
 get_tarball() {
-    local EXT=${2:-"xz"}
-    local URL=${3:-"${DISTFILES}"}
-    local ALT_URL="$4"
-    if [ ! \( -f "$1.tar.xz" -o -f "$1.tar.bz2" -o -f "$1.tar.gz" \) ]; then
-	wget "${URL}/$1.tar.${EXT}" || :
-	if [ ! -f "$1.tar.${EXT}" ]; then
-	    if [ -n "${ALT_URL}" ]; then
-		wget "${ALT_URL}/$1.tar.${EXT}"
-	    else
-		exit 1
-	    fi
+    local URL="$1"
+    local FILE="$2"
+    local EXT=${3:-"xz"}
+    if [ ! \( -f "${FILE}.tar.xz" -o -f "${FILE}.tar.bz2" -o -f "${FILE}.tar.gz" \) ]; then
+	wget "${URL}/${FILE}.tar.${EXT}" || :
+	if [ ! -f "${FILE}.tar.${EXT}" ]; then
+	    exit 1
 	fi
     fi
 }
@@ -1193,11 +1193,11 @@ get_sources() {
     [ -n "${NVPTXTOOLS_VSN}" ] && get_source "${NVPTXTOOLS_VSN}"
     [ -n "${CC65_VSN}" ] && get_source "${CC65_VSN}"
     [ -n "${GCC_6502_BITS_VSN}" ] && get_source "${GCC_6502_BITS_VSN}"
-    [ -n "${MAKE_VSN}" ] && get_tarball "make-${MAKE_VSN}" "gz" "https://ftpmirror.gnu.org/make"
-    get_tarball "gmp-${GMP_VSN}"
+    [ -n "${MAKE_VSN}" ] && get_tarball "${MAKE_URL}" "make-${MAKE_VSN}" "gz"
+    get_tarball "${GMP_URL}" "gmp-${GMP_VSN}"
     [ -n "${LINUX_VSN}" ] && get_source_linux "${LINUX_VSN}"
-    get_tarball "mpfr-${MPFR_VSN}"
-    get_tarball "mpc-${MPC_VSN}" "gz"
+    get_tarball "${MPFR_URL}" "mpfr-${MPFR_VSN}"
+    get_tarball "${MPC_URL}" "mpc-${MPC_VSN}" "gz"
     cd -
 }
 
