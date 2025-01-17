@@ -176,7 +176,7 @@
 
 set -e
 
-VERSION="8.3.2"
+VERSION="8.3.3"
 
 CROSS_DIR=
 DASHJ=
@@ -276,7 +276,7 @@ MPFR_VSN=4.2.1
 MUSL_VSN=1.2.5
 NEWLIB_VSN=4.5.0.20241231
 NVPTXTOOLS_VSN="git;https://github.com/MentorEmbedded/nvptx-tools.git;-;master;HEAD;-"
-UCLIBC_VSN=1.0.50
+UCLIBC_VSN=1.0.51
 
 # URLs for component tarballs
 GMP_URL="https://ftpmirror.gnu.org/gmp"
@@ -374,7 +374,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	UCLIBC_WANTS_STATIC=y
 	LINUX_VSN=4.16 # blackfin was removed in linux-4.17
-	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.50-bfin;HEAD;mikpe"
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.51-bfin;HEAD;mikpe"
 	;;
     "bpf")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-none"
@@ -400,7 +400,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_BIG_ENDIAN=y
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	LINUX_VSN=5.11 # c6x was removed in linux-5.12
-	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.50-c6x;HEAD;mikpe"
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.51-c6x;HEAD;mikpe"
 	;;
     "cr16")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -461,7 +461,7 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_SSP=y
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	# fixes for build breakages in 1.0.46
-	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.50-frv;HEAD;mikpe"
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.51-frv;HEAD;mikpe"
 	LINUX_VSN=4.16 # frv was removed in linux-4.17
 	;;
     "ft32")
@@ -799,7 +799,7 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}e-uclinux-uclibc"
 	LINUX_VSN=2.6.26 # v850 was removed in linux-2.6.27
 	# v850 was removed in uClibc-ng-1.0.11, this is an unofficial forward-port from 1.0.10
-	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.50-v850;HEAD;mikpe"
+	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.51-v850;HEAD;mikpe"
 	;;
     "vax")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux"
