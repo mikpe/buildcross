@@ -547,12 +547,12 @@ case "${TARGET_ARCH}" in
 	;;
     "kvx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
-	# from https://github.com/kalray/build-scripts.git v5.0.0
-	# based on binutils-2.41.50, gcc-12.2.1, linux-6.1.63, and uclibc-ng-1.0.43
-	BINUTILS_VSN="git;https://github.com/kalray/binutils.git;-;-;36c6e9ec960aa92a8b41b97fe5facd9a9abbb039;kalray"
-	GCC_VSN="git;https://github.com/kalray/gcc.git;-;-;ff559b8c1afd7b42a727268f56f544b819f65e04;kalray"
-	LINUX_VSN="git;https://github.com/kalray/linux_coolidge.git;-;-;68f7b7a8532d7f42143017f414470f4f9303468b;kalray"
-	UCLIBC_VSN="git;https://github.com/kalray/uclibc-ng.git;-;-;7888351d92bb9fcdcde4c31359803f091c5b6258;kalray"
+	# from https://github.com/kalray/build-scripts.git v5.2.0
+	# based on binutils-2.41.50, gcc-13.2.1, linux-6.1.87, and uclibc-ng-1.0.45
+	BINUTILS_VSN="git;https://github.com/kalray/binutils.git;-;-;7a6d3ed83c733b84af62bff0627027b80ad83671;kalray"
+	GCC_VSN="git;https://github.com/kalray/gcc.git;-;-;0067bade4a4efb6b7a2ac9910b96c350aa3655cc;kalray"
+	LINUX_VSN="git;https://github.com/kalray/linux_coolidge.git;-;-;660a33f25bb6fd6b01878411358560be0043e6b7;kalray"
+	UCLIBC_VSN="git;https://github.com/kalray/uclibc-ng.git;-;-;fc3b6dc46a80e1f4aa468472aa6c7083f3bc6581;kalray"
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	HOST_GCC_VSN=14.2.0
 	;;
