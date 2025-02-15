@@ -699,6 +699,7 @@ case "${TARGET_ARCH}" in
     "nios2")
 	GCC_WANTS_ENABLE_OBSOLETE=1 # gcc-14 marks nios2 as obsolete
 	GLIBC_VSN=2.40 # nios2 was removed in glibc-2.41
+	BINUTILS_VSN=2.43.1 # nios2 was removed in binutils-2.44
 	;;
     "ns32k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-netbsd"
@@ -761,6 +762,8 @@ case "${TARGET_ARCH}" in
 	GCC_WANTS_ENABLE_OBSOLETE=1
 	NEWLIB_VSN= # doesn't support score
 	SKIP_HOST_GCC=1 # PATH must point to a suitable old gcc <= 10.5
+	# https://sourceware.org/bugzilla/show_bug.cgi?id=32700
+	BINUTILS_VSN=2.43.1 # score fails to build with binutils-2.44
 	;;
     "tilegx")
 	BINUTILS_VSN=2.28.1 # later versions cannot build glibc
