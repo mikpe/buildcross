@@ -760,7 +760,7 @@ case "${TARGET_ARCH}" in
 	GCC_VSN=4.9.4 # removed in gcc-5.0
 	GCC_WANTS_ENABLE_OBSOLETE=1
 	NEWLIB_VSN= # doesn't support score
-	SKIP_HOST_GCC=1 # PATH must point to a suitable old gcc
+	SKIP_HOST_GCC=1 # PATH must point to a suitable old gcc <= 10.5
 	;;
     "tilegx")
 	BINUTILS_VSN=2.28.1 # later versions cannot build glibc
