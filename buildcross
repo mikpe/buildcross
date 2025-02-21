@@ -47,6 +47,7 @@
 # 6502		6502 (binutils from cc65, libtinyc)
 # a29k		a29k-unknown-coff (no libc) (3)
 # aarch64	aarch64-unknown-linux-gnu
+# aarch64-mingw64	aarch64-w64-mingw32
 # alpha		alpha-unknown-linux-gnu
 # arc		arc-unknown-linux-gnu
 # armv7l	armv7l-unknown-linux-gnueabi
@@ -140,8 +141,6 @@
 # Pending:
 #
 # aarch64	waiting for glibc -mabi=ilp32 support
-# aarch64-w64-mingw32
-#		waiting for support in all upstream components
 # loongarch64	waiting for -m32 support
 #
 # Unsupported:
@@ -176,7 +175,7 @@
 
 set -e
 
-VERSION="8.6.0"
+VERSION="8.7.0"
 
 CROSS_DIR=
 DASHJ=
@@ -350,6 +349,14 @@ case "${TARGET_ARCH}" in
 	#   + set BUILD_TRIPLE=i686-pc-linux-gnu
 	#   + use setarch i686
 	SKIP_HOST_GCC=1
+	;;
+    "aarch64-mingw64")
+	TARGET_ARCH="aarch64"
+	TARGET_TRIPLE="aarch64-w64-mingw32"
+	HOST_GCC_VSN=14.2.0
+	BINUTILS_VSN="git;https://github.com/Windows-on-ARM-Experiments/binutils-woarm64.git;-;woarm64;HEAD;-"
+	GCC_VSN="git;https://github.com/Windows-on-ARM-Experiments/gcc-woarm64.git;-;woarm64;HEAD;-"
+	MINGW64_VSN="git;https://github.com/Windows-on-ARM-Experiments/mingw-woarm64.git;-;woarm64;HEAD;-"
 	;;
     "armv7l")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnueabi"
@@ -912,7 +919,7 @@ case "${TARGET_TRIPLE}" in
 	NVPTXTOOLS_VSN=
 	UCLIBC_VSN=
 	;;
-    x86_64-w64-mingw32)
+    x86_64-w64-mingw32 | aarch64-w64-mingw32)
 	GLIBC_VSN=
 	LINUX_VSN=
 	MUSL_VSN=
@@ -1461,6 +1468,15 @@ build_cross_gcc() {
 	"aarch64")
 	    LIBSSP_CONFIG="--disable-libssp"
 	    MULTILIB_CONFIG="--disable-multilib"
+	    case "${TARGET_TRIPLE}" in
+		"aarch64-w64-mingw32")
+		    LIBC_CONFIGS="--enable-threads=win32"
+		    # fixincludes breakage
+		    if [ ! -d "${CROSS_DIR}/usr/." ]; then
+			ln -s mingw "${CROSS_DIR}/usr"
+		    fi
+		    ;;
+	    esac
 	    ;;
 	"arc")
 	    MULTILIB_CONFIG="--disable-multilib --with-cpu=hs38"
@@ -2257,16 +2273,25 @@ build_target_musl() {
 build_target_mingw64crt() {
     local GIT
     local SOURCE_PATH
+    local CRT_CONFIG
     log "building mingw-w64-crt ${MINGW64_VSN}"
     GIT=`gitify_vsn_mingw64 "${MINGW64_VSN}"`
     SOURCE_PATH=`unpack_source "${GIT}"`
     rm -rf objdir-crt
     mkdir objdir-crt
     cd objdir-crt
+    case "${TARGET_TRIPLE}" in
+	"aarch64-w64-mingw32")
+	    CRT_CONFIG="--disable-lib32 --disable-lib64 --disable-libarm32 --enable-libarm64"
+	    ;;
+	"x86_64-w64-mingw32")
+	    CRT_CONFIG="--enable-lib32 --enable-lib64 --disable-libarm32 --disable-libarm64"
+	    ;;
+    esac
+
     ${SOURCE_PATH}/mingw-w64-crt/configure \
 		--prefix="${CROSS_DIR}/${TARGET_TRIPLE}" \
-		--enable-lib32 \
-		--enable-lib64 \
+		${CRT_CONFIG} \
 		--host="${TARGET_TRIPLE}"
     make ${DASHJ}
     make install
