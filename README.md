@@ -38,6 +38,7 @@ Supported targets and resulting toolchains:
 | 6502		| 6502 (binutils from cc65, libtinyc) |
 | a29k		| a29k-unknown-coff (no libc) [^3] |
 | aarch64	| aarch64-unknown-linux-gnu |
+| aarch64-mingw64 | aarch64-w64-mingw32 |
 | alpha		| alpha-unknown-linux-gnu |
 | arc		| arc-unknown-linux-gnu |
 | armv7l	| armv7l-unknown-linux-gnueabi |
