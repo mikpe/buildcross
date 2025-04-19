@@ -175,7 +175,7 @@
 
 set -e
 
-VERSION="8.7.1"
+VERSION="8.7.2"
 
 CROSS_DIR=
 DASHJ=
