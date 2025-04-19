@@ -381,7 +381,6 @@ case "${TARGET_ARCH}" in
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
 	UCLIBC_WANTS_STATIC=y
 	LINUX_VSN=4.16 # blackfin was removed in linux-4.17
-	UCLIBC_VSN="git;https://github.com/mikpe/uclibc-ng.git;-;v1.0.51-bfin;HEAD;mikpe"
 	;;
     "bpf")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-none"
