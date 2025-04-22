@@ -140,7 +140,6 @@
 #
 # Pending:
 #
-# aarch64	waiting for glibc -mabi=ilp32 support
 # loongarch64	waiting for -m32 support
 #
 # Unsupported:
