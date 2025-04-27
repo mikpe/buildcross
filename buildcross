@@ -174,7 +174,7 @@
 
 set -e
 
-VERSION="8.7.2"
+VERSION="8.8.0"
 
 CROSS_DIR=
 DASHJ=
@@ -262,7 +262,7 @@ fi
 BINUTILS_VSN=2.44
 CC65_VSN=
 GCC_6502_BITS_VSN=
-GCC_VSN=14.2.0
+GCC_VSN=15.1.0
 GCC_GENERATED_FILES_VSN="git;https://github.com/mikpe/gcc-generated-files.git;-;master;HEAD;mikpe"
 GLIBC_VSN=2.41
 GMP_VSN=6.3.0
