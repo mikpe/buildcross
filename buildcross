@@ -487,11 +487,6 @@ case "${TARGET_ARCH}" in
 	# if on x86_64, gcc must support -m32
 	SKIP_HOST_GCC=1
 	;;
-    "hppa")
-	# gcc-14/15 fail to build glibc-2.39 for hppa, see:
-	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=112358
-	GCC_VSN=13.3.0
-	;;
     "i860")
 	TARGET_TRIPLE="${TARGET_ARCH}-stardent-sysv4"
 	GCC_VSN=3.2.3
