@@ -174,7 +174,7 @@
 
 set -e
 
-VERSION="8.8.2"
+VERSION="8.9.0"
 
 CROSS_DIR=
 DASHJ=
@@ -1277,6 +1277,7 @@ build_host_make() {
 
 build_host_gmp() {
     local SUFFIX="$1"
+    local CC=""
     if [ -d "${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" -o -d "${HOST_TOOLS_DIR}/gcc-${HOST_GCC_VSN}" ]; then
 	return
     fi
@@ -1289,8 +1290,21 @@ build_host_gmp() {
     rm -rf objdir-gmp
     mkdir objdir-gmp
     cd objdir-gmp
+    # gcc-15 fails to build gmp-6.3.0 unless -std=gnu17 is specified
+    if gcc -v > /dev/null 2>&1 ; then
+	echo 'void f(){} void g(){f(1,2,3);}' > conftest.c
+	if gcc -S conftest.c > /dev/null 2>&1 ; then
+	    echo "gmp pre-check: gcc passes as-is"
+	elif gcc -std=gnu17 -S conftest.c > /dev/null 2>&1 ; then
+	    echo "gmp pre-check: gcc needs -std=gnu17"
+	    CC="CC=gcc -std=gnu17"
+	else
+	    echo "gmp pre-check: failure"
+	fi
+	rm -f conftest.c
+    fi
     unset ABI
-    ${SOURCES_DIR}/gmp-${GMP_VSN}/configure \
+    ${SOURCES_DIR}/gmp-${GMP_VSN}/configure "${CC}" \
 		--prefix="${HOST_TOOLS_DIR}/gmp-${GMP_VSN}${SUFFIX}" \
 		--disable-shared \
 		--enable-alloca=alloca \
