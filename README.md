@@ -41,6 +41,7 @@ Supported targets and resulting toolchains:
 | aarch64-mingw64 | aarch64-w64-mingw32 |
 | alpha		| alpha-unknown-linux-gnu |
 | arc		| arc-unknown-linux-gnu |
+| arc64		| arc64-unknown-linux-gnu |
 | armv7l	| armv7l-unknown-linux-gnueabi |
 | avr		| avr-unknown-elf (no libc) |
 | avr32		| avr32-unknown-linux-uclibc [^1] |

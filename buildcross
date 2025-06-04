@@ -50,6 +50,7 @@
 # aarch64-mingw64	aarch64-w64-mingw32
 # alpha		alpha-unknown-linux-gnu
 # arc		arc-unknown-linux-gnu
+# arc64		arc64-unknown-linux-gnu
 # armv7l	armv7l-unknown-linux-gnueabi
 # avr		avr-unknown-elf (no libc)
 # avr32		avr32-unknown-linux-uclibc (1)
@@ -174,7 +175,7 @@
 
 set -e
 
-VERSION="8.9.0"
+VERSION="8.9.1"
 
 CROSS_DIR=
 DASHJ=
@@ -356,6 +357,16 @@ case "${TARGET_ARCH}" in
 	BINUTILS_VSN="git;https://github.com/Windows-on-ARM-Experiments/binutils-woarm64.git;-;woarm64;HEAD;-"
 	GCC_VSN="git;https://github.com/Windows-on-ARM-Experiments/gcc-woarm64.git;-;woarm64;HEAD;-"
 	MINGW64_VSN="git;https://github.com/Windows-on-ARM-Experiments/mingw-woarm64.git;-;woarm64;HEAD;-"
+	;;
+    "arc64")
+	# ARCv3, vendor's tree, not yet upstreamed
+	TARGET_TRIPLE="arc64-unknown-linux-gnu"
+	HOST_GCC_VSN="${GCC_VSN}"
+	BINUTILS_VSN="git;https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git;-;arc64;HEAD;arc"
+	GCC_VSN="git;https://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git;-;arc64;HEAD;arc"
+	LINUX_VSN="git;https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git;-;arc64;HEAD;arc"
+	GLIBC_VSN="git;https://github.com/foss-for-synopsys-dwc-arc-processors/glibc.git;-;arc64;HEAD;arc"
+	GLIBC_WANTS_DISABLE_WERROR=1
 	;;
     "armv7l")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnueabi"
@@ -2032,6 +2043,7 @@ build_linux_headers() {
     log "building linux-headers ${LINUX_VSN}"
     case "${TARGET_ARCH}" in
 	"aarch64") KERNEL_ARCH="arm64";;
+	"arc64") KERNEL_ARCH="arc";;
 	"armv7l") KERNEL_ARCH="arm";;
 	"bfin") KERNEL_ARCH="blackfin";;
 	"hppa") KERNEL_ARCH="parisc";;
