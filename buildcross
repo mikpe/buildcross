@@ -73,6 +73,7 @@
 # hppa		hppa-unknown-linux-gnu (no -m64 support)
 # i860		i860-stardent-sysv4 (no libc) (3)
 # i960		i960-unknown-elf with uclinux and uclibc (3)
+# ia16		ia16-unknown-elf (1)
 # ia64		ia64-unknown-linux-gnu
 # ip2k		ip2k-unknown-elf (no libc) (2)
 # iq2000	iq2000-unknown-elf
@@ -175,7 +176,7 @@
 
 set -e
 
-VERSION="8.9.1"
+VERSION="8.9.2"
 
 CROSS_DIR=
 DASHJ=
@@ -533,6 +534,18 @@ case "${TARGET_ARCH}" in
 	# - set BUILD_TRIPLE because gcc-3.x -v doesn't list Target:
 	# - if on x86_64, set BUILD_TRIPLE=x86_64-unknown-linux-gnu NOT x86_64-pc-linux-gnu
 	# - if on x86_64, set CC to a wrapper script that enforces -m32
+	SKIP_HOST_GCC=1
+	;;
+    "ia16")
+	# from https://github.com/crtc-demos/build-ia16.git
+	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	# binutils is based on 2.28.51.20170117
+	BINUTILS_VSN="git;https://github.com/crtc-demos/binutils-ia16.git;-;-;HEAD;-"
+	# gcc is based on 6.3.0
+	GCC_VSN="git;https://github.com/crtc-demos/gcc-ia16.git;-;-;HEAD;-"
+	# newlib is based on 2_4_0
+	NEWLIB_VSN="git;https://github.com/crtc-demos/newlib-ia16.git;-;-;HEAD;-"
+	# you need to adjust PATH to select an older gcc (6.5.0 is known to work)
 	SKIP_HOST_GCC=1
 	;;
     "ia64")
@@ -2327,10 +2340,15 @@ build_target_newlib() {
     local GIT
     local SOURCE_PATH
     local DISABLE_MULTILIB
+    local TARGET_OPTIONS
     log "building newlib ${NEWLIB_VSN} for ${TARGET_TRIPLE}"
     GIT=`gitify_vsn_newlib "${NEWLIB_VSN}"`
     SOURCE_PATH=`unpack_source "${GIT}"`
+    TARGET_OPTIONS=
     case "${TARGET_ARCH}" in
+	"ia16")
+	    TARGET_OPTIONS="--disable-newlib-wide-orient --enable-newlib-nano-malloc --disable-newlib-multithread --enable-newlib-global-atexit --enable-newlib-reent-small"
+	    ;;
 	"tricore")
 	    # the git repo lost all executable flags
 	    chmod +x	"${SOURCE_PATH}/compile" \
@@ -2368,7 +2386,7 @@ build_target_newlib() {
     rm -rf objdir-newlib
     mkdir objdir-newlib
     cd objdir-newlib
-    ${SOURCE_PATH}/configure ${DISABLE_MULTILIB} \
+    ${SOURCE_PATH}/configure ${DISABLE_MULTILIB} ${TARGET_OPTIONS} \
 		--target="${TARGET_TRIPLE}" \
 		--build="${BUILD_TRIPLE}" \
 		--prefix="${CROSS_DIR}"

@@ -64,6 +64,7 @@ Supported targets and resulting toolchains:
 | hppa		| hppa-unknown-linux-gnu (no -m64 support) |
 | i860		| i860-stardent-sysv4 (no libc) [^3] |
 | i960		| i960-unknown-elf with uclinux and uclibc [^3] |
+| ia16		| ia16-unknown-elf [^1] |
 | ia64		| ia64-unknown-linux-gnu |
 | ip2k		| ip2k-unknown-elf (no libc) [^2] |
 | iq2000	| iq2000-unknown-elf |
