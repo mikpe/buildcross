@@ -261,7 +261,7 @@ if [ -z "${CROSS_DIR}" ]; then
 fi
 
 # default component versions
-BINUTILS_VSN=2.44
+BINUTILS_VSN=2.45
 CC65_VSN=
 GCC_6502_BITS_VSN=
 GCC_VSN=15.1.0
@@ -431,6 +431,7 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN=4.16 # cris was removed in linux-4.17
 	GCC_WANTS_ENABLE_OBSOLETE=1 # gcc-10 marks cris as obsolete
 	GCC_VSN=10.5.0 # gcc-11.1.0 dropped support for this target triple
+	BINUTILS_VSN=2.44 # cris fails to build with binutils-2.45
 	;;
     "crx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -723,6 +724,7 @@ case "${TARGET_ARCH}" in
 	GLIBC_WANTS_DISABLE_WERROR=1
 	GCC_VSN=12.4.0 # gcc-13.x triggers a linkage error in glibc
 	LINUX_VSN=5.17 # nds32 was removed in linux-5.18
+	BINUTILS_VSN=2.44 # nds32 fails to build with binutils-2.45
 	;;
     "nios2")
 	GCC_VSN=14.3.0 # nios2 was removed in gcc-15
