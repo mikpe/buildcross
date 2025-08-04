@@ -431,6 +431,7 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN=4.16 # cris was removed in linux-4.17
 	GCC_WANTS_ENABLE_OBSOLETE=1 # gcc-10 marks cris as obsolete
 	GCC_VSN=10.5.0 # gcc-11.1.0 dropped support for this target triple
+	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=121336
 	BINUTILS_VSN=2.44 # cris fails to build with binutils-2.45
 	;;
     "crx")
