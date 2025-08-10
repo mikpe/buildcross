@@ -579,7 +579,7 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN="git;https://github.com/kalray/linux_coolidge.git;-;-;660a33f25bb6fd6b01878411358560be0043e6b7;kalray"
 	UCLIBC_VSN="git;https://github.com/kalray/uclibc-ng.git;-;-;fc3b6dc46a80e1f4aa468472aa6c7083f3bc6581;kalray"
 	UCLIBC_WANTS_RESOLVER_SUPPORT=y
-	HOST_GCC_VSN=14.3.0
+	HOST_GCC_VSN=14.3.0 # linux-headers unifdef.c fails to build with gcc-15
 	;;
     "lm32")
 	GCC_VSN=14.3.0 # linux-headers unifdef.c fails to build with gcc-15.1.0
