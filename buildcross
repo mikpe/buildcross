@@ -264,7 +264,7 @@ fi
 BINUTILS_VSN=2.45
 CC65_VSN=
 GCC_6502_BITS_VSN=
-GCC_VSN=15.1.0
+GCC_VSN=15.2.0
 GCC_GENERATED_FILES_VSN="git;https://github.com/mikpe/gcc-generated-files.git;-;master;HEAD;mikpe"
 GLIBC_VSN=2.42
 GMP_VSN=6.3.0
@@ -354,7 +354,7 @@ case "${TARGET_ARCH}" in
     "aarch64-mingw64")
 	TARGET_ARCH="aarch64"
 	TARGET_TRIPLE="aarch64-w64-mingw32"
-	HOST_GCC_VSN=14.3.0
+	HOST_GCC_VSN=15.2.0
 	BINUTILS_VSN="git;https://github.com/Windows-on-ARM-Experiments/binutils-woarm64.git;-;woarm64;HEAD;-"
 	GCC_VSN="git;https://github.com/Windows-on-ARM-Experiments/gcc-woarm64.git;-;woarm64;HEAD;-"
 	MINGW64_VSN="git;https://github.com/Windows-on-ARM-Experiments/mingw-woarm64.git;-;woarm64;HEAD;-"
