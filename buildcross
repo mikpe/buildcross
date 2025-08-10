@@ -568,7 +568,7 @@ case "${TARGET_ARCH}" in
 	;;
     "iq2000")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	GCC_VSN=14.3.0 # newlib fails to compile with gcc-15.1.0
+	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.5.0-iq2000;HEAD;mikpe"
 	;;
     "kvx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
@@ -609,7 +609,6 @@ case "${TARGET_ARCH}" in
 	SKIP_HOST_GCC=1
 	;;
     "m32r")
-	GCC_VSN=14.3.0 # newlib fails to build with gcc-15.1.0
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
 	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.5.0-m32r;HEAD;mikpe"
 	;;
@@ -688,8 +687,8 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-knuth-mmixware"
 	;;
     "mn10300")
-	GCC_VSN=14.3.0 # newlib fails to build with gcc-15.1.0
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	NEWLIB_VSN="git;https://github.com/mikpe/newlib.git;-;newlib-4.5.0-mn10300;HEAD;mikpe"
 	;;
     "moxie")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
