@@ -176,7 +176,7 @@
 
 set -e
 
-VERSION="8.10.4"
+VERSION="8.10.5"
 
 CROSS_DIR=
 DASHJ=
@@ -261,7 +261,7 @@ if [ -z "${CROSS_DIR}" ]; then
 fi
 
 # default component versions
-BINUTILS_VSN=2.45
+BINUTILS_VSN=2.45.1
 CC65_VSN=
 GCC_6502_BITS_VSN=
 GCC_VSN=15.2.0
@@ -722,8 +722,6 @@ case "${TARGET_ARCH}" in
 	GLIBC_WANTS_DISABLE_WERROR=1
 	GCC_VSN=12.5.0 # gcc-13.x triggers a linkage error in glibc
 	LINUX_VSN=5.17 # nds32 was removed in linux-5.18
-	# https://sourceware.org/bugzilla/show_bug.cgi?id=33229
-	BINUTILS_VSN="git;https://github.com/mikpe/binutils-gdb.git;-;binutils-2_45-branch;HEAD;mikpe"
 	;;
     "nios2")
 	GCC_VSN=14.3.0 # nios2 was removed in gcc-15
