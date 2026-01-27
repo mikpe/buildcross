@@ -1057,7 +1057,7 @@ vsntoref_musl() {
 }
 
 gitify_vsn_newlib() {
-    gitify_vsn "$1" "git;https://github.com/bminor/newlib.git;-;master;-;bminor" vsntoref_newlib
+    gitify_vsn "$1" "git;https://github.com/mikpe/newlib.git;-;master;-;mikpe" vsntoref_newlib
 }
 
 vsntoref_newlib() {
