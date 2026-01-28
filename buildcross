@@ -176,7 +176,7 @@
 
 set -e
 
-VERSION="8.10.8"
+VERSION="8.10.9"
 
 CROSS_DIR=
 DASHJ=
@@ -1050,7 +1050,7 @@ vsntoref_mingw64() {
 }
 
 gitify_vsn_musl() {
-    gitify_vsn "$1" "git;https://github.com/bminor/musl.git;-;master;-;bminor" vsntoref_musl
+    gitify_vsn "$1" "git;https://github.com/kraj/musl.git;-;master;-;kraj" vsntoref_musl
 }
 
 vsntoref_musl() {
