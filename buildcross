@@ -354,7 +354,7 @@ case "${TARGET_ARCH}" in
     "aarch64-mingw64")
 	TARGET_ARCH="aarch64"
 	TARGET_TRIPLE="aarch64-w64-mingw32"
-	HOST_GCC_VSN=15.2.0
+	HOST_GCC_VSN="${GCC_VSN}"
 	BINUTILS_VSN="git;https://github.com/Windows-on-ARM-Experiments/binutils-woarm64.git;-;woarm64;HEAD;-"
 	GCC_VSN="git;https://github.com/Windows-on-ARM-Experiments/gcc-woarm64.git;-;woarm64;HEAD;-"
 	MINGW64_VSN="git;https://github.com/Windows-on-ARM-Experiments/mingw-woarm64.git;-;woarm64;HEAD;-"
