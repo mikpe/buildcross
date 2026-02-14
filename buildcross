@@ -1095,7 +1095,8 @@ vsntoref_newlib() {
 
 gitify_vsn_uclibc() {
     # The developer has a mirror on GH, but it's broken (missing tags).
-    gitify_vsn "$1" "git;https://git.uclibc-ng.org/git/uclibc-ng.git;-;master;-;" vsntoref_uclibc
+    # uclibc-ng's official git is unreliable, use our own mirror on GH.
+    gitify_vsn "$1" "git;https://github.com/mikpe/uclibc-ng.git;-;master;-;mikpe" vsntoref_uclibc
 }
 
 vsntoref_uclibc() {
