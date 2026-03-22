@@ -1051,7 +1051,7 @@ vsntoref_mingw64() {
 }
 
 gitify_vsn_musl() {
-    gitify_vsn "$1" "git;https://github.com/kraj/musl.git;-;master;-;kraj" vsntoref_musl
+    gitify_vsn "$1" "git;https://git.musl-libc.org/git/musl;-;master;-;" vsntoref_musl
 }
 
 vsntoref_musl() {
