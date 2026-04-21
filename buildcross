@@ -52,7 +52,7 @@
 # arc		arc-unknown-linux-gnu
 # arc64		arc64-unknown-linux-gnu
 # armv7l	armv7l-unknown-linux-gnueabi
-# avr		avr-unknown-elf (no libc)
+# avr		avr (avr-libc)
 # avr32		avr32-unknown-linux-uclibc (1)
 # bfin		bfin-unknown-linux-uclibc
 # bpf		bpf-unknown-none (no libc)
@@ -176,7 +176,7 @@
 
 set -e
 
-VERSION="8.11.3"
+VERSION="8.12.0"
 
 CROSS_DIR=
 DASHJ=
@@ -261,6 +261,7 @@ if [ -z "${CROSS_DIR}" ]; then
 fi
 
 # default component versions
+AVR_LIBC_VSN=
 BINUTILS_VSN=2.46
 CC65_VSN=
 GCC_6502_BITS_VSN=
@@ -373,8 +374,10 @@ case "${TARGET_ARCH}" in
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-gnueabi"
 	;;
     "avr")
-	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	NEWLIB_VSN= # not supported in newlib at all
+	# avr-libc requires this to be just "avr", otherwise it should be "avr-unknown-elf"
+	TARGET_TRIPLE="${TARGET_ARCH}"
+	AVR_LIBC_VSN="git;https://github.com/avrdudes/avr-libc.git;-;main;HEAD;-"
+	NEWLIB_VSN=
 	;;
     "avr32")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-linux-uclibc"
@@ -958,6 +961,7 @@ case "${TARGET_TRIPLE}" in
 	;;
     *-elf | \
     *-coff | \
+    avr | \
     bpf-unknown-none | \
     i860-stardent-sysv4 | \
     m88k-unknown-openbsd | \
@@ -1227,6 +1231,7 @@ get_sources() {
     [ -n "${MINGW64_VSN}" ] && get_source_mingw64 "${MINGW64_VSN}"
     [ -n "${NEWLIB_VSN}" ] && get_source_newlib "${NEWLIB_VSN}"
     [ -n "${NVPTXTOOLS_VSN}" ] && get_source "${NVPTXTOOLS_VSN}"
+    [ -n "${AVR_LIBC_VSN}" ] && get_source "${AVR_LIBC_VSN}"
     [ -n "${CC65_VSN}" ] && get_source "${CC65_VSN}"
     [ -n "${GCC_6502_BITS_VSN}" ] && get_source "${GCC_6502_BITS_VSN}"
     [ -n "${MAKE_VSN}" ] && get_tarball "${MAKE_URL}" "make-${MAKE_VSN}" "gz"
@@ -2399,6 +2404,25 @@ build_target_newlib() {
     rm -rf objdir-newlib
 }
 
+build_target_avr_libc() {
+    local SOURCE_PATH
+    log "building avr-libc"
+    SOURCE_PATH=`unpack_source "${AVR_LIBC_VSN}"`
+    cd ${SOURCE_PATH}
+    ./bootstrap
+    cd -
+    rm -rf objdir-avr-libc
+    mkdir objdir-avr-libc
+    cd objdir-avr-libc
+    ${SOURCE_PATH}/configure \
+		--host=avr \
+		--prefix="${CROSS_DIR}"
+    make ${DASHJ}
+    make install
+    cd ..
+    rm -rf objdir-avr-libc
+}
+
 build_target_6502_bits() {
     local SOURCE_PATH
     local CC65_PATH="${CROSS_DIR}/cc65/bin"
@@ -2448,6 +2472,8 @@ build_target_libc() {
 	build_target_mingw64crt
     elif [ -n "${NEWLIB_VSN}" ]; then
 	build_target_newlib
+    elif [ -n "${AVR_LIBC_VSN}" ]; then
+	build_target_avr_libc
     elif [ -n "${GCC_6502_BITS_VSN}" ]; then
 	build_target_6502_bits
     elif [ "${TARGET_ARCH}" = "m1750" ]; then

@@ -43,7 +43,7 @@ Supported targets and resulting toolchains:
 | arc		| arc-unknown-linux-gnu |
 | arc64		| arc64-unknown-linux-gnu |
 | armv7l	| armv7l-unknown-linux-gnueabi |
-| avr		| avr-unknown-elf (no libc) |
+| avr		| avr (avr-libc) |
 | avr32		| avr32-unknown-linux-uclibc [^1] |
 | bfin		| bfin-unknown-linux-uclibc |
 | bpf		| bpf-unknown-none (no libc) |
