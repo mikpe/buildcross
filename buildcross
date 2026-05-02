@@ -176,7 +176,7 @@
 
 set -e
 
-VERSION="8.12.1"
+VERSION="8.13.0"
 
 CROSS_DIR=
 DASHJ=
@@ -265,7 +265,7 @@ AVR_LIBC_VSN=
 BINUTILS_VSN=2.46
 CC65_VSN=
 GCC_6502_BITS_VSN=
-GCC_VSN=15.2.0
+GCC_VSN=16.1.0
 GCC_GENERATED_FILES_VSN="git;https://github.com/mikpe/gcc-generated-files.git;-;master;HEAD;mikpe"
 GLIBC_VSN=2.43
 GMP_VSN=6.3.0
@@ -474,6 +474,8 @@ case "${TARGET_ARCH}" in
 	;;
     "epiphany")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	# gcc-16.1 marked epihany obsolete
+	GCC_WANTS_ENABLE_OBSOLETE=1
 	;;
     "fr30")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -791,9 +793,15 @@ case "${TARGET_ARCH}" in
 	;;
     "rl78")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	# gcc-16.1 marked rl78 obsolete
+	GCC_WANTS_ENABLE_OBSOLETE=1
 	;;
     "rx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
+	;;
+    "s390x")
+	# gcc-16.1 marked -m31 obsolete
+	GCC_WANTS_ENABLE_OBSOLETE=1
 	;;
     "score")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
