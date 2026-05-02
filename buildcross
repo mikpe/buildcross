@@ -755,6 +755,11 @@ case "${TARGET_ARCH}" in
     "nvptx")
 	TARGET_TRIPLE="${TARGET_ARCH}-none"
 	;;
+    "or1k")
+	# gcc-16.1.0 ICEs compiling glibc-2.43:
+	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=125155
+	GCC_VSN=15.2.0
+	;;
     "pdp11")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-aout"
 	NEWLIB_VSN= # not supported in newlib at all
