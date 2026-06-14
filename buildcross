@@ -588,7 +588,6 @@ case "${TARGET_ARCH}" in
 	HOST_GCC_VSN=14.3.0 # linux-headers unifdef.c fails to build with gcc-15
 	;;
     "lm32")
-	GCC_VSN=14.3.0 # linux-headers unifdef.c fails to build with gcc-15.1.0
 	TARGET_TRIPLE="${TARGET_ARCH}-uclinux-uclibc"
 	LINUX_VSN="git;https://github.com/m-labs/linux-milkymist.git;-;master;1f446f97a4362092dab13d996193a9dc7b0be8e9"
 	;;
@@ -2073,6 +2072,7 @@ build_linux_headers() {
     local GIT
     local SOURCE_PATH
     local CROSS_COMPILE="${TARGET_TRIPLE}-"
+    local HOSTCC=gcc
     if [ -f "${CROSS_DIR}/usr/include/linux/version.h" ]; then
 	return
     fi
@@ -2097,6 +2097,10 @@ build_linux_headers() {
     GIT=`gitify_vsn_linux "${LINUX_VSN}"`
     SOURCE_PATH=`unpack_source "${GIT}"`
     case "${TARGET_ARCH}" in
+	lm32)
+	    # allow gcc >= 15 to compile unifdef.c
+	    HOSTCC="gcc -std=gnu17"
+	    ;;
 	"v850")
 	    # fix glibc conflict in 2.6.26, upstream d15bd1067b1fcb2b7250d22bc0c7c7fea0b759f7
 	    sed -i -e 's,getline(,get_line(,g' "${SOURCE_PATH}/scripts/unifdef.c"
@@ -2113,7 +2117,7 @@ build_linux_headers() {
        rm -f "${CROSS_DIR}/usr/include/asm"
        ln -s "asm-${KERNEL_ARCH}" "${CROSS_DIR}/usr/include/asm"
     else
-	make ARCH="${KERNEL_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" INSTALL_HDR_PATH="${CROSS_DIR}/usr" headers_install
+	make ARCH="${KERNEL_ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" INSTALL_HDR_PATH="${CROSS_DIR}/usr" HOSTCC="${HOSTCC}" headers_install
     fi
     case "${TARGET_ARCH}" in
 	"hexagon")
