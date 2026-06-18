@@ -355,7 +355,8 @@ case "${TARGET_ARCH}" in
     "aarch64-mingw64")
 	TARGET_ARCH="aarch64"
 	TARGET_TRIPLE="aarch64-w64-mingw32"
-	HOST_GCC_VSN="${GCC_VSN}"
+	# TODO: aarch64-w64-mingw32-gcc doesn't build with gcc-16, possibly due to default changing from -std=c++17 to -std=c++20
+	HOST_GCC_VSN=15.3.0
 	BINUTILS_VSN="git;https://github.com/Windows-on-ARM-Experiments/binutils-woarm64.git;-;woarm64;HEAD;-"
 	GCC_VSN="git;https://github.com/Windows-on-ARM-Experiments/gcc-woarm64.git;-;woarm64;HEAD;-"
 	MINGW64_VSN="git;https://github.com/Windows-on-ARM-Experiments/mingw-woarm64.git;-;woarm64;HEAD;-"
@@ -363,7 +364,8 @@ case "${TARGET_ARCH}" in
     "arc64")
 	# ARCv3, vendor's tree, not yet upstreamed
 	TARGET_TRIPLE="arc64-unknown-linux-gnu"
-	HOST_GCC_VSN="${GCC_VSN}"
+	# TODO: arc64-gcc doesn't build with gcc-16, possibly due to default changing from -std=c++17 to -std=c++20
+	HOST_GCC_VSN=15.3.0
 	BINUTILS_VSN="git;https://github.com/foss-for-synopsys-dwc-arc-processors/binutils-gdb.git;-;arc64;HEAD;arc"
 	GCC_VSN="git;https://github.com/foss-for-synopsys-dwc-arc-processors/gcc.git;-;arc64;HEAD;arc"
 	LINUX_VSN="git;https://github.com/foss-for-synopsys-dwc-arc-processors/linux.git;-;arc64;HEAD;arc"
@@ -733,6 +735,8 @@ case "${TARGET_ARCH}" in
 	LINUX_VSN=5.17 # nds32 was removed in linux-5.18
 	;;
     "nios2")
+	# TODO: nios2-gcc doesn't build with gcc-16, possibly due to default changing from -std=c++17 to -std=c++20
+	HOST_GCC_VSN=15.3.0
 	GCC_VSN=14.3.0 # nios2 was removed in gcc-15
 	GCC_WANTS_ENABLE_OBSOLETE=1
 	GLIBC_VSN=2.40 # nios2 was removed in glibc-2.41
