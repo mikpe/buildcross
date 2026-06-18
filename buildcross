@@ -1240,13 +1240,23 @@ get_source_uclibc() {
     get_source "${GIT}"
 }
 
-get_sources() {
-    log "getting sources"
+get_host_sources() {
+    log "getting sources for host tools"
+    cd "${DOWNLOADS_DIR}"
+    [ -n "${HOST_GCC_VSN}" ] && get_source_gcc "${HOST_GCC_VSN}"
+    [ -n "${MAKE_VSN}" ] && get_tarball "${MAKE_URL}" "make-${MAKE_VSN}" "gz"
+    get_tarball "${GMP_URL}" "gmp-${GMP_VSN}"
+    get_tarball "${MPFR_URL}" "mpfr-${MPFR_VSN}"
+    get_tarball "${MPC_URL}" "mpc-${MPC_VSN}" "gz"
+    cd -
+}
+
+get_cross_sources() {
+    log "getting sources for cross tools"
     cd "${DOWNLOADS_DIR}"
     [ -n "${BINUTILS_VSN}" ] && get_source_binutils "${BINUTILS_VSN}"
     get_source_gcc "${GCC_VSN}"
     [ -n "${GCC_WANTS_GENERATED_FILES}" ] && get_source "${GCC_GENERATED_FILES_VSN}"
-    [ -n "${HOST_GCC_VSN}" ] && get_source_gcc "${HOST_GCC_VSN}"
     [ -n "${GLIBC_VSN}" ] && get_source_glibc "${GLIBC_VSN}"
     [ -n "${UCLIBC_VSN}" ] && get_source_uclibc "${UCLIBC_VSN}"
     [ -n "${MUSL_VSN}" ] && get_source_musl "${MUSL_VSN}"
@@ -1256,11 +1266,7 @@ get_sources() {
     [ -n "${AVR_LIBC_VSN}" ] && get_source "${AVR_LIBC_VSN}"
     [ -n "${CC65_VSN}" ] && get_source "${CC65_VSN}"
     [ -n "${GCC_6502_BITS_VSN}" ] && get_source "${GCC_6502_BITS_VSN}"
-    [ -n "${MAKE_VSN}" ] && get_tarball "${MAKE_URL}" "make-${MAKE_VSN}" "gz"
-    get_tarball "${GMP_URL}" "gmp-${GMP_VSN}"
     [ -n "${LINUX_VSN}" ] && get_source_linux "${LINUX_VSN}"
-    get_tarball "${MPFR_URL}" "mpfr-${MPFR_VSN}"
-    get_tarball "${MPC_URL}" "mpc-${MPC_VSN}" "gz"
     cd -
 }
 
@@ -2529,7 +2535,7 @@ if [ ! -d "${HOST_TOOLS_DIR}" ]; then
     mkdir -p "${HOST_TOOLS_DIR}"
 fi
 
-get_sources
+get_host_sources
 
 cd ${BUILD_DIR}
 
@@ -2596,6 +2602,8 @@ fi
 #
 # Build Cross Tools and Libc
 #
+
+get_cross_sources
 
 # build cross binary tools
 build_cross_binary_tools
