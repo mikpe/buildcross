@@ -818,6 +818,8 @@ case "${TARGET_ARCH}" in
     "tilegx")
 	BINUTILS_VSN=2.28.1 # later versions cannot build glibc
 	GCC_VSN=7.5.0 # later versions cannot build glibc
+	# Building this glibc fails miserably with make-4.4, but works with make-4.3.
+	MAKE_VSN=4.3
 	GLIBC_VSN=2.25 # later versions do not build
 	LINUX_VSN=4.16 # tile was removed in linux-4.17
 	;;
