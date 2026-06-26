@@ -737,7 +737,7 @@ case "${TARGET_ARCH}" in
     "nios2")
 	# TODO: nios2-gcc doesn't build with gcc-16, possibly due to default changing from -std=c++17 to -std=c++20
 	HOST_GCC_VSN=15.3.0
-	GCC_VSN=14.3.0 # nios2 was removed in gcc-15
+	GCC_VSN=14.4.0 # nios2 was removed in gcc-15
 	GCC_WANTS_ENABLE_OBSOLETE=1
 	GLIBC_VSN=2.40 # nios2 was removed in glibc-2.41
 	BINUTILS_VSN=2.43.1 # nios2 was removed in binutils-2.44
