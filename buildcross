@@ -741,6 +741,7 @@ case "${TARGET_ARCH}" in
 	GCC_WANTS_ENABLE_OBSOLETE=1
 	GLIBC_VSN=2.40 # nios2 was removed in glibc-2.41
 	BINUTILS_VSN=2.43.1 # nios2 was removed in binutils-2.44
+	LINUX_VSN=6.19 # nios2 glibc doesn't build with newer linux headers
 	;;
     "ns32k")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-netbsd"
