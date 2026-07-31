@@ -1248,7 +1248,7 @@ get_host_sources() {
     get_tarball "${GMP_URL}" "gmp-${GMP_VSN}"
     get_tarball "${MPFR_URL}" "mpfr-${MPFR_VSN}"
     get_tarball "${MPC_URL}" "mpc-${MPC_VSN}" "gz"
-    cd -
+    cd "${BUILD_DIR}"
 }
 
 get_cross_sources() {
@@ -1267,7 +1267,7 @@ get_cross_sources() {
     [ -n "${CC65_VSN}" ] && get_source "${CC65_VSN}"
     [ -n "${GCC_6502_BITS_VSN}" ] && get_source "${GCC_6502_BITS_VSN}"
     [ -n "${LINUX_VSN}" ] && get_source_linux "${LINUX_VSN}"
-    cd -
+    cd "${BUILD_DIR}"
 }
 
 unpack_tarball() {
