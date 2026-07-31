@@ -104,7 +104,7 @@ Supported targets and resulting toolchains:
 | rl78		| rl78-unknown-elf |
 | riscv64	| riscv64-unknown-linux-gnu (no 32-bit support) |
 | rx		| rx-unknown-elf |
-| s390x		| s390x-unknown-linux-gnu with -m64 and -m31 support |
+| s390x		| s390x-unknown-linux-gnu (only -m64) |
 | score		| score-unknown-elf (no libc) [^1] |
 | sh4		| sh4-unknown-linux-gnu |
 | sparc64	| sparc64-unknown-linux-gnu with -m64 and -m32 support |

@@ -113,7 +113,7 @@
 # rl78		rl78-unknown-elf
 # riscv64	riscv64-unknown-linux-gnu (no 32-bit support)
 # rx		rx-unknown-elf
-# s390x		s390x-unknown-linux-gnu with -m64 and -m31 support
+# s390x		s390x-unknown-linux-gnu (only -m64)
 # score		score-unknown-elf (no libc) (1)
 # sh4		sh4-unknown-linux-gnu
 # sparc64	sparc64-unknown-linux-gnu with -m64 and -m32 support
@@ -804,10 +804,6 @@ case "${TARGET_ARCH}" in
 	;;
     "rx")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
-	;;
-    "s390x")
-	# gcc-16.1 marked -m31 obsolete
-	GCC_WANTS_ENABLE_OBSOLETE=1
 	;;
     "score")
 	TARGET_TRIPLE="${TARGET_ARCH}-unknown-elf"
@@ -1652,6 +1648,10 @@ build_cross_gcc() {
 	    # see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90419#c1
 	    MULTILIB_CONFIG="--enable-multilib --with-multilib-list=lp64d"
 	    ;;
+	"s390x")
+	    MULTILIB_CONFIG="--disable-multilib"
+	    LIBSSP_CONFIG="--disable-libssp"
+	    ;;
 	"tilegx")
 	    MULTILIB_CONFIG="--disable-multilib"
 	    ;;
@@ -2227,9 +2227,6 @@ build_target_glibc() {
 	    ;;
 	"ppc64")
 	    build_glibc "${SOURCE_PATH}" "ppc-unknown-linux-gnu" "CC=ppc64-unknown-linux-gnu-gcc -m32"
-	    ;;
-	"s390x")
-	    build_glibc "${SOURCE_PATH}" "s390-unknown-linux-gnu" "CC=s390x-unknown-linux-gnu-gcc -m31"
 	    ;;
 	"sparc64")
 	    build_glibc "${SOURCE_PATH}" "sparcv9-unknown-linux-gnu" "CC=sparc64-unknown-linux-gnu-gcc -m32 -mcpu=ultrasparc"
